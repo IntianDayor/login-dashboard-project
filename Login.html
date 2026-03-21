@@ -12,6 +12,7 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
+            background-color: #ccc;
         }
         .log-in {
             background-color: #f0f0f0;
@@ -21,6 +22,7 @@
         }
         .log-in h1 {
             margin-bottom: 20px;
+            text-align: center;
         }
         .log-in form {
             display: flex;
@@ -43,6 +45,19 @@
         .log-in button:hover {
             background-color: #0056b3;
         }
+        .log-in p {
+            font-size: x-small;
+            text-align: center;
+            padding: 10px;
+            text-decoration: underline;
+            cursor: pointer;
+            border-radius: 30px;
+            width: 65px;
+            margin: 10px auto;
+        }
+        .log-in p:hover {
+            color: #007BFF;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +67,7 @@
             <input type="text" placeholder="Username">
             <input type="password" placeholder="Password">
             <button type="submit">Log In</button>
+            <p class="sign-up" id="sign-up-button">Signup Here</p>
         </form>
     </main>
     <script>
@@ -80,6 +96,11 @@
                 alert('Invalid username or password.');
             }
         });
+
+        const signupButton = document.getElementById('sign-up-button');
+        signupButton.addEventListener('click', () => {
+        window.location.href = 'signup.html';
+    });
 
     </script>
 </body>

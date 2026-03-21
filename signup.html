@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Account</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ccc;
+        }
+        .sign-up {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sign-up h1 {
+            text-align: center;
+            padding: 10px;
+        }
+        .sign-up form {
+            display: flex;
+            flex-direction: column;
+        }
+        .sign-up input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        } 
+        .sign-up button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .sign-up button:hover{
+            color: #0056b3;
+        }
+        .sign-up p {
+            font-size: x-small;
+            text-align: center;
+            padding: 10px;
+            text-decoration: underline;
+            cursor: pointer;
+            border-radius: 30px;
+            width: 150px;
+            margin: 10px auto;
+        }
+        .sign-up p:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <main class="sign-up">
+        <form action="">
+            <h1>Register an Account</h1>
+            <input type="text" placeholder="Enter Preferred Username" id="username-reg">
+            <input type="text" placeholder="Create Password" id="create-password">
+            <input type="text" placeholder="Confirm Password" id="confirm-password">
+            <button type="submit">Sign Up</button>
+            <p class="back-to-login" id="back-to-login">Already have an Account?</p>
+        </form>
+    </main>
+</body>
+<script>
+
+
+    // Goes back to the Log In Page
+    const backToLogin = document.getElementById('back-to-login');
+    backToLogin.addEventListener('click', () => {
+        window.location.href = 'Login.html'
+    });
+
+</script>
+</html>
