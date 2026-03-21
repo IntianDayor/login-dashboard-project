@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .log-in {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .log-in h1 {
+            margin-bottom: 20px;
+        }
+        .log-in form {
+            display: flex;
+            flex-direction: column;
+        }
+        .log-in input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .log-in button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .log-in button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <main class="log-in">
+        <h1>Log In</h1>
+        <form action="">
+            <input type="text" placeholder="Username">
+            <input type="password" placeholder="Password">
+            <button type="submit">Log In</button>
+        </form>
+    </main>
+    <script>
+        
+        // This is for testing purposes only.
+        const psuedoDatabase = {
+            users: [
+                { username: 'admin', password: 'password' },
+                { username: 'intian', password: '1234' },
+                { username: 'dayor', password: 'nataekaba' }
+            ]
+        };
+        
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = form.querySelector('input[type="text"]').value;
+            const password = form.querySelector('input[type="password"]').value;
+
+            // No data base yet. Gonna Try to hard code the username and password for now.
+            const user = psuedoDatabase.users.find(u => u.username === username && u.password === password);
+            if (user) {
+                localStorage.setItem('username', username); // Store username in localStorage
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Invalid username or password.');
+            }
+        });
+
+    </script>
+</body>
+</html>
