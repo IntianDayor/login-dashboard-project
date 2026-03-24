@@ -67,13 +67,15 @@
             <input type="text" placeholder="Enter Preferred Username" id="username-reg">
             <input type="text" placeholder="Create Password" id="create-password">
             <input type="text" placeholder="Confirm Password" id="confirm-password">
-            <button type="submit">Sign Up</button>
+            <button type="submit" id="signup">Sign Up</button>
             <p class="back-to-login" id="back-to-login">Already have an Account?</p>
         </form>
     </main>
 </body>
 <script>
 
+    // Register User
+    const newUser = [];
 
     // Goes back to the Log In Page
     const backToLogin = document.getElementById('back-to-login');
