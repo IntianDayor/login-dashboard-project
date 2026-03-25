@@ -70,16 +70,9 @@
             <p class="sign-up" id="sign-up-button">Signup Here</p>
         </form>
     </main>
-    <script>
+    <script type="module">
         
-        // This is for testing purposes only.
-        const psuedoDatabase = {
-            users: [
-                { username: 'admin', password: 'password' },
-                { username: 'intian', password: '1234' },
-                { username: 'dayor', password: 'nataekaba' }
-            ]
-        };
+        import { psuedoDatabase } from './database.js';
         
         const form = document.querySelector('form');
         form.addEventListener('submit', function(event) {
