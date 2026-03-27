@@ -58,6 +58,25 @@
         .log-in p:hover {
             color: #007BFF;
         }
+        .log-in label {
+            font-size: x-small; 
+            position: relative;
+            left: 84%;
+            bottom: 37px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            width: 30px;
+            height: 20px;
+            color: transparent;
+            transition: color 0.2s;
+        }
+        .log-in label:hover{
+            color: inherit;
+        }
+        #show-password:hover {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -65,7 +84,8 @@
         <h1>Log In</h1>
         <form action="">
             <input type="text" placeholder="Username">
-            <input type="password" placeholder="Password">
+            <input type="password" placeholder="Password" id="password">
+            <label><input type="checkbox" id="show-password">Show</label>
             <button type="submit">Log In</button>
             <p class="sign-up" id="sign-up-button">Signup Here</p>
         </form>
@@ -101,6 +121,15 @@
         signupButton.addEventListener('click', () => {
         window.location.href = 'signup.html';
     });
+
+        // Options to show password    
+        const showPwd = document.getElementById('show-password');
+
+        showPwd.addEventListener('change', () => {
+        password.type = showPwd.checked ? 'text' : 'password';
+        });
+
+        
 
     </script>
 </body>
