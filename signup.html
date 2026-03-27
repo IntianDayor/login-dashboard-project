@@ -147,8 +147,6 @@
     });
 
     // Option to show passwords
-    const createPassword = document.getElementById('create-password');
-    const confirmPassword = document.getElementById('confirm-password')
     const showPwdForCreate = document.getElementById('show-password-create');
         showPwdForCreate.addEventListener('change', () => {
             createPassword.type = showPwdForCreate.checked ? 'text' : 'password';
