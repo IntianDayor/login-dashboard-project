@@ -58,6 +58,25 @@
         .sign-up p:hover {
             color: #0056b3;
         }
+        .sign-up label {
+            font-size: x-small; 
+            position: relative;
+            left: 91%;
+            bottom: 37px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            width: 30px;
+            height: 20px;
+            color: transparent;
+            transition: color 0.2s;
+        }
+        .sign-up label:hover {
+            color: inherit;
+        }
+        #show-password:hover {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -65,8 +84,10 @@
         <form action="">
             <h1>Register an Account</h1>
             <input type="text" placeholder="Enter Preferred Username" id="username-reg">
-            <input type="text" placeholder="Create Password" id="create-password">
-            <input type="text" placeholder="Confirm Password" id="confirm-password">
+            <input type="password" placeholder="Create Password" id="create-password">
+            <label><input type="checkbox" id="show-password-create">Show</label>
+            <input type="password" placeholder="Confirm Password" id="confirm-password">
+            <label><input type="checkbox" id="show-password-confirm">Show</label>
             <button type="submit" id="signup">Sign Up</button>
             <p class="back-to-login" id="back-to-login">Already have an Account?</p>
         </form>
@@ -124,6 +145,18 @@
     backToLogin.addEventListener('click', () => {
         window.location.href = 'Login.html'
     });
+
+    // Option to show passwords
+    const createPassword = document.getElementById('create-password');
+    const confirmPassword = document.getElementById('confirm-password')
+    const showPwdForCreate = document.getElementById('show-password-create');
+        showPwdForCreate.addEventListener('change', () => {
+            createPassword.type = showPwdForCreate.checked ? 'text' : 'password';
+        });
+    const showPwdForConfirm = document.getElementById('show-password-confirm');
+        showPwdForConfirm.addEventListener('change', () => {
+            confirmPassword.type = showPwdForConfirm.checked ? 'text' : 'password';
+        });
 
 </script>
 </html>
