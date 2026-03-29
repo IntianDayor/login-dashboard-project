@@ -85,7 +85,9 @@
         <form action="">
             <input type="text" placeholder="Username">
             <input type="password" placeholder="Password" id="password">
-            <label><input type="checkbox" id="show-password">Show</label>
+            <label><input type="checkbox" id="show-password" onclick="password.type = this.checked ? 'text' : 'password'">
+                Show
+            </label>
             <button type="submit">Log In</button>
             <p class="sign-up" id="sign-up-button">Signup Here</p>
         </form>
@@ -122,14 +124,6 @@
         window.location.href = 'signup.html';
     });
 
-        // Options to show password    
-        const showPwd = document.getElementById('show-password');
-
-        showPwd.addEventListener('change', () => {
-        password.type = showPwd.checked ? 'text' : 'password';
-        });
-
-        
 
     </script>
 </body>
