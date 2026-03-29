@@ -84,10 +84,16 @@
         <form action="">
             <h1>Register an Account</h1>
             <input type="text" placeholder="Enter Preferred Username" id="username-reg">
-            <input type="password" placeholder="Create Password" id="create-password">
-            <label><input type="checkbox" id="show-password-create">Show</label>
-            <input type="password" placeholder="Confirm Password" id="confirm-password">
-            <label><input type="checkbox" id="show-password-confirm">Show</label>
+            <input type="password" placeholder="Create Password" id="create">
+            <label>
+                <input type="checkbox" id="show-password-create" onclick="create.type = this.checked ? 'text' : 'password'">
+                Show
+            </label>
+            <input type="password" placeholder="Confirm Password" id="confirmpass">
+            <label>
+                <input type="checkbox" id="show-password-confirm" onclick="confirmpass.type = this.checked ? 'text' : 'password'">
+                Show
+            </label>
             <button type="submit" id="signup">Sign Up</button>
             <p class="back-to-login" id="back-to-login">Already have an Account?</p>
         </form>
@@ -146,6 +152,7 @@
         window.location.href = 'Login.html'
     });
 
+<<<<<<< HEAD
     // Option to show passwords
     const showPwdForCreate = document.getElementById('show-password-create');
         showPwdForCreate.addEventListener('change', () => {
@@ -156,5 +163,7 @@
             confirmPassword.type = showPwdForConfirm.checked ? 'text' : 'password';
         });
 
+=======
+>>>>>>> 249483b2b5bbe5d107d5130f1d72b4528d98eddc
 </script>
 </html>
