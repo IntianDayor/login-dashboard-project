@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Dashboard | Christian Dior Feraer</title>
     <style>
        
         *{
@@ -52,10 +52,21 @@
             right: 0;
         }
 
-        .sidebar-button, .sidebar-button-2 {
+        .sidebar-button {
             background: none;
             border: none;
             color: white;
+            font-size: 24px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+        }
+
+        .sidebar-button-2 {
+            background: none;
+            border: none;
+            color: black;
             font-size: 24px;
             cursor: pointer;
             position: absolute;
@@ -67,7 +78,7 @@
             color: #ddd;
         }
 
-        li {
+        .log-out {
             background-color: inherit;
             position: absolute;
             align-items: center;
@@ -80,8 +91,28 @@
             left: 4px;
             cursor: pointer;
         }
+        .different-data {
+            background-color: inherit;
+            position: absolute;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            top: 43px;
+            right: 4px;
+            left: 4px;
+        }
+        .resume, .experience, .projects {
+            background-color: inherit;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
 
-        li:hover {
+        .resume:hover, .experience:hover, .projects:hover, .log-out:hover {
             background-color: #ddd;
             text-decoration: underline;
         }
@@ -95,9 +126,14 @@
     </section>
     <h2>Welcome, <span id="username"></span>!</h2>
     <div class="sidebar">
-        <button class="sidebar-button-2">&equiv;</button>
+        <button class="sidebar-button-2">&times;</button>
+        <ul class="different-data">
+            <li class="resume" style="list-style-type: none;" id="resume">Resume</li>
+            <li class="experience" style="list-style-type: none;" id="profile">Profile</li>
+            <li class="projects" style="list-style-type: none;" id="projects">Projects</li>
+        </ul>
         <ul>
-            <li style="list-style-type: none;" id="log-out">Log Out</li>
+            <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
         </ul> 
     </div>
 </body>
