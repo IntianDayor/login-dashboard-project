@@ -101,49 +101,28 @@
 </body>
 <script type="module">
     
-    import { psuedoDatabase } from './database.js';
-
-    /* Creation of a new account. This is for testing purposes only. 
-    In a real application, you would send this data to a server and store it in a database.
-    */
-
-    // Validation process for creating a new account.
-    const usernameReg = document.getElementById('username-reg');
-    const confirmPassword = document.getElementById('confirm-password');
-    const createPassword = document.getElementById('create-password');
     const form = document.querySelector('form');
-    
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        let hasError = false;
-        // Check if the username already exists in the psuedoDatabase.
-        psuedoDatabase.users.forEach(user => {
-            if (user.username === usernameReg.value) {
-                alert('Username already exists. Please choose a different username.');
-                hasError = true;
-            }
-            });
-        
-        // Validate that the password and confirm password fields match and that all fields are filled out.
-        if (createPassword.value !== confirmPassword.value) {
-                alert('Passwords do not match. Please try again.');
-                hasError = true;
+
+    form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+        const username = form.querySelector('input[type="text"]').value;
+        const password = form.querySelector('input[type="password"]').value;
+
+        const response = await fetch("api/signup.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Account created!");
+            window.location.href = "login.html";
+        } else {
+            alert("Signup failed");
         }
-        if (usernameReg.value.trim() === '' || createPassword.value.trim() === '' || confirmPassword.value.trim() === '') {
-                alert('Please fill in all fields.');
-                hasError = true;
-        }
-        if (hasError) {
-                usernameReg.value = '';
-                createPassword.value = '';
-                confirmPassword.value = '';
-        }
-        // If there are no errors, add the new user to the psuedoDatabase and redirect to the login page.
-        if (!hasError) {
-            psuedoDatabase.users.push({ username: usernameReg.value, password: createPassword.value });
-            alert('Account created successfully! You can now log in.');
-            window.location.href = 'Login.html';
-        } 
     });
 
     // Goes back to the Log In Page
@@ -151,7 +130,5 @@
     backToLogin.addEventListener('click', () => {
         window.location.href = 'Login.html'
     });
-
-    
 </script>
 </html>

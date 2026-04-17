@@ -93,31 +93,35 @@
         </form>
     </main>
     <script type="module">
-        
-        import { psuedoDatabase } from './database.js';
-        
         const form = document.querySelector('form');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+
+        form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
             const username = form.querySelector('input[type="text"]').value;
             const password = form.querySelector('input[type="password"]').value;
 
-            // No data base yet. Gonna Try to hard code the username and password for now.
-            const user = psuedoDatabase.users.find(u => u.username === username && u.password === password);
-            if (user) {
-                localStorage.setItem('username', username); // Store username in localStorage
-                window.location.href = 'dashboard.html';
+            const response = await fetch("api/login.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                localStorage.setItem("username", username);
+                window.location.href = "dashboard.html";
             } else {
-                alert('Invalid username or password.');
+                alert("Invalid username or password");
             }
         });
 
-        const signupButton = document.getElementById('sign-up-button');
-        signupButton.addEventListener('click', () => {
-        window.location.href = 'signup.html';
-    });
-
-
+        const signUpButton = document.getElementById('sign-up-button');
+        signUpButton.addEventListener('click', function() {
+            window.location.href = "signup.html";
+        });
+        
     </script>
 </body>
 </html>
