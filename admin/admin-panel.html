@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Christian Dior Feraer</title>
+    <title>ADMIN PANEL</title>
     <style>
-       
         *{
             box-sizing: border-box;
         }
@@ -102,8 +101,8 @@
             right: 4px;
             left: 4px;
         }
-        .resume, .experience, .projects {
-            background-color: inherit;
+        .manage-users, .upload-projects, .upload-resume, .edit-profile {
+            background-color: inherit;  
             align-items: center;
             text-align: center;
             padding: 10px;
@@ -113,58 +112,51 @@
             width: 100%;
         }
 
-        .resume:hover, .experience:hover, .projects:hover, .log-out:hover {
+        .manage-users:hover, .upload-projects:hover, .upload-resume:hover, .edit-profile:hover, .log-out:hover {
             background-color: #ddd;
             text-decoration: underline;
         }
-
     </style>
 </head>
 <body>
     <section class="topbar">
-        <h1 style="font-size: 24px;">Simple Dashboard</h1>
+        <h1 style="font-size: 24px;">Admin Panel</h1>
         <button class="sidebar-button">&equiv;</button>
     </section>
     <h2>Welcome, <span id="username"></span>!</h2>
     <div class="sidebar">
         <button class="sidebar-button-2">&times;</button>
         <ul class="different-data">
-            <li class="resume" style="list-style-type: none;" id="resume">Resume</li>
-            <li class="experience" style="list-style-type: none;" id="profile">Profile</li>
-            <li class="projects" style="list-style-type: none;" id="projects">Projects</li>
+            <li class="manage-users" style="list-style-type: none;" id="manage-users">Manage Users</li>
+            <li class="upload-projects" style="list-style-type: none;" id="upload-projects">Upload Projects</li>
+            <li class="upload-resume" style="list-style-type: none;" id="upload-resume">Upload Resume</li>
+            <li class="edit-profile" style="list-style-type: none;" id="edit-profile">Edit Profile</li>
         </ul>
         <ul>
             <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
         </ul> 
     </div>
 </body>
-    <script>
-
+<script>
     const sidebarButton = document.querySelector('.sidebar-button');
     const sidebarButton2 = document.querySelector('.sidebar-button-2');
-    const usernameSpan = document.getElementById('username');
-
-    // Retrieve the username from localStorage and display it
-    const username = localStorage.getItem('username');
-    if (username) {
-        usernameSpan.textContent = username;
-    }
-
-    // Add event listeners to toggle the sidebar
     const sidebar = document.querySelector('.sidebar');
+
     sidebarButton.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
+        sidebar.classList.add('active');
     });
+
     sidebarButton2.addEventListener('click', () => {
-    sidebar.classList.remove('active');
+        sidebar.classList.remove('active');
     });
-    
-    // Add event listener to the logout item
-    const logoutItem = document.getElementById('log-out');
-    logoutItem.addEventListener('click', () => {
-        localStorage.removeItem('username');
-        window.location.href = 'Login.html';
-    });
-    
-    </script>
+
+     // Display the username on the dashboard
+     const usernameDisplay = document.getElementById('username');
+     const storedUsername = localStorage.getItem('username');
+     if (storedUsername) {
+         usernameDisplay.textContent = storedUsername;
+     } else {
+         usernameDisplay.textContent = 'Guest';
+     }
+</script>
 </html>

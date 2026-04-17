@@ -93,6 +93,17 @@
         </form>
     </main>
     <script type="module">
+
+        /* 
+        This script handles the login form submission, 
+        sending the username and password to the server for authentication. 
+
+        If the login is successful, 
+        it stores the username in localStorage and redirects to the dashboard. 
+
+        It also adds a click event listener to the signup button to redirect to the signup page.        
+        */
+
         const form = document.querySelector('form');
 
         form.addEventListener('submit', async function(event) {
@@ -101,7 +112,12 @@
             const username = form.querySelector('input[type="text"]').value;
             const password = form.querySelector('input[type="password"]').value;
 
-            const response = await fetch("api/login.php", {
+            if (!username || !password) {
+                alert("Please enter both username and password");
+                return;
+            }
+
+            const response = await fetch("../api/login.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })

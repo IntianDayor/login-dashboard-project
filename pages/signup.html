@@ -83,7 +83,9 @@
     <main class="sign-up">
         <form action="">
             <h1>Register an Account</h1>
-            <input type="text" placeholder="Enter Preferred Username" id="username-reg">
+            <input type="text" placeholder="Username" id="username-reg">
+            <input type="text" placeholder="Full Name" id="fullname">
+            <input type="email" placeholder="Email Address" id="email">
             <input type="password" placeholder="Create Password" id="create">
             <label>
                 <input type="checkbox" id="show-password-create" onclick="create.type = this.checked ? 'text' : 'password'">
@@ -101,6 +103,19 @@
 </body>
 <script type="module">
     
+    /* 
+    This script handles the registration process for new users. 
+    
+    It listens for the form submission, validates the input,
+    and sends the registration data to the server via a POST request to the signup.php API endpoint.
+
+    If the registration is successful, 
+    it redirects the user to the login page; otherwise,
+    it displays an error message. 
+    
+    Additionally, it provides a link for users who already have an account to navigate back to the login page.
+    */
+
     const form = document.querySelector('form');
 
     form.addEventListener('submit', async function(event) {
@@ -108,11 +123,31 @@
 
         const username = form.querySelector('input[type="text"]').value;
         const password = form.querySelector('input[type="password"]').value;
+        const confirmPassword = form.querySelectorAll('input[type="password"]')[1].value;
+        const fullname = form.querySelector('input[type="text"][id="fullname"]').value;
+        const email = form.querySelector('input[type="email"]').value;
 
-        const response = await fetch("api/signup.php", {
+        // Checks if the password and confirm password fields match
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+        }
+        // Checks if all fields are filled out
+        if (!username || !password || !fullname || !email) {
+            alert("Please fill in all fields");
+            return;
+        }
+
+        if (password.length < 6) {
+            alert("Password must be at least 6 characters long");
+            return;
+        }
+
+        // Sends the registration data to the server
+        const response = await fetch("../api/signup.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username, password, fullname, email })
         });
 
         const result = await response.json();
@@ -128,7 +163,7 @@
     // Goes back to the Log In Page
     const backToLogin = document.getElementById('back-to-login');
     backToLogin.addEventListener('click', () => {
-        window.location.href = 'Login.html'
+        window.location.href = 'login.html'
     });
 </script>
 </html>
