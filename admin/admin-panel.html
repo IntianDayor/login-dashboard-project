@@ -138,6 +138,7 @@
     </div>
 </body>
 <script>
+    
     const sidebarButton = document.querySelector('.sidebar-button');
     const sidebarButton2 = document.querySelector('.sidebar-button-2');
     const sidebar = document.querySelector('.sidebar');
@@ -158,5 +159,14 @@
      } else {
          usernameDisplay.textContent = 'Guest';
      }
+     
+     // Goes back to login page and removes the username from localStorage
+     const logOutButton = document.getElementById('log-out');
+     logOutButton.addEventListener('click', () => {
+         localStorage.removeItem('username');
+         localStorage.removeItem('isAdmin');
+         window.location.href = '../pages/login.html';
+     });
+
 </script>
 </html>
