@@ -3,83 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/styles/global.css">
     <title>Christian Dior Feraer's Info</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #ccc;
-        }
-        .log-in {
-            background-color: #f0f0f0;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .log-in h1 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .log-in form {
-            display: flex;
-            flex-direction: column;
-        }
-        .log-in input {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-        .log-in button {
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .log-in button:hover {
-            background-color: #0056b3;
-        }
-        .log-in p {
-            font-size: x-small;
-            text-align: center;
-            padding: 10px;
-            text-decoration: underline;
-            cursor: pointer;
-            border-radius: 30px;
-            width: 65px;
-            margin: 10px auto;
-        }
-        .log-in p:hover {
-            color: #007BFF;
-        }
-        .log-in label {
-            font-size: x-small; 
-            position: relative;
-            left: 84%;
-            bottom: 37px;
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-            width: 30px;
-            height: 20px;
-            color: transparent;
-            transition: color 0.2s;
-        }
-        .log-in label:hover{
-            color: inherit;
-        }
-        #show-password:hover {
-            cursor: pointer;
-        }
-    </style>
 </head>
-<body>
+<body class="auth">
     <main class="log-in">
         <h1>My Info</h1>
         <form action="">
@@ -89,56 +16,9 @@
                 Show
             </label>
             <button type="submit">Log In</button>
-            <p class="sign-up" id="sign-up-button">Signup Here</p>
+            <p class="sign-up-button" id="sign-up-button">Signup Here</p>
         </form>
     </main>
-    <script type="module">
-
-        /* 
-        This script handles the login form submission, 
-        sending the username and password to the server for authentication. 
-
-        If the login is successful, 
-        it stores the username in localStorage and redirects to the dashboard. 
-
-        It also adds a click event listener to the signup button to redirect to the signup page.        
-        */
-
-        const form = document.querySelector('form');
-
-        form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-
-            const username = form.querySelector('input[type="text"]').value;
-            const password = form.querySelector('input[type="password"]').value;
-
-            if (!username || !password) {
-                alert("Please enter both username and password");
-                return;
-            }
-
-            const response = await fetch("../api/login.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
-            });
-
-            const result = await response.json();
-
-            if (!result.success) {
-                alert(result.message || "Login failed");
-            } else {
-                localStorage.setItem("username", result.user.username);
-                localStorage.setItem("isAdmin", result.isAdmin);
-                window.location.href = result.isAdmin ? "../admin/admin-panel.html" : "dashboard.html";
-            }
-        });
-
-        const signUpButton = document.getElementById('sign-up-button');
-        signUpButton.addEventListener('click', function() {
-            window.location.href = "signup.html";
-        });
-        
-    </script>
+    <script src="../assets/scripts/auth.js"></script>
 </body>
 </html>

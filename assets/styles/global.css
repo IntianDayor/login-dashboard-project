@@ -1,0 +1,226 @@
+/* =========================
+   GLOBAL RESET + BODY
+========================= */
+*{
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+/* Different background per pages */
+body.dashboard,
+body.admin {
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+body.auth {
+    background-color: #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h2 {
+    color: #333;
+}
+
+/* =========================
+   TOPBAR + SIDEBAR (ADMIN + DASHBOARD)
+========================= */
+.topbar {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 10%;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 20%;
+    height: 100%;
+    background-color: lightgray;
+    transition: right 0.3s ease-out;
+}
+
+.sidebar.active {
+    right: 0;
+}
+
+/* Sidebar buttons */
+.sidebar-button,
+.sidebar-button-2 {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+
+.sidebar-button { color: white; }
+.sidebar-button-2 { color: black; }
+
+.sidebar-button:hover,
+.sidebar-button-2:hover {
+    color: #ddd;
+}
+
+.different-data {
+    position: absolute;
+    text-align: center;
+    padding: 10px;
+    top: 43px;
+    right: 4px;
+    left: 4px;
+}
+
+.log-out {
+    position: absolute;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 10px;
+    bottom: 10px;
+    right: 4px;
+    left: 4px;
+    cursor: pointer;
+}
+
+/* Admin + Dashboard menu items */
+.manage-users,
+.upload-projects,
+.upload-resume,
+.edit-profile,
+.resume,
+.experience,
+.projects {
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.manage-users:hover,
+.upload-projects:hover,
+.upload-resume:hover,
+.edit-profile:hover,
+.resume:hover,
+.experience:hover,
+.projects:hover,
+.log-out:hover {
+    background-color: #ddd;
+    text-decoration: underline;
+}
+
+/* =========================
+   LOGIN + SIGNUP (AUTH PAGES)
+========================= */
+.log-in,
+.sign-up {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Titles */
+.log-in h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+.sign-up h1 {
+    text-align: center;
+    padding: 10px;
+}
+
+/* Forms */
+.log-in form,
+.sign-up form {
+    display: flex;
+    flex-direction: column;
+}
+
+.log-in input,
+.sign-up input {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+/* Buttons */
+.log-in button,
+.sign-up button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.log-in button:hover { background-color: #0056b3; }
+.sign-up button:hover { color: #0056b3; }
+
+/* Small links */
+.log-in p,
+.sign-up p {
+    font-size: x-small;
+    text-align: center;
+    text-decoration: underline;
+    cursor: pointer;
+    border-radius: 30px;
+    margin: 10px auto;
+}
+
+.log-in p { width: 65px; }
+.sign-up p { width: 150px; }
+
+.log-in p:hover { color: #007BFF; }
+.sign-up p:hover { color: #0056b3; }
+
+/* Show password icon */
+.log-in label,
+.sign-up label {
+    font-size: x-small; 
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 30px;
+    height: 20px;
+    color: transparent;
+    transition: color 0.2s;
+}
+
+.log-in label { left: 84%; bottom: 37px; }
+.sign-up label { left: 91%; bottom: 37px; }
+
+.log-in label:hover,
+.sign-up label:hover {
+    color: inherit;
+}
+
+#show-password:hover {
+    cursor: pointer;
+}

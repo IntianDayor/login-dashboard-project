@@ -3,124 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/styles/global.css">
     <title>Dashboard | Christian Dior Feraer</title>
-    <style>
-       
-        *{
-            box-sizing: border-box;
-        }
-
-       body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        h2 {
-            color: #333;
-        }
-        
-        .topbar {
-            position: fixed;
-            display: flex;
-            align-items: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #007BFF;
-            color: white;
-            padding: 10px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            height: 10%;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 20%;
-            height: 100%;
-            background-color: lightgray;
-            transition: right 0.3s ease-out;
-        }
-
-        .sidebar.active {
-            right: 0;
-        }
-
-        .sidebar-button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            position: absolute;
-            right: 20px;
-            top: 10px;
-        }
-
-        .sidebar-button-2 {
-            background: none;
-            border: none;
-            color: black;
-            font-size: 24px;
-            cursor: pointer;
-            position: absolute;
-            right: 20px;
-            top: 10px;
-        }
-
-        .sidebar-button:hover, .sidebar-button-2:hover {
-            color: #ddd;
-        }
-
-        .log-out {
-            background-color: inherit;
-            position: absolute;
-            align-items: center;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 10px;
-            bottom: 10px;
-            right: 4px;
-            left: 4px;
-            cursor: pointer;
-        }
-        .different-data {
-            background-color: inherit;
-            position: absolute;
-            align-items: center;
-            text-align: center;
-            padding: 10px;
-            top: 43px;
-            right: 4px;
-            left: 4px;
-        }
-        .resume, .experience, .projects {
-            background-color: inherit;
-            align-items: center;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 10px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .resume:hover, .experience:hover, .projects:hover, .log-out:hover {
-            background-color: #ddd;
-            text-decoration: underline;
-        }
-
-    </style>
 </head>
-<body>
+<body class="dashboard">
     <section class="topbar">
         <h1 style="font-size: 24px;">User Dashboard</h1>
         <button class="sidebar-button">&equiv;</button>
@@ -137,34 +23,6 @@
             <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
         </ul> 
     </div>
+    <script src="../assets/scripts/dashboard-script.js"></script>
 </body>
-    <script>
-
-    const sidebarButton = document.querySelector('.sidebar-button');
-    const sidebarButton2 = document.querySelector('.sidebar-button-2');
-    const usernameSpan = document.getElementById('username');
-
-    // Retrieve the username from localStorage and display it
-    const username = localStorage.getItem('username');
-    if (username) {
-        usernameSpan.textContent = username;
-    }
-
-    // Add event listeners to toggle the sidebar
-    const sidebar = document.querySelector('.sidebar');
-    sidebarButton.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-    });
-    sidebarButton2.addEventListener('click', () => {
-    sidebar.classList.remove('active');
-    });
-    
-    // Add event listener to the logout item
-    const logoutItem = document.getElementById('log-out');
-    logoutItem.addEventListener('click', () => {
-        localStorage.removeItem('username');
-        window.location.href = 'login.html';
-    });
-    
-    </script>
 </html>

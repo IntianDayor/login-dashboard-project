@@ -3,83 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/styles/global.css">
     <title>Register Account | To access Christian Dior Feraer's Info</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #ccc;
-        }
-        .sign-up {
-            background-color: #f0f0f0;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .sign-up h1 {
-            text-align: center;
-            padding: 10px;
-        }
-        .sign-up form {
-            display: flex;
-            flex-direction: column;
-        }
-        .sign-up input {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        } 
-        .sign-up button {
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .sign-up button:hover{
-            color: #0056b3;
-        }
-        .sign-up p {
-            font-size: x-small;
-            text-align: center;
-            padding: 10px;
-            text-decoration: underline;
-            cursor: pointer;
-            border-radius: 30px;
-            width: 150px;
-            margin: 10px auto;
-        }
-        .sign-up p:hover {
-            color: #0056b3;
-        }
-        .sign-up label {
-            font-size: x-small; 
-            position: relative;
-            left: 91%;
-            bottom: 37px;
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-            width: 30px;
-            height: 20px;
-            color: transparent;
-            transition: color 0.2s;
-        }
-        .sign-up label:hover {
-            color: inherit;
-        }
-        #show-password:hover {
-            cursor: pointer;
-        }
-    </style>
 </head>
-<body>
+<body class="auth">
     <main class="sign-up">
         <form action="">
             <h1>Register an Account</h1>
@@ -88,82 +15,18 @@
             <input type="email" placeholder="Email Address" id="email">
             <input type="password" placeholder="Create Password" id="create">
             <label>
-                <input type="checkbox" id="show-password-create" onclick="create.type = this.checked ? 'text' : 'password'">
+                <input type="checkbox" id="show-password" onclick="create.type = this.checked ? 'text' : 'password'">
                 Show
             </label>
             <input type="password" placeholder="Confirm Password" id="confirmpass">
             <label>
-                <input type="checkbox" id="show-password-confirm" onclick="confirmpass.type = this.checked ? 'text' : 'password'">
+                <input type="checkbox" id="show-password" onclick="confirmpass.type = this.checked ? 'text' : 'password'">
                 Show
             </label>
             <button type="submit" id="signup">Sign Up</button>
             <p class="back-to-login" id="back-to-login">Already have an Account?</p>
         </form>
     </main>
+    <script src="../assets/scripts/auth.js"></script>
 </body>
-<script type="module">
-    
-    /* 
-    This script handles the registration process for new users. 
-    
-    It listens for the form submission, validates the input,
-    and sends the registration data to the server via a POST request to the signup.php API endpoint.
-
-    If the registration is successful, 
-    it redirects the user to the login page; otherwise,
-    it displays an error message. 
-    
-    Additionally, it provides a link for users who already have an account to navigate back to the login page.
-    */
-
-    const form = document.querySelector('form');
-
-    form.addEventListener('submit', async function(event) {
-    event.preventDefault();
-
-        const username = form.querySelector('input[type="text"]').value;
-        const password = form.querySelector('input[type="password"]').value;
-        const confirmPassword = form.querySelectorAll('input[type="password"]')[1].value;
-        const fullname = form.querySelector('input[type="text"][id="fullname"]').value;
-        const email = form.querySelector('input[type="email"]').value;
-
-        // Checks if the password and confirm password fields match
-        if (password !== confirmPassword) {
-            alert("Passwords do not match");
-            return;
-        }
-        // Checks if all fields are filled out
-        if (!username || !password || !fullname || !email) {
-            alert("Please fill in all fields");
-            return;
-        }
-
-        if (password.length < 6) {
-            alert("Password must be at least 6 characters long");
-            return;
-        }
-
-        // Sends the registration data to the server
-        const response = await fetch("../api/signup.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password, fullname, email })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert("Account created!");
-            window.location.href = "login.html";
-        } else {
-            alert("Signup failed");
-        }
-    });
-
-    // Goes back to the Log In Page
-    const backToLogin = document.getElementById('back-to-login');
-    backToLogin.addEventListener('click', () => {
-        window.location.href = 'login.html'
-    });
-</script>
 </html>

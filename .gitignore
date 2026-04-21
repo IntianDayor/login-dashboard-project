@@ -113,3 +113,29 @@ build/
 *.db
 *.sqlite
 *.sqlite3
+
+# PHP specific
+vendor/
+composer.lock
+composer.phar
+.phpunit.result.cache
+.php_cs.cache
+.php_cs.dist
+.phpstorm.meta.php
+.phpunit.cache
+.phpunit.result.cache
+.phpunit/
+
+# XAMPP specific
+xampp/
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Backup files
+*.bak
+*.tmp
+*.temp
+~$*
