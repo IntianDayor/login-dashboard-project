@@ -1,3 +1,9 @@
+/* =========================
+   CONTENT PAGE STYLES
+========================= */
+
+/*==========ADMIN PANEL PAGE STYLES==========*/
+
 /*-----Manage Users Page Styles-----*/
 
 .content {
@@ -33,4 +39,12 @@ th, td {
     font-weight: bold;
     font-size: large;
     width: 100vh;
+}
+
+/*-----Projects Page Styles-----*/
+.input-project {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
 }

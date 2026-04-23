@@ -54,4 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "manage-users.html";
     });
 
+    // Project Management Button (Admin only) //
+    const projectManagementBtn = document.getElementById("upload-projects");
+
+    projectManagementBtn?.addEventListener("click", () => {
+        window.location.href = "projects.html";
+    });
 });
