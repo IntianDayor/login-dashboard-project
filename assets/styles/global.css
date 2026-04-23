@@ -32,9 +32,7 @@ h2 {
     color: #333;
 }
 
-/* =========================
-   TOPBAR + SIDEBAR (ADMIN + DASHBOARD)
-========================= */
+/*Topbar & Sidebar */
 .topbar {
     position: fixed;
     display: flex;
@@ -75,11 +73,22 @@ h2 {
     top: 10px;
 }
 
-.sidebar-button { color: white; }
+.home-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    right: 45px;
+    top: 9px;
+}
+
+.sidebar-button, .home-button { color: white; }
 .sidebar-button-2 { color: black; }
 
 .sidebar-button:hover,
-.sidebar-button-2:hover {
+.sidebar-button-2:hover,
+.home-button:hover {
     color: #ddd;
 }
 
@@ -105,13 +114,14 @@ h2 {
 }
 
 /* Admin + Dashboard menu items */
-.manage-users,
-.upload-projects,
-.upload-resume,
-.edit-profile,
-.resume,
-.experience,
-.projects {
+.different-data .manage-users,
+.different-data .upload-projects,
+.different-data .upload-resume,
+.different-data .edit-profile,
+.different-data .resume,
+.different-data .experience,
+.different-data .projects,
+.different-data .home {
     text-align: center;
     padding: 10px;
     border-radius: 5px;
@@ -120,13 +130,14 @@ h2 {
     width: 100%;
 }
 
-.manage-users:hover,
-.upload-projects:hover,
-.upload-resume:hover,
-.edit-profile:hover,
-.resume:hover,
-.experience:hover,
-.projects:hover,
+.different-data .manage-users:hover,
+.different-data .upload-projects:hover,
+.different-data .upload-resume:hover,
+.different-data .edit-profile:hover,
+.different-data .resume:hover,
+.different-data .experience:hover,
+.different-data .projects:hover,
+.different-data .home:hover,
 .log-out:hover {
     background-color: #ddd;
     text-decoration: underline;

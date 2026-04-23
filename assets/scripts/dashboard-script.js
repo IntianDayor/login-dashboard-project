@@ -7,8 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn = document.querySelector(".sidebar-button-2");
     const usernameDisplay = document.getElementById("username");
     const logoutBtn = document.getElementById("log-out");
+    const homeBtn = document.getElementById("home");
+    const sidebarHomeBtn = document.querySelector(".sidebar #home");
 
-    // Sidebar toggle (shared) //
+    // Sidebar toggle //
     openBtn?.addEventListener("click", () => sidebar?.classList.add("active"));
     closeBtn?.addEventListener("click", () => sidebar?.classList.remove("active"));
 
@@ -18,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         usernameDisplay.textContent = username || "Guest";
     }
 
-    // Logout (shared) //
+    // Logout //
     logoutBtn?.addEventListener("click", () => {
         localStorage.removeItem("username");
         localStorage.removeItem("isAdmin");
@@ -29,6 +31,27 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             window.location.href = "login.html";
         }
+    });
+
+    // Home Button //
+    const homeClickHandler = () => {
+        if (window.location.pathname.includes("/admin/")) {
+            window.location.href = "admin-panel.html";
+        } else {
+            window.location.href = "dashboard.html";
+        }
+    };
+    homeBtn?.addEventListener("click", homeClickHandler);
+    sidebarHomeBtn?.addEventListener("click", homeClickHandler);
+
+
+    // =============== Admin Panel Specific ============== //
+    
+    // Manage User Button (Admin only) //
+    const manageUsersBtn = document.getElementById("manage-users");
+
+    manageUsersBtn?.addEventListener("click", () => {
+        window.location.href = "manage-users.html";
     });
 
 });
