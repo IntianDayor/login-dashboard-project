@@ -2,7 +2,7 @@
 header("Content-Type: application/json");
 include "db.php";
 
-$sql = "SELECT id, username, name, email, DATE(`created_@`) AS created_at FROM users";
+$sql = "SELECT id, username, name, email, DATE(`created_at`) AS created_at FROM users";
 
 $result = $conn->query($sql);
 
