@@ -60,4 +60,48 @@ document.addEventListener("DOMContentLoaded", () => {
     projectManagementBtn?.addEventListener("click", () => {
         window.location.href = "projects.html";
     });
+
+    // Resume Management Button (Admin only) //
+    const resumeManagementBtn = document.getElementById("upload-resume");
+    
+    resumeManagementBtn?.addEventListener("click", () => {
+        window.location.href = "upload-resume.html";
+    });
+
+    // Edit Profile Button (Admin only) //
+    const editProfileBtn = document.getElementById("edit-profile");
+
+    editProfileBtn?.addEventListener("click", () => {
+        window.location.href = "edit-profile.html";
+    });
+
+
+
+
+    // =============== User Dashboard Specific ============== //
+
+    // View Resume Button (User only) //
+    const viewResumeBtn = document.getElementById("resume");
+    if (viewResumeBtn) {
+        viewResumeBtn.addEventListener("click", () => {
+            window.location.href = "view-resume.html";
+        });
+    }
+
+    // View Profile Button (User only) //
+    const viewProfileBtn = document.getElementById("profile");
+    if (viewProfileBtn) {
+        viewProfileBtn.addEventListener("click", () => {
+            window.location.href = "profile.html";
+        });
+    }
+
+    // View Projects Button (User only) //
+    const viewProjectsBtn = document.getElementById("projects");
+    if (viewProjectsBtn) {
+        viewProjectsBtn.addEventListener("click", () => {
+            window.location.href = "projects-user.html";
+        });
+    }
+
 });

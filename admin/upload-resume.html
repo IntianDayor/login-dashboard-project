@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="../assets/styles/global.css">
     <!-- Content-specific styles -->
     <link rel="stylesheet" href="../assets/styles/content.css">
-    <title>Projects</title>
+    <title>Upload Resume</title>
 </head>
 <body>
-    <main class="upload-projects">
+    <main class="upload-resume">
         <!-- Topbar and Sidebar -->
         <section class="topbar">
-            <h1 style="font-size: 24px;">Projects</h1>
+            <h1 style="font-size: 24px;">Resume</h1>
             <button class="home-button" id="home">&#8962;</button>
             <button class="sidebar-button">&equiv;</button>
         </section>
@@ -31,22 +31,18 @@
         </ul> 
         </div>
 
-        <!-- Projects Content -->
+        <!-- Upload Resume Content -->
         <section class="content">
             <form action="">
-                <div class="user-view" id="user-view">&#128065; User View</div>
-                <div class="input-project">
-                    <input type="text" placeholder="Project Title" id="project-title">
-                    <textarea placeholder="Project Description" id="project-description"></textarea>
-                    <input type="file" multiple accept="image/*" id="project-image">
-                    <input type="text" placeholder="Project Link" id="project-link">
-                    <button id="add-project">Add Project</button>
+                <div class="input-resume">
+                    <input type="file" accept=".pdf,.doc,.docx" id="resume-file">
+                    <button id="upload-resume">Upload Resume</button>
                 </div>
             </form>
         </section>
 
     </main>
     <script src="../assets/scripts/dashboard-script.js"></script>
-    <script src="../assets/scripts/manage-proj-script.js"></script>
+    <script src="../assets/scripts/upload-resume-script.js"></script>
 </body>
 </html>

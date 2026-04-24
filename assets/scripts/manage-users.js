@@ -1,3 +1,5 @@
+// Display User Data in Manage Users Page //
+
 const userTableBody = document.getElementById('users-table-body');
 
 async function fetchUsers() {

@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Global styles -->
     <link rel="stylesheet" href="../assets/styles/global.css">
-    <title>Dashboard | Christian Dior Feraer</title>
+    <!-- Content-specific styles -->
+    <link rel="stylesheet" href="../assets/styles/content.css">
+    <title>View Resume</title>
 </head>
-<body class="dashboard">
+<body class="my-resume">
     <!-- Topbar and Sidebar -->
     <section class="topbar">
-        <h1 style="font-size: 24px;">User Dashboard</h1>
+        <h1 style="font-size: 24px;">My Resume</h1>
         <button class="home-button" id="home">&#8962;</button>
         <button class="sidebar-button">&equiv;</button>
     </section>
-    <h2>Welcome, <span id="username"></span>!</h2>
     <div class="sidebar">
         <button class="sidebar-button-2">&times;</button>
         <ul class="different-data">
@@ -26,6 +28,15 @@
             <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
         </ul> 
     </div>
+
+    <!-- Resume Content -->
+    <section class="content">
+        <div class="resume-wrapper">
+            <div class="resume-content">
+                <!-- Resume content will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
     <script src="../assets/scripts/dashboard-script.js"></script>
 </body>
 </html>

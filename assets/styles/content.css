@@ -48,3 +48,20 @@ th, td {
     gap: 10px;
     margin-bottom: 20px;
 }
+
+.user-view,
+.back-to-manage-projects {
+    position: fixed;
+    top: 80px;
+    left: 5px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.user-view:hover,
+.back-to-manage-projects:hover {
+    background-color: #0056b3;
+}
