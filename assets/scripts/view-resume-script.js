@@ -1,3 +1,5 @@
+// View Resume Script // 
+
 fetch("../api/get-resumes.php")
     .then(res => res.json())
     .then(data => {
@@ -58,4 +60,7 @@ fetch("../api/get-resumes.php")
 
         </div>
     `;
-});
+    })
+    .catch(error => {
+        alert("Error loading resume");
+    });
