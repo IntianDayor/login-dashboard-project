@@ -2,19 +2,20 @@
    CONTENT PAGE STYLES
 ========================= */
 
-/*==========ADMIN PANEL PAGE STYLES==========*/
-
-/*-----Manage Users Page Styles-----*/
+/*==========GENERAL CONTENT STYLES==========*/
 
 .content {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     background-color: #f4f4f4;
     cursor: default;
 }
 
+/*==========ADMIN PANEL PAGE STYLES==========*/
+
+/*-----Manage Users Page Styles-----*/
 .user-management {
     margin: 20px;
     padding: 20px;
@@ -64,4 +65,87 @@ th, td {
 .user-view:hover,
 .back-to-manage-projects:hover {
     background-color: #0056b3;
+}
+
+/*-----Upload Resume Page Styles-----*/
+.upload-resume-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 30vh;
+    width: 30vw;
+    background-color: white;
+    margin: 40px auto;
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+}
+
+.upload-resume-wrapper form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
+}
+
+.upload-resume-wrapper input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.upload-resume-wrapper input[type="file"]:hover {
+    border-color: #007BFF;
+}
+
+.upload-resume-wrapper input[type="file"]::file-selector-button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.upload-resume-wrapper input[type="file"]::file-selector-button:hover {
+    background-color: #0056b3;
+}
+
+.upload-resume-wrapper button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.upload-resume-wrapper button:hover {
+    background-color: #0056b3;
+}
+
+/*==========USER VIEW PAGE STYLES==========*/
+
+/*-----View Resume Page Styles-----*/
+
+.resume-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    width: 70vw;
+    background-color: #f4f4f4;
+    margin: 40px auto;
+}
+
+.resume-content {
+    width: 60%;
+    max-width: 800px;
+    padding: 20px;
+    margin: 100px auto 40px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0, 0.1);
+    box-sizing: border-box;
 }

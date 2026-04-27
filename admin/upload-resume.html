@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../assets/styles/content.css">
     <title>Upload Resume</title>
 </head>
-<body>
+<body> 
     <main class="upload-resume">
         <!-- Topbar and Sidebar -->
         <section class="topbar">
@@ -33,16 +33,14 @@
 
         <!-- Upload Resume Content -->
         <section class="content">
-            <form action="">
-                <div class="input-resume">
-                    <input type="file" accept=".pdf,.doc,.docx" id="resume-file">
-                    <button id="upload-resume">Upload Resume</button>
-                </div>
-            </form>
+            <div class="upload-resume-wrapper">
+                <form action="../api/upload-resume.php" method="POST" enctype="multipart/form-data">
+                    <input type="file" name="resume" accept=".pdf" required>
+                    <button type="submit">Upload Resume</button>
+                </form>
+            </div>
         </section>
-
     </main>
     <script src="../assets/scripts/dashboard-script.js"></script>
-    <script src="../assets/scripts/upload-resume-script.js"></script>
 </body>
 </html>
