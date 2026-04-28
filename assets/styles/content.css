@@ -126,6 +126,8 @@ th, td {
     background-color: #0056b3;
 }
 
+/*----- Edit Profile Page Styles -----*/
+
 /*==========USER VIEW PAGE STYLES==========*/
 
 /*-----View Resume Page Styles-----*/
@@ -152,9 +154,10 @@ th, td {
 }
 
 /*-----View Projects Page Styles-----*/
+
 .project-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, max-content));
     gap: 20px;
     margin-top: 20px;
     padding: 20px;
@@ -173,6 +176,8 @@ th, td {
     border: 1px solid #e0e0e0;
     display: flex;
     flex-direction: column;
+    width: max-content;
+    max-width: 100%;
 }
 
 .project-card:hover {
@@ -196,6 +201,7 @@ th, td {
     overflow-wrap: break-word;
     white-space: pre-wrap;
     flex-grow: 1;
+    max-width: 500px;
 }
 
 .project-slider {
@@ -219,8 +225,6 @@ th, td {
     background: rgba(0,0,0,0.6);
     color: white;
     border: none;
-    font-size: 22px;
-    padding: 6px 12px;
     cursor: pointer;
     border-radius: 50%;
     z-index: 5;
@@ -277,3 +281,5 @@ th, td {
 .image-modal .close-modal:hover {
     color: #007BFF;
 }
+
+/*-----Profile Page Styles-----*/
