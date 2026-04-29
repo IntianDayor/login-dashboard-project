@@ -74,13 +74,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                     data-images='${JSON.stringify(project.images)}'
                     data-index="0">
 
-                    <button class="slide-btn left" onclick="event.stopPropagation(); prevImage(this)">&#10094;</button>
+                    <button class="slide-btn left" onclick="event.stopPropagation(); imageSlider(this, -1)">&#10094;</button>
 
-                    <img class="slider-image" 
-                    src="../${project.images[0]}" 
-                    onclick="event.stopPropagation(); openImageModal(this.src)">
+                    <div class="slider-viewport">
+                        <div class="slider-track">
+                            ${project.images.map(img => 
+                                `<img src="../${img}" onclick="event.stopPropagation(); openImageModal(this.src)">`
+                            ).join("")}
+                        </div>
+                    </div>
 
-                    <button class="slide-btn right" onclick="event.stopPropagation(); nextImage(this)">&#10095;</button>
+                    <button class="slide-btn right" onclick="event.stopPropagation(); imageSlider(this, 1)">&#10095;</button>
 
                 </div>
             `;
@@ -98,6 +102,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>
             `;
         }).join("");
+
+        // Initialize sliders after rendering projects
+        setTimeout(() => {
+            initSliders();  // Gives the DOM a moment to update before initializing sliders
+        }, 50);
 
         // Add modal HTML to container
         container.innerHTML += `
@@ -148,30 +157,43 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Image slider functions
-
-function nextImage(btn) {
-    const slider = btn.parentElement;
-    const img = slider.querySelector(".slider-image");
+// Auto Image Slider
+function autoSlider(slider, direction) {
+    const track = slider.querySelector(".slider-track");
 
     const images = JSON.parse(slider.dataset.images);
     let index = parseInt(slider.dataset.index);
 
-    index = (index + 1) % images.length;
-
+    index = (index + direction + images.length) % images.length;
     slider.dataset.index = index;
-    img.src = "../" + images[index];
+
+    track.style.transform = `translateX(-${index * 100}%)`;
 }
 
-function prevImage(btn) {
+// Image slider Button Handler
+function imageSlider(btn, direction) {
     const slider = btn.parentElement;
-    const img = slider.querySelector(".slider-image");
+    autoSlider(slider, direction);
+}
 
-    const images = JSON.parse(slider.dataset.images);
-    let index = parseInt(slider.dataset.index);
+// Auto Slider Engine
+function initSliders() {
+    document.querySelectorAll(".project-slider").forEach(slider => {
 
-    index = (index - 1 + images.length) % images.length;
+        let autoSlide = setInterval(() => {
+            console.log("Auto sliding:", slider); // Debug log to verify slider reference
+            autoSlider(slider, 1);
+        }, 4000);
 
-    slider.dataset.index = index;
-    img.src = "../" + images[index];
+        slider.addEventListener("mouseenter", () => {   // Pause auto sliding on hover
+            clearInterval(autoSlide);
+        });
+
+        slider.addEventListener("mouseleave", () => {   // Resume auto sliding when not hovering
+            autoSlide = setInterval(() => {
+                autoSlider(slider, 1);
+            }, 4000);
+        });
+
+    });
 }

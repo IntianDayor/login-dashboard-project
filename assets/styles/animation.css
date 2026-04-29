@@ -1,0 +1,34 @@
+/* =========================
+   GLOBAL ANIMATIONS
+========================= */
+
+/* Generic Fade Animation */
+.fade-transition {
+    transition: opacity 0.3s ease;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+/* ---- Image Slider Animations ---- */
+.slider-viewport {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+}
+
+.slider-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s ease;
+}
+
+.slider-track img {
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
