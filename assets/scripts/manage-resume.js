@@ -36,16 +36,14 @@ if (resumeContainer) {
     fetch("../api/get-resumes.php")
     .then(res => res.json())
     .then(data => {
-        const container = document.querySelector(".resume-content");
-
         if (data.length === 0) {
-            container.innerHTML = "<p>No resume uploaded yet.</p>";
+            resumeContainer.innerHTML = "<p>No resume uploaded yet.</p>";
             return;
         }
 
         const resume = data[0];
         
-        container.innerHTML = `
+        resumeContainer.innerHTML = `
         <h3 style="
             text-align: center; 
             margin: 10px;"

@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "login.html";
         });
 
+        // Go back to login page
         document.getElementById("back-to-login")?.addEventListener("click", () => {
             window.location.href = "login.html";
         });
