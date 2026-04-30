@@ -1,5 +1,12 @@
 // =============== DASHBOARD SCRIPT ============== //
 
+// Global function to handle logout from any page
+function logout(redirectPath) {
+    localStorage.removeItem("username");
+    localStorage.removeItem("isAdmin");
+    window.location.href = redirectPath;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const sidebar = document.querySelector(".sidebar");
@@ -22,15 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Logout //
     logoutBtn?.addEventListener("click", () => {
-        localStorage.removeItem("username");
-        localStorage.removeItem("isAdmin");
-
-        // Redirect to login page
-        if (window.location.pathname.includes("/admin/")) {
-            window.location.href = "../pages/login.html";
-        } else {
-            window.location.href = "login.html";
-        }
+        const path = window.location.pathname.includes("/admin/")
+            ? "../pages/login.html"
+            : "login.html";
+        logout(path);
     });
 
     // Home Button //
@@ -41,67 +43,25 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "dashboard.html";
         }
     };
-    homeBtn?.addEventListener("click", homeClickHandler);
-    sidebarHomeBtn?.addEventListener("click", homeClickHandler);
 
+    [homeBtn, sidebarHomeBtn].forEach(btn =>
+        btn?.addEventListener("click", homeClickHandler));
 
-    // =============== Admin Panel Specific ============== //
     
-    // Manage User Button (Admin only) //
-    const manageUsersBtn = document.getElementById("manage-users");
+    // Navigation Buttons (both Admin and User) //
+    const navMap = {
+        "resume":   "view-resume.html",
+        "profile":  "profile.html",
+        "projects": "projects-user.html",
+        "manage-users":    "manage-users.html",
+        "upload-projects": "projects.html",
+        "upload-resume":   "upload-resume.html",
+        "edit-profile":    "edit-profile.html",
+    };
 
-    manageUsersBtn?.addEventListener("click", () => {
-        window.location.href = "manage-users.html";
+    Object.entries(navMap).forEach(([id, href]) => {
+        document.getElementById(id)?.addEventListener("click", () =>
+        window.location.href = href);
     });
-
-    // Project Management Button (Admin only) //
-    const projectManagementBtn = document.getElementById("upload-projects");
-
-    projectManagementBtn?.addEventListener("click", () => {
-        window.location.href = "projects.html";
-    });
-
-    // Resume Management Button (Admin only) //
-    const resumeManagementBtn = document.getElementById("upload-resume");
-    
-    resumeManagementBtn?.addEventListener("click", () => {
-        window.location.href = "upload-resume.html";
-    });
-
-    // Edit Profile Button (Admin only) //
-    const editProfileBtn = document.getElementById("edit-profile");
-
-    editProfileBtn?.addEventListener("click", () => {
-        window.location.href = "edit-profile.html";
-    });
-
-
-
-
-    // =============== User Dashboard Specific ============== //
-
-    // View Resume Button (User only) //
-    const viewResumeBtn = document.getElementById("resume");
-    if (viewResumeBtn) {
-        viewResumeBtn.addEventListener("click", () => {
-            window.location.href = "view-resume.html";
-        });
-    }
-
-    // View Profile Button (User only) //
-    const viewProfileBtn = document.getElementById("profile");
-    if (viewProfileBtn) {
-        viewProfileBtn.addEventListener("click", () => {
-            window.location.href = "profile.html";
-        });
-    }
-
-    // View Projects Button (User only) //
-    const viewProjectsBtn = document.getElementById("projects");
-    if (viewProjectsBtn) {
-        viewProjectsBtn.addEventListener("click", () => {
-            window.location.href = "projects-user.html";
-        });
-    }
 
 });

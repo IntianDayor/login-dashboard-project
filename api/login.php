@@ -4,6 +4,12 @@ include "db.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 
+// Validate input
+if (empty($data['username']) || empty($data['password'])) {
+  echo json_encode(["success" => false, "message" => "All fields required"]);
+  exit;
+}
+
 $username = $data['username'];
 $password = $data['password'];
 

@@ -28,6 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mkdir($uploadDir, 0755, true);
             }
 
+            // Insert into previews table
+            $imgStmt = $conn->prepare("
+                INSERT INTO project_previews (project_id, image_path)
+                VALUES (?, ?)
+            ");
+
             foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
 
                 $imageName = uniqid() . '_' . $_FILES['images']['name'][$key];
@@ -35,15 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 move_uploaded_file($tmpName, $uploadDir . $imageName);
 
-                // Insert into previews table
-                $imgStmt = $conn->prepare("
-                    INSERT INTO project_previews (project_id, image_path)
-                    VALUES (?, ?)
-                ");
+                
                 $imgStmt->bind_param("is", $project_id, $imagePath);
                 $imgStmt->execute();
-                $imgStmt->close();
             }
+            
+            $imgStmt->close();
         }
 
         echo json_encode([

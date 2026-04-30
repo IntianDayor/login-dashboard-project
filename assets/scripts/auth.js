@@ -80,17 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const result = await response.json();
 
+            // Handle specific error messages from the server
             if (!result.success) {
-                if (result.message === "Username already taken")
-                    alert("Username already exists. Please choose another.");
-                else if (result.message === "Email already registered")
-                    alert("Email already registered. Please use another email.");
-                else alert("Signup failed");
+                const MSG = {
+                    "Username already taken":   "Username already exists. Please choose another.",
+                    "Email already registered": "Email already registered. Please use another email.",
+                };
+                alert(MSG[result.message] ?? "Signup failed");
                 return;
             }
 
             alert("Account created!");
             window.location.href = "login.html";
+
         });
 
         // Go back to login page

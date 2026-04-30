@@ -103,18 +103,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }).join("");
 
-        // Initialize sliders after rendering projects
-        setTimeout(() => {
-            initSliders();  // Gives the DOM a moment to update before initializing sliders
-        }, 50);
+        // Build and append image modal to the DOM (only once)
+        const modal = document.createElement("div");
+        modal.className = "image-modal";
+        modal.id = "imageModal";
+        modal.onclick = closeImageModal;
+        modal.innerHTML = `<span class="close-modal">&times;</span><img id="modalImage" src="" alt="Zoomed image">`;
+        container.appendChild(modal);
 
-        // Add modal HTML to container
-        container.innerHTML += `
-            <div class="image-modal" id="imageModal" onclick="closeImageModal()">
-                <span class="close-modal">&times;</span>
-                <img id="modalImage" src="" alt="Zoomed image">
-            </div>
-        `;
+        // Init sliders AFTER modal is in the DOM
+        initSliders();
 
     } catch (err) {
         console.error(err);
@@ -181,7 +179,6 @@ function initSliders() {
     document.querySelectorAll(".project-slider").forEach(slider => {
 
         let autoSlide = setInterval(() => {
-            console.log("Auto sliding:", slider); // Debug log to verify slider reference
             autoSlider(slider, 1);
         }, 4000);
 
