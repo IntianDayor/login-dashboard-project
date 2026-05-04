@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
     closeBtn?.addEventListener("click", () => sidebar?.classList.remove("active"));
 
     // Display username //
-    const username = localStorage.getItem("username");
     if (usernameDisplay) {
         usernameDisplay.textContent = username || "Guest";
     }
