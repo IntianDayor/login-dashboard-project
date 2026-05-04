@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="../assets/styles/global.css">
     <!-- Content-specific styles -->
     <link rel="stylesheet" href="../assets/styles/content.css">
+    <!-- Animation Styles-->
+     <link rel="stylesheet" href="../assets/styles/animation.css">
     <title>View Profile</title>
 </head>
 <body class="my-profile">
@@ -33,10 +35,21 @@
     <section class="content">
         <div class="profile-wrapper">
             <div class="profile-content">
-                <!-- Profile content will be dynamically inserted here -->
+                <div class="profile-fullname" id="profile-fullname">
+                    <h1>Christian Dior C. <br>Feraer</h1>
+                </div>
+                
+                <div class="profile-picture" id="profile-picture">
+                    <!-- Dynamically Add Profile Picture -->
+                </div>
+
+                <div class="profile-description" id="profile-description">
+                    <!--Dynamically Add Description here-->
+                </div>
             </div>
         </div>
     </section>
     <script src="../assets/scripts/dashboard-script.js"></script>
+    <script src="../assets/scripts/manage-profile.js"></script>
 </body>
 </html>

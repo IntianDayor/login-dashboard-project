@@ -1,5 +1,20 @@
 // =============== DASHBOARD SCRIPT ============== //
 
+// Credential Check if the user is logged in
+const username = localStorage.getItem("username");
+const isAdmin  = localStorage.getItem("isAdmin");
+const onAdminPage = window.location.pathname.includes("/admin/");
+const onUserPage  = window.location.pathname.includes("/pages/");
+
+if (!username) {
+    // Not logged in at all — send to login
+    window.location.href = onAdminPage ? "../pages/login.html" : "login.html";
+} else if (onAdminPage && isAdmin !== "true") {
+    // Logged in but not admin — kick them out of admin pages
+    window.location.href = "../pages/dashboard.html";
+}
+
+
 // Global function to handle logout from any page
 function logout(redirectPath) {
     localStorage.removeItem("username");

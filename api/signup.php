@@ -4,17 +4,17 @@ include "db.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 
+// Check if all fields are filled
+if (!$data || empty($data['username']) || empty($data['password']) || empty($data['fullname']) || empty($data['email'])) {
+    echo json_encode(["success" => false, "message" => "All fields are required"]);
+    exit;
+}
+
 $username = trim($data['username']);
 $password = $data['password'];
 $name = trim($data['fullname']);
 $email = trim($data['email']);
 $role = "user"; // Default role for new users
-
-// Check if all fields are filled
-if (empty($username) || empty($password) || empty($name) || empty($email)) {
-    echo json_encode(["success" => false, "message" => "All fields are required"]);
-    exit;
-}
 
 // Check if username already exists
 $sql = "SELECT id FROM users WHERE username = ?";

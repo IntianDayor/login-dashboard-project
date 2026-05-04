@@ -33,21 +33,19 @@
 
         <!-- Edit Profile Content -->
         <section class="content">
-            <form action="">
+            <form class="edit-profile-form">
                 <div class="input-profile">
-                    <input type="text" placeholder="Full Name" id="full-name">
-                    <input type="text" placeholder="Professional Summary" id="professional-summary">
-                    <input type="text" placeholder="Skills" id="skills">
-                    <input type="text" placeholder="Experience" id="experience">
-                    <input type="text" placeholder="Education" id="education">
-                    <input type="text" placeholder="Seminars/Certifications" id="certifications">
-                    <button id="save-profile">Save Changes</button>
+                    <label for="Description">Edit Description:</label>
+                    <textarea id="Description" placeholder="Enter your description here..." name="description"></textarea>
+                    <label for="profile-picture">Change Profile Picture:</label>
+                    <input type="file" id="profile-picture" accept="image/*" name="profile_picture">
                 </div>
+                <button type="submit">Save Changes</button>
             </form>
         </section>
         
     </main>
     <script src="../assets/scripts/dashboard-script.js"></script>
-    <script src="../assets/scripts/edit-profile-script.js"></script>
+    <script src="../assets/scripts/manage-profile.js"></script>
 </body>
 </html>

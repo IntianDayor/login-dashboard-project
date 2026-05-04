@@ -27,7 +27,11 @@ if ($result->num_rows > 0) {
         echo json_encode([
             "success" => true, 
             "isAdmin" => $user['role'] === 'admin',
-            "user" => $user]);
+            "user" => [
+                "username" => $user['username'],
+                "name"     => $user['name'],
+            ]
+        ]);
     } else {
         echo json_encode(["success" => false, "message" => "Invalid password"]);
     }

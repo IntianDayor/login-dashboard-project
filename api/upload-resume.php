@@ -19,10 +19,8 @@ $tmpname = $_FILES['resume']['tmp_name'];
 // Make file name unique to avoid overwriting
 $newName = time() . "_" . $filename;
 
-// Move the uploaded file to the "resumes" directory
-$uploadPath = "../assets/uploads/resumes/" . $newName;
-
-move_uploaded_file($tmpname, $uploadPath);
+$uploadDir = __DIR__ . "/../assets/uploads/resumes/";
+move_uploaded_file($tmpname, $uploadDir . $newName);
 
 // Save to Database
 $stmt = $conn->prepare("INSERT INTO resumes (file_name, file_path) VALUES (?, ?)");

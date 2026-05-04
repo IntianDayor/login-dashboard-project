@@ -4,6 +4,7 @@
 
 /*==========GENERAL CONTENT STYLES==========*/
 
+/* CONTENT CONTAINER */
 .content {
     display: flex;
     justify-content: center;
@@ -12,6 +13,61 @@
     background-color: #f4f4f4;
     cursor: default;
     padding-top: 90px;
+}
+
+/* BUTTONS & INPUTS */
+.upload-resume-wrapper input[type="file"],
+.edit-profile-form input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.upload-resume-wrapper input[type="file"]:hover,
+.edit-profile-form input[type="file"]:hover {
+    border-color: #007BFF;
+}
+
+.upload-resume-wrapper input[type="file"]::file-selector-button,
+.edit-profile-form input[type="file"]::file-selector-button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.upload-resume-wrapper input[type="file"]::file-selector-button:hover,
+.edit-profile-form input[type="file"]::file-selector-button:hover {
+    background-color: #0056b3;
+}
+
+.upload-resume-wrapper button, 
+.edit-profile-form button {
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.upload-resume-wrapper button:hover, 
+.edit-profile-form button:hover {
+    background-color: #0056b3;
+}
+
+.input-profile textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.input-profile textarea:hover {
+    border-color: #007BFF;
 }
 
 /*==========ADMIN PANEL PAGE STYLES==========*/
@@ -90,44 +146,8 @@ th, td {
     padding: 20px;
 }
 
-.upload-resume-wrapper input[type="file"] {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.upload-resume-wrapper input[type="file"]:hover {
-    border-color: #007BFF;
-}
-
-.upload-resume-wrapper input[type="file"]::file-selector-button {
-    padding: 10px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.upload-resume-wrapper input[type="file"]::file-selector-button:hover {
-    background-color: #0056b3;
-}
-
-.upload-resume-wrapper button {
-    padding: 10px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.upload-resume-wrapper button:hover {
-    background-color: #0056b3;
-}
-
 /*----- Edit Profile Page Styles -----*/
-.edit-profile form {
+.edit-profile-form {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -301,3 +321,64 @@ th, td {
 }
 
 /*-----Profile Page Styles-----*/
+
+.profile-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    width: 70vw;
+    background-color: #f4f4f4;
+    margin: 40px auto;
+}
+
+.profile-content {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+    margin: 100px auto 40px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.profile-content .profile-fullname {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    margin-right: 210px;
+}
+
+.profile-content .profile-picture {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #007BFF;
+}
+
+.profile-content .profile-picture img {
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+    object-fit: cover;
+    border-radius: 50%;
+    object-position: center top;
+    margin-bottom: 10px;
+}
+
+.profile-content .profile-description {
+    display: flex;
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    margin-top: 90px;
+}

@@ -12,3 +12,8 @@ SELECT * FROM project_previews;
 
 --@block
 SELECT * FROM resumes;
+
+--@block
+SELECT * FROM profile;
+
+--@block

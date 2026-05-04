@@ -16,6 +16,7 @@ ORDER BY p.id DESC
 ";
 
 $result = $conn->query($sql);
+if (!$result) { echo json_encode([]); exit; }
 
 $projects = [];
 

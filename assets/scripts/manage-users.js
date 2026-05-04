@@ -3,21 +3,27 @@
 const userTableBody = document.getElementById('users-table-body');
 
 async function fetchUsers() {
-    const response = await fetch("../api/users-table.php");
-    const result = await response.json();
-    displayUsers(result);
+    try {
+        const response = await fetch("../api/users-table.php");
+        const result = await response.json();
+        displayUsers(result);
+    } catch (error) {
+        console.error("Failed to fetch users:", error);
+        userTableBody.innerHTML = '<tr><td colspan="4">Failed to load users.</td></tr>';
+    }
 }
 
 function displayUsers(users) {
-    userTableBody.innerHTML = ''; // Clear existing rows
+    userTableBody.innerHTML = '';
     users.forEach(user => {
         const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${user.id}</td>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.created_at}</td>
-        `;
+
+        [user.id, user.name, user.email, user.created_at].forEach(value => {
+            const td = document.createElement('td');
+            td.textContent = value;
+            row.appendChild(td);
+        });
+
         userTableBody.appendChild(row);
     });
 }
