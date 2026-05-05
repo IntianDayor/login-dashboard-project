@@ -1,5 +1,11 @@
 // ====== MANAGE PROJECT SCRIPTS ====== //
 
+function esc(str) {
+    const d = document.createElement("div");
+    d.textContent = str ?? "";
+    return d.innerHTML;
+}
+
 // Script for managing project view and user preview navigation //
 
 const showUserViewButton = document.getElementById('user-view');
@@ -91,10 +97,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             return `
                 <div class="project-card"
-                data-link="${project.project_link ?? ""}"
+                data-link="${esc(project.project_link)}"
                 onclick="openProjectLink(this)">
-                    <h3>${project.title}</h3>
-                    <p>${project.description}</p>
+                    <h3>${esc(project.title)}</h3>
+                    <p>${esc(project.description)}</p>
 
                     <div class="project-images">
                         ${imagesHTML}

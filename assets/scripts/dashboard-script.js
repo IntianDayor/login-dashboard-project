@@ -17,9 +17,11 @@ if (!username) {
 
 // Global function to handle logout from any page
 function logout(redirectPath) {
-    localStorage.removeItem("username");
-    localStorage.removeItem("isAdmin");
-    window.location.href = redirectPath;
+    fetch("../api/logout.php", { method: "POST" }).finally(() => {
+        localStorage.removeItem("username");
+        localStorage.removeItem("isAdmin");
+        window.location.href = redirectPath;
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

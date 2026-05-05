@@ -1,4 +1,7 @@
 <?php
+include "auth-check.php";
+requireAdmin();
+
 header("Content-Type: application/json");
 include "db.php";
 
@@ -36,12 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
 
+                // Skip files over 5MB
+                if ($_FILES['images']['size'][$key] > 5 * 1024 * 1024) {
+                    continue;
+                }
+
                 $imageName = uniqid() . '_' . $_FILES['images']['name'][$key];
                 $imagePath = "assets/uploads/images/projects/" . $imageName;
 
-                move_uploaded_file($tmpName, $uploadDir . $imageName);
+                // Skip DB insert for this image if move failed
+                if (!move_uploaded_file($tmpName, $uploadDir . $imageName)) {
+                    continue;
+                }
 
-                
                 $imgStmt->bind_param("is", $project_id, $imagePath);
                 $imgStmt->execute();
             }
