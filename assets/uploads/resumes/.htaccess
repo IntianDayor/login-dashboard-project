@@ -1,5 +1,1 @@
 Options -Indexes
-<FilesMatch "\.pdf$">
-    Order deny,allow
-    Deny from all
-</FilesMatch>
