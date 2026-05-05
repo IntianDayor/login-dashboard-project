@@ -30,7 +30,6 @@ $tmpname = $_FILES['resume']['tmp_name'];
 $newName = time() . "_" . $filename;
 
 $uploadDir = __DIR__ . "/../assets/uploads/resumes/";
-$uploadDir = __DIR__ . "/../assets/uploads/resumes/";
 
 // Check if move succeeded before touching the database
 if (!move_uploaded_file($tmpname, $uploadDir . $newName)) {

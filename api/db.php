@@ -13,7 +13,7 @@ $name = $_ENV['DB_NAME'];
 $conn = new mysqli($host, $user, $pass, $name);
 
 if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
+    die(json_encode(["success" => false, "message" => "Database connection error."]));
 }
 
 ?>

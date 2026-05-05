@@ -25,6 +25,10 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
     if (password_verify($password, $user['password'])) {
+
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['isAdmin']  = ($user['role'] === 'admin');
+
         echo json_encode([
             "success" => true, 
             "isAdmin" => $user['role'] === 'admin',
@@ -34,9 +38,9 @@ if ($result->num_rows > 0) {
             ]
         ]);
     } else {
-        echo json_encode(["success" => false, "message" => "Invalid password"]);
+        echo json_encode(["success" => false, "message" => "Invalid Username or Password"]);
     }
 } else {
-    echo json_encode(["success" => false, "message" => "User not found"]);
+    echo json_encode(["success" => false, "message" => "Invalid Username or Password"]);
 }
 ?>

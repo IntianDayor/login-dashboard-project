@@ -5,7 +5,7 @@ requireLogin();
 header('Content-Type: application/json');
 include "db.php";
 
-$sql = "SELECT * FROM profile";
+$sql = "SELECT description, profile_picture FROM profile WHERE id = 1 LIMIT 1";
 
 $result = $conn->query($sql);
 

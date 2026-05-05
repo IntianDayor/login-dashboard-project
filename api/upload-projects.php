@@ -65,9 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
     } else {
+        error_log("Project insert failed: " . $stmt->error); // logs to server, invisible to users
         echo json_encode([
             "success" => false,
-            "message" => "Database error: " . $stmt->error
+            "message" => "Failed to upload project. Please try again."
         ]);
     }
 

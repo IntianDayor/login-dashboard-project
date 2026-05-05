@@ -19,6 +19,11 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
     $allowed = ['image/jpeg', 'image/png', 'image/webp'];
     $mime = mime_content_type($_FILES['profile_picture']['tmp_name']);
 
+    if ($_FILES['profile_picture']['size'] > 2 * 1024 * 1024) {
+        echo json_encode(["success" => false, "message" => "Image too large. Maximum size is 2MB."]);
+        exit;
+    }
+
     if (!in_array($mime, $allowed)) {
         echo json_encode(["success" => false, "message" => "Only JPG, PNG, or WebP images are allowed"]);
         exit;

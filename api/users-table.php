@@ -1,4 +1,7 @@
 <?php
+include "auth-check.php";
+requireAdmin();
+
 header("Content-Type: application/json");
 include "db.php";
 
