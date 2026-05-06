@@ -1,18 +1,24 @@
-FROM php:8.2-apache
+FROM ubuntu:22.04
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
+    apache2 \
+    php8.1 \
+    php8.1-mysql \
+    php8.1-zip \
+    php8.1-xml \
+    php8.1-mbstring \
+    libapache2-mod-php8.1 \
     git \
     zip \
     unzip \
-    libzip-dev \
-    && docker-php-ext-install zip
+    curl \
+    && apt-get clean
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN a2dismod mpm_event mpm_worker mpm_prefork \
-    && a2enmod mpm_prefork rewrite
+RUN a2enmod rewrite php8.1
 
 WORKDIR /var/www/html
 
@@ -26,9 +32,10 @@ RUN chown -R www-data:www-data assets/uploads \
 RUN echo '<Directory /var/www/html>\n\
     AllowOverride All\n\
     Require all granted\n\
-</Directory>' > /etc/apache2/conf-available/allow-htaccess.conf \
-    && a2enconf allow-htaccess
+</Directory>' >> /etc/apache2/apache2.conf
 
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 EXPOSE 80
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]
