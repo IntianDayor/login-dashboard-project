@@ -36,6 +36,8 @@ RUN echo '<Directory /var/www/html>\n\
 
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
+COPY php.ini /etc/php/8.1/apache2/conf.d/custom.ini
+
 EXPOSE 80
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
