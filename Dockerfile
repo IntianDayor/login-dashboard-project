@@ -11,8 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN a2enmod rewrite
-RUN a2dismod mpm_event && a2enmod mpm_prefork
+RUN a2dismod mpm_event mpm_worker && a2enmod mpm_prefork rewrite
 
 WORKDIR /var/www/html
 
