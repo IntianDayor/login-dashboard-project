@@ -5,8 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 header('Content-Type: application/json');
 
-// Regenerate CSRF token if missing
-if (!empty($_SESSION['username']) && empty($_SESSION['csrf_token'])) {
+// Always regenerate CSRF token for logged-in users
+if (!empty($_SESSION['username'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
