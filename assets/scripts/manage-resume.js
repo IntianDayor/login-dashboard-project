@@ -6,6 +6,7 @@ const uploadForm = document.querySelector(".upload-resume-wrapper form");
 if (uploadForm) {
     uploadForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        await verifySession(true); // Wait for fresh token before uploading
 
         const formData = new FormData(uploadForm);
 
