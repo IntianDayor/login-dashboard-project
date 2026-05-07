@@ -38,6 +38,7 @@ The primary goal of this project is to present myself as a **professional** in a
 - **XSS Protection** — All rich text content is sanitized using DOMPurify before saving and before rendering.
 - **Password Hashing** — All passwords are hashed using PHP's `password_hash()` with bcrypt.
 - **Session Authentication** — Protected pages require valid PHP sessions.
+- **CSRF Protection** — All mutating requests (uploads, edits) require a valid CSRF token sent via the `X-CSRF-Token` header, preventing cross-site request forgery attacks.
 
 ## Technology Stack
 
@@ -145,6 +146,12 @@ Deployed the containerized app to Railway with a managed MySQL database. Encount
 
 - **Railway query editor mangling bcrypt hashes** — Railway's MySQL query editor treated `$` signs in bcrypt password hashes as variable references, corrupting the stored hash. Worked around by using MySQL's `CONCAT()` function to split the hash string and avoid the `$` parsing issue.
 
+- **CSRF token invalid on file uploads (deployment only)** — File uploads worked perfectly locally but consistently failed with `Invalid CSRF token` on Railway. After extensive debugging:
+  - **Root cause 1 — Race condition:** The JS was calling `verifySession()` inside the submit handler, which triggered a second `check-session.php` request that regenerated the token *after* the page-load token was already stored in `localStorage`. The upload then sent the old token while the server had a new one. Fixed by removing `await verifySession(true)` from all upload handlers and relying solely on the page-load call.
+  - **Root cause 2 — Multi-container sessions:** Railway runs multiple container instances. PHP sessions stored in `/tmp` are local to each container, so `check-session.php` might run on Container A (writing the token) while `upload-resume.php` hits Container B (where the session doesn't exist). Fixed by implementing a **database-backed session handler** (`session-db.php`) that stores all session data in a shared MySQL `sessions` table, so every container reads the same session.
+  - **Root cause 3 — HTTP header case normalization:** Even after fixing sessions, the CSRF check still failed because `getallheaders()` is case-sensitive and Railway's Apache was normalizing `X-CSRF-Token` to lowercase. Fixed by wrapping with `array_change_key_case(getallheaders(), CASE_LOWER)` and reading `x-csrf-token` instead.
+
+
 ## What I Learned Building This
 
 ### 🐳 DevOps & Deployment
@@ -163,6 +170,8 @@ Deployed the containerized app to Railway with a managed MySQL database. Encount
 - **Directory listing** — learned that without protection, Apache can expose the contents of upload folders to anyone who visits the URL. Fixed using `.htaccess` with `Options -Indexes` to block directory browsing on upload folders.
 - **Password security** — all passwords are hashed using PHP's `password_hash()` with bcrypt, meaning raw passwords are never stored in the database.
 - **Environment variable security** — database credentials are never hardcoded or committed to GitHub. They are injected at runtime via Railway's environment variable system.
+- **CSRF (Cross-Site Request Forgery) protection** — learned that file upload endpoints need a CSRF token to prevent malicious sites from triggering actions on behalf of logged-in users. Implemented a token-based system where the server generates a token on login, stores it in the session, and every mutating request must send it via the `X-CSRF-Token` header. Also learned that deploying to a multi-instance environment (Railway) requires database-backed sessions so all containers share the same token, and that PHP's `getallheaders()` is case-sensitive so header keys must be normalized with `array_change_key_case()`.
+
 
 ### 🛠️ General Development
 - Implementing **rich text editing** with Quill.js
