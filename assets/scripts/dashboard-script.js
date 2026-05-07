@@ -21,6 +21,11 @@ async function verifySession(requireAdmin = false) {
             localStorage.setItem("csrf_token", data.csrf_token);
         }
 
+        // Enable all submit/upload buttons after token is ready
+        document.querySelectorAll('button[type="submit"], #add-project, #upload-resume-btn').forEach(btn => {
+            btn.disabled = false;
+        });
+
     } catch (err) {
         window.location.href = '../pages/login.html';
     }
@@ -30,6 +35,13 @@ async function verifySession(requireAdmin = false) {
 function getCsrfToken() {
     return localStorage.getItem("csrf_token") || "";
 }
+
+// Disable upload buttons until session is verified and token is ready
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('button[type="submit"], #add-project, #upload-resume-btn').forEach(btn => {
+        btn.disabled = true;
+    });
+});
 
 // Credential Check if the user is logged in
 const username = localStorage.getItem("username");
