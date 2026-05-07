@@ -1,15 +1,9 @@
 <?php
 include "auth-check.php";
 requireAdmin();
-
-// TEMP DEBUG - remove after fix
-error_log("UPLOAD SESSION ID: " . session_id());
-error_log("UPLOAD CSRF TOKEN: " . ($_SESSION['csrf_token'] ?? 'EMPTY'));
-
 verifyCsrf();
 
 header("Content-Type: application/json");
-include "db.php";
 
 if (!isset($_FILES['resume']) || $_FILES['resume']['error'] !== UPLOAD_ERR_OK) {
     echo json_encode(["success" => false, "message" => "No file uploaded or upload error"]);
