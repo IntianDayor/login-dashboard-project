@@ -46,11 +46,13 @@ if (!username) {
 }
 
 // Server-side session verification for admin pages
-if (onAdminPage) {
-    verifySession(true);
-} else if (onUserPage) {
-    verifySession(false);
-}
+(async () => {
+    if (onAdminPage) {
+        await verifySession(true);
+    } else if (onUserPage) {
+        await verifySession(false);
+    }
+})();
 
 
 // Global function to handle logout from any page
