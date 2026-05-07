@@ -1,6 +1,7 @@
 <?php
 include "auth-check.php";
 requireAdmin();
+verifyCsrf();
 
 header("Content-Type: application/json");
 include "db.php";
@@ -26,8 +27,9 @@ if ($_FILES['resume']['size'] > $maxSize) {
 $filename = $_FILES['resume']['name'];
 $tmpname = $_FILES['resume']['tmp_name'];
 
-// Unique File Name to avoid overwriting
-$newName = time() . "_" . $filename;
+// Unique File Name to avoid overwriting and replaces any character that isn't a letter, number, dot, dash, or underscore with a "_".
+$safeName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
+$newName = time() . "_" . $safeName;
 
 $uploadDir = __DIR__ . "/../assets/uploads/resumes/";
 

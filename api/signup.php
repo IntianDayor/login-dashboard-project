@@ -16,6 +16,24 @@ $name = trim($data['fullname']);
 $email = trim($data['email']);
 $role = "user"; // Default role for new users
 
+// Enforce input length limits
+if (strlen($username) > 50) {
+    echo json_encode(["success" => false, "message" => "Username too long. Maximum 50 characters."]);
+    exit;
+}
+if (strlen($name) > 150) {
+    echo json_encode(["success" => false, "message" => "Full name too long. Maximum 150 characters."]);
+    exit;
+}
+if (strlen($email) > 150) {
+    echo json_encode(["success" => false, "message" => "Email too long. Maximum 150 characters."]);
+    exit;
+}
+if (strlen($password) < 6) {
+    echo json_encode(["success" => false, "message" => "Password must be at least 6 characters."]);
+    exit;
+}
+
 // Check if username already exists
 $sql = "SELECT id FROM users WHERE username = ?";
 $stmt = $conn->prepare($sql);

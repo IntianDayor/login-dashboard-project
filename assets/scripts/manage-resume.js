@@ -12,6 +12,7 @@ if (uploadForm) {
         try {
             const response = await fetch("../api/upload-resume.php", {
                 method: "POST",
+                headers: { "X-CSRF-Token": getCsrfToken() },
                 body: formData
             });
 

@@ -1,5 +1,9 @@
 <?php
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 header("Content-Type: application/json");
 include "db.php";
 
@@ -28,10 +32,12 @@ if ($result->num_rows > 0) {
 
         $_SESSION['username'] = $user['username'];
         $_SESSION['isAdmin']  = ($user['role'] === 'admin');
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
         echo json_encode([
-            "success" => true, 
+            "success" => true,
             "isAdmin" => $user['role'] === 'admin',
+            "csrf_token" => $_SESSION['csrf_token'],
             "user" => [
                 "username" => $user['username'],
                 "name"     => $user['name'],

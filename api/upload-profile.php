@@ -1,6 +1,7 @@
 <?php
 include "auth-check.php";
 requireAdmin();
+verifyCsrf();
 
 header('Content-Type: application/json');
 include "db.php";

@@ -18,6 +18,7 @@ if (editForm) {
         try {
             const response = await fetch("../api/upload-profile.php", {
                 method: "POST",
+                headers: { "X-CSRF-Token": getCsrfToken() },
                 body: formData
             });
 

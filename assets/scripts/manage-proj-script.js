@@ -49,6 +49,7 @@ addProjectbtn?.addEventListener('click', async (e) => {
     try {
         const response = await fetch('../api/upload-projects.php', {
             method: 'POST',
+            headers: { "X-CSRF-Token": getCsrfToken() },
             body: formData
         });
         const result = await response.json();

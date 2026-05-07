@@ -17,4 +17,14 @@ function requireAdmin() {
         exit;
     }
 }
+
+function verifyCsrf() {
+    $headers = getallheaders();
+    $token = $headers['X-CSRF-Token'] ?? '';
+
+    if (empty($token) || $token !== ($_SESSION['csrf_token'] ?? '')) {
+        echo json_encode(["success" => false, "message" => "Invalid CSRF token"]);
+        exit;
+    }
+}
 ?>

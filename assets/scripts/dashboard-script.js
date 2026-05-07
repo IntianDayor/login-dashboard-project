@@ -1,5 +1,36 @@
 // =============== DASHBOARD SCRIPT ============== //
 
+// Verify session server-side on every page load
+async function verifySession(requireAdmin = false) {
+    try {
+        const res = await fetch('../api/check-session.php');
+        const data = await res.json();
+
+        if (!data.loggedIn) {
+            window.location.href = '../pages/login.html';
+            return;
+        }
+
+        if (requireAdmin && !data.isAdmin) {
+            window.location.href = '../pages/dashboard.html';
+            return;
+        }
+
+        // Always refresh the CSRF token from the server
+        if (data.csrf_token) {
+            localStorage.setItem("csrf_token", data.csrf_token);
+        }
+
+    } catch (err) {
+        window.location.href = '../pages/login.html';
+    }
+}
+
+// Get CSRF token from localStorage
+function getCsrfToken() {
+    return localStorage.getItem("csrf_token") || "";
+}
+
 // Credential Check if the user is logged in
 const username = localStorage.getItem("username");
 const isAdmin  = localStorage.getItem("isAdmin");
@@ -14,10 +45,17 @@ if (!username) {
     window.location.href = "../pages/dashboard.html";
 }
 
+// Server-side session verification for admin pages
+if (onAdminPage) {
+    verifySession(true);
+} else if (onUserPage) {
+    verifySession(false);
+}
+
 
 // Global function to handle logout from any page
 function logout(redirectPath) {
-    fetch("../api/logout.php", { method: "POST" }).finally(() => {
+    fetch("../api/logout.php", { method: "POST", headers: { "X-CSRF-Token": getCsrfToken() } }).finally(() => {
         localStorage.removeItem("username");
         localStorage.removeItem("isAdmin");
         window.location.href = redirectPath;

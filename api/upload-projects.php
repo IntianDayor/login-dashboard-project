@@ -1,6 +1,7 @@
 <?php
 include "auth-check.php";
 requireAdmin();
+verifyCsrf();
 
 header("Content-Type: application/json");
 include "db.php";
@@ -41,6 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Skip files over 5MB
                 if ($_FILES['images']['size'][$key] > 5 * 1024 * 1024) {
+                    continue;
+                }
+
+                // Validate MIME type — only allow real images
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                $fileMime = mime_content_type($_FILES['images']['tmp_name'][$key]);
+                if (!in_array($fileMime, $allowedMimes)) {
                     continue;
                 }
 

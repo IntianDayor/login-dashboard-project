@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             localStorage.setItem("username", result.user.username);
             localStorage.setItem("isAdmin", result.isAdmin);
+            localStorage.setItem("csrf_token", result.csrf_token);
 
             window.location.href = result.isAdmin
                 ? "../admin/admin-panel.html"
