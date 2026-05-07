@@ -1,6 +1,11 @@
 <?php
 include "auth-check.php";
 requireAdmin();
+
+// TEMP DEBUG - remove after fix
+error_log("UPLOAD SESSION ID: " . session_id());
+error_log("UPLOAD CSRF TOKEN: " . ($_SESSION['csrf_token'] ?? 'EMPTY'));
+
 verifyCsrf();
 
 header("Content-Type: application/json");
