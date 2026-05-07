@@ -2,11 +2,11 @@
 
 ## About This Project
 
-This is my personal portfolio website — a centralized hub designed to showcase my professional profile, skills, projects, and career journey to potential employers and clients.
+This is my personal portfolio website: a centralized hub designed to showcase my professional profile, skills, projects, and career journey to potential employers and clients.
 
 ## Purpose
 
-The primary goal of this project is to present myself as a **professional** in a polished, recruiter-ready format. It serves as my digital identity — a single destination where visitors can learn who I am, what I can do, and the value I bring. Rather than limiting to a single role, this portfolio showcases versatility across multiple areas of expertise.
+The primary goal of this project is to present myself as a **professional** in a polished, recruiter-ready format. It serves as my digital identity, a single destination where visitors can learn who I am, what I can do, and the value I bring. Rather than limiting to a single role, this portfolio showcases versatility across multiple areas of expertise.
 
 ## Live Demo
 
@@ -126,7 +126,7 @@ Started the project locally using XAMPP as the development environment with phpM
 Migrated the entire project to Laragon for a more stable local development experience. Laragon's cleaner Apache + MySQL setup resolved the issues encountered in XAMPP and allowed development to continue smoothly.
 
 **Phase 3 — Learning Docker**
-With the project working locally on Laragon, began learning Docker from scratch. Wrote a `Dockerfile` line by line to understand every instruction, then set up `docker-compose` to run PHP and MySQL together in containers — replicating the production environment locally.
+With the project working locally on Laragon, began learning Docker from scratch. Wrote a `Dockerfile` line by line to understand every instruction, then set up `docker-compose` to run PHP and MySQL together in containers, replicating the production environment locally.
 
 **Phase 4 — Deployment to Railway**
 Deployed the containerized app to Railway with a managed MySQL database. Encountered and resolved several real-world deployment issues along the way:
