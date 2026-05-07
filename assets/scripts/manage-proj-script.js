@@ -31,7 +31,11 @@ addProjectbtn?.addEventListener('click', async (e) => {
 
     const formData = new FormData();
     formData.append('title', document.getElementById('project-title').value);
-    formData.append('description', document.getElementById('project-description').value);
+
+    // Get Quill content and sanitize with DOMPurify
+    const cleanHTML = DOMPurify.sanitize(window.projectQuill.root.innerHTML);
+    formData.append('description', cleanHTML);
+
     formData.append('link', document.getElementById('project-link').value);
 
     const imageInput = document.getElementById('project-image');
@@ -100,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 data-link="${esc(project.project_link)}"
                 onclick="openProjectLink(this)">
                     <h3>${esc(project.title)}</h3>
-                    <p>${esc(project.description)}</p>
+                    <div class="project-description">${DOMPurify.sanitize(project.description)}</div>
 
                     <div class="project-images">
                         ${imagesHTML}

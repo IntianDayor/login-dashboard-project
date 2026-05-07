@@ -1,6 +1,6 @@
 // ====== MANAGE PROFILE SCRIPT ====== //
 
-// --- EDIT PROFILE PAGE (admin) ---
+// EDIT PROFILE PAGE (admin) //
 const editForm = document.querySelector(".edit-profile-form");
 
 if (editForm) {
@@ -8,6 +8,12 @@ if (editForm) {
         e.preventDefault();
 
         const formData = new FormData(editForm);
+
+        // Get Quill content, sanitize it with DOMPurify, append to formData
+        if (window.profileQuill) {
+            const cleanHTML = DOMPurify.sanitize(window.profileQuill.root.innerHTML);
+            formData.append('description', cleanHTML);
+        }
 
         try {
             const response = await fetch("../api/upload-profile.php", {
@@ -28,7 +34,7 @@ if (editForm) {
     });
 }
 
-// --- VIEW PROFILE PAGE (user) ---
+// VIEW PROFILE PAGE (user) //
 const profilePictureDiv  = document.getElementById("profile-picture");
 const profileDescription = document.getElementById("profile-description");
 
@@ -45,7 +51,7 @@ if (profilePictureDiv || profileDescription) {
             }
 
             if (profileDescription && profile.description) {
-                profileDescription.textContent = profile.description;
+                profileDescription.innerHTML = DOMPurify.sanitize(profile.description);
             }
         })
         .catch(err => console.error("Failed to load profile:", err));

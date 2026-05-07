@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Global styles -->
+    <!-- Global CSS -->
     <link rel="stylesheet" href="../assets/styles/global.css">
-    <!-- Content-specific styles -->
+    <!-- Content CSS -->
     <link rel="stylesheet" href="../assets/styles/content.css">
+    <!-- Quill CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet">
     <title>Edit Profile</title>
 </head>
 <body>
     <main class="edit-profile">
-        <!-- Topbar and Sidebar -->
         <section class="topbar">
             <h1 style="font-size: 24px;">Edit Profile</h1>
             <button class="home-button" id="home">&#8962;</button>
@@ -19,33 +20,52 @@
         </section>
         <div class="sidebar">
             <button class="sidebar-button-2">&times;</button>
-        <ul class="different-data">
-            <li class="manage-users" style="list-style-type: none;" id="manage-users">Manage Users</li>
-            <li class="upload-projects" style="list-style-type: none;" id="upload-projects">Upload Projects</li>
-            <li class="upload-resume" style="list-style-type: none;" id="upload-resume">Upload Resume</li>
-            <li class="edit-profile" style="list-style-type: none;" id="edit-profile">Edit Profile</li>
-            <li class="home" style="list-style-type: none;" id="home">Home</li>
-        </ul>
-        <ul>
-            <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
-        </ul> 
+            <ul class="different-data">
+                <li class="manage-users" style="list-style-type: none;" id="manage-users">Manage Users</li>
+                <li class="upload-projects" style="list-style-type: none;" id="upload-projects">Upload Projects</li>
+                <li class="upload-resume" style="list-style-type: none;" id="upload-resume">Upload Resume</li>
+                <li class="edit-profile" style="list-style-type: none;" id="edit-profile">Edit Profile</li>
+                <li class="home" style="list-style-type: none;" id="home">Home</li>
+            </ul>
+            <ul>
+                <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
+            </ul>
         </div>
 
-        <!-- Edit Profile Content -->
         <section class="content">
             <form class="edit-profile-form">
                 <div class="input-profile">
-                    <label for="Description">Edit Description:</label>
-                    <textarea id="Description" placeholder="Enter your description here..." name="description"></textarea>
+                    <label>Edit Description:</label>
+                    <div id="description-editor" style="background:white; min-height: 150px;"></div>
                     <label for="profile-picture">Change Profile Picture:</label>
                     <input type="file" id="profile-picture" accept="image/*" name="profile_picture">
                 </div>
                 <button type="submit">Save Changes</button>
             </form>
         </section>
-        
     </main>
+
     <script src="../assets/scripts/dashboard-script.js"></script>
+    <!-- DOMPurify for XSS protection -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
+    <!-- Quill JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
+    <script>
+        // Initialize Quill on the description editor
+        const quill = new Quill('#description-editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Make quill instance available globally so manage-profile.js can use it
+        window.profileQuill = quill;
+    </script>
     <script src="../assets/scripts/manage-profile.js"></script>
 </body>
 </html>
