@@ -6,7 +6,6 @@ const editForm = document.querySelector(".edit-profile-form");
 if (editForm) {
     editForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        await verifySession(true); // Wait for fresh token before uploading
 
         const formData = new FormData(editForm);
 

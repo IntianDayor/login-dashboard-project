@@ -28,7 +28,6 @@ if (backToManageProjectsButton) {
 const addProjectbtn = document.getElementById('add-project');
 addProjectbtn?.addEventListener('click', async (e) => {
     e.preventDefault();
-    await verifySession(true);
 
     const formData = new FormData();
     formData.append('title', document.getElementById('project-title').value);
