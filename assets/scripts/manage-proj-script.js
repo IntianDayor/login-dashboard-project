@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }).join("");
 
-        // Build and append image modal to the DOM (only once)
+        // Build and append image modal to the DOM
         const modal = document.createElement("div");
         modal.className = "image-modal";
         modal.id = "imageModal";
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         modal.innerHTML = `<span class="close-modal">&times;</span><img id="modalImage" src="" alt="Zoomed image">`;
         container.appendChild(modal);
 
-        // Init sliders AFTER modal is in the DOM
+        // Initialize sliders AFTER modal is in the DOM
         initSliders();
 
     } catch (err) {

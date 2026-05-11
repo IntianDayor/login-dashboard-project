@@ -1,9 +1,5 @@
 <?php
-require_once __DIR__ . '/db.php';        // db connection must come first
-require_once __DIR__ . '/session-db.php'; // register handler before session_start
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/bootstrap.php';
 header("Content-Type: application/json");
 
 $data = json_decode(file_get_contents("php://input"), true);

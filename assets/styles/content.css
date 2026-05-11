@@ -5,6 +5,9 @@
 /*==========GENERAL CONTENT STYLES==========*/
 
 /* CONTENT CONTAINER */
+.dashboard .content {
+    background-color: #f0f0f0;
+}
 .content {
     display: flex;
     justify-content: center;
@@ -16,8 +19,17 @@
 }
 
 /* BUTTONS & INPUTS */
+
+.input-project input[type="text"]{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: text;
+}
+
 .upload-resume-wrapper input[type="file"],
-.edit-profile-form input[type="file"] {
+.edit-profile-form input[type="file"],
+.input-project input[type="file"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -25,12 +37,15 @@
 }
 
 .upload-resume-wrapper input[type="file"]:hover,
-.edit-profile-form input[type="file"]:hover {
+.edit-profile-form input[type="file"]:hover,
+.input-project input[type="file"]:hover,
+.input-project input[type="text"]:hover {
     border-color: #007BFF;
 }
 
 .upload-resume-wrapper input[type="file"]::file-selector-button,
-.edit-profile-form input[type="file"]::file-selector-button {
+.edit-profile-form input[type="file"]::file-selector-button,
+.input-project input[type="file"]::file-selector-button {
     padding: 10px;
     background-color: #007BFF;
     color: #fff;
@@ -40,12 +55,14 @@
 }
 
 .upload-resume-wrapper input[type="file"]::file-selector-button:hover,
-.edit-profile-form input[type="file"]::file-selector-button:hover {
+.edit-profile-form input[type="file"]::file-selector-button:hover,
+.input-project input[type="file"]::file-selector-button:hover {
     background-color: #0056b3;
 }
 
 .upload-resume-wrapper button, 
-.edit-profile-form button {
+.edit-profile-form button,
+.input-project button {
     padding: 10px;
     background-color: #007BFF;
     color: #fff;
@@ -55,20 +72,11 @@
 }
 
 .upload-resume-wrapper button:hover, 
-.edit-profile-form button:hover {
+.edit-profile-form button:hover,
+.input-project button:hover {
     background-color: #0056b3;
 }
 
-.input-profile textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    resize: vertical;
-}
-
-.input-profile textarea:hover {
-    border-color: #007BFF;
-}
 
 /*==========ADMIN PANEL PAGE STYLES==========*/
 
@@ -99,6 +107,25 @@ th, td {
     width: 100vh;
 }
 
+.user-management select {
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-management select:hover {
+    background-color: #0056b3;
+}
+
+.user-management select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}
+
 /*-----Projects Page Styles-----*/
 .input-project {
     display: flex;
@@ -123,7 +150,6 @@ th, td {
 .back-to-manage-projects:hover {
     background-color: #0056b3;
 }
-
 /*-----Upload Resume Page Styles-----*/
 .upload-resume-wrapper {
     display: flex;
@@ -167,6 +193,72 @@ th, td {
 }
 
 /*==========USER VIEW PAGE STYLES==========*/
+
+/*-----Dashboard Page Styles-----*/
+
+.dashboard span {
+    font-style: italic;
+    font-weight: bold;
+}
+
+.dashboard-wrapper {
+    width: 90vw;
+    height: 80vh;
+    margin-top: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.dashboard-navbar {
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    align-items: center;
+    color: #f4f4f4;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 20px;
+    border: solid #e0e0e0;
+}
+
+.dashboard-navbar h3 {
+    background-color: #007BFF;
+    border-radius: 15px;
+    padding: 10px;
+    margin: 6px;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-navbar h3:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    cursor: pointer;
+}
+
+.dashboard-desc {
+    box-sizing: border-box;
+    background-color: #fff;
+    padding: 30px;
+    margin: 30px;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.dashboard-desc h2 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.dashboard-desc hr {
+    margin: 0 0 20px 0;
+}
+
+.dashboard-desc p {
+    margin: 0;
+    line-height: 1.6;
+}
 
 /*-----View Resume Page Styles-----*/
 

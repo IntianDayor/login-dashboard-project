@@ -9,7 +9,7 @@ async function fetchUsers() {
         displayUsers(result);
     } catch (error) {
         console.error("Failed to fetch users:", error);
-        userTableBody.innerHTML = '<tr><td colspan="4">Failed to load users.</td></tr>';
+        userTableBody.innerHTML = '<tr><td colspan="6">Failed to load users.</td></tr>';
     }
 }
 
@@ -18,15 +18,58 @@ function displayUsers(users) {
     users.forEach(user => {
         const row = document.createElement('tr');
 
-        [user.id, user.name, user.email, user.created_at].forEach(value => {
+        [user.id, user.username, user.name, user.email, user.created_at].forEach(value => {
             const td = document.createElement('td');
             td.textContent = value;
             row.appendChild(td);
         });
 
+        // Role dropdown instead of plain text
+        const roleTd = document.createElement('td');
+        const select = document.createElement('select');
+
+        ['user', 'admin'].forEach(option => {
+            const opt = document.createElement('option');
+            opt.value = option;
+            opt.textContent = option;
+            if (option === user.role) opt.selected = true;
+            select.appendChild(opt);
+        });
+
+        select.addEventListener('change', () => setRole(user.id, select.value, select));
+        roleTd.appendChild(select);
+        row.appendChild(roleTd);
+
         userTableBody.appendChild(row);
     });
 }
 
-// Call fetchUsers when the page loads
+async function setRole(userId, newRole, selectEl) {
+    if (!confirm(`Change this user's role to "${newRole}"?`)) {
+        // Revert the dropdown if cancelled
+        selectEl.value = selectEl.value === 'admin' ? 'user' : 'admin';
+        return;
+    }
+
+    try {
+        const response = await fetch('../api/set-role.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': getCsrfToken()
+            },
+            body: JSON.stringify({ id: userId, role: newRole })
+        });
+    
+        const result = await response.json();
+        if (!result.success) {
+            alert('Failed to update role: ' + (result.error || 'Unknown error'));
+            selectEl.value = selectEl.value === 'admin' ? 'user' : 'admin'; // revert
+        }
+    } catch (err) {
+        console.error('Set role error:', err);
+        selectEl.value = selectEl.value === 'admin' ? 'user' : 'admin'; // revert
+    }
+}
+
 document.addEventListener('DOMContentLoaded', fetchUsers);

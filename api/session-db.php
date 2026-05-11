@@ -1,9 +1,14 @@
 <?php
+function getConn() {
+    global $conn;
+    return $conn;
+}
+
 function sess_open($path, $name) { return true; }
 function sess_close() { return true; }
 
 function sess_read($id) {
-    global $conn;
+    $conn = getConn();
     if (!$conn) return '';
     $stmt = $conn->prepare("SELECT data FROM sessions WHERE id = ? AND expires > NOW()");
     $stmt->bind_param("s", $id);
@@ -14,7 +19,7 @@ function sess_read($id) {
 }
 
 function sess_write($id, $data) {
-    global $conn;
+    $conn = getConn();
     if (!$conn) return false;
     $expires = date('Y-m-d H:i:s', time() + 3600);
     $stmt = $conn->prepare("
@@ -26,7 +31,7 @@ function sess_write($id, $data) {
 }
 
 function sess_destroy($id) {
-    global $conn;
+    $conn = getConn();
     if (!$conn) return false;
     $stmt = $conn->prepare("DELETE FROM sessions WHERE id = ?");
     $stmt->bind_param("s", $id);
@@ -34,7 +39,7 @@ function sess_destroy($id) {
 }
 
 function sess_gc($maxlifetime) {
-    global $conn;
+    $conn = getConn();
     if (!$conn) return false;
     $conn->query("DELETE FROM sessions WHERE expires < NOW()");
     return true;

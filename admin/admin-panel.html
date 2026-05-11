@@ -7,25 +7,20 @@
     <title>ADMIN PANEL</title>
 </head>
 <body class="admin">
-    <section class="topbar">
-        <h1 style="font-size: 24px;">Admin Panel</h1>
-        <button class="home-button" id="home">&#8962;</button>
-        <button class="sidebar-button">&equiv;</button>
+    <div id="sidebar-container" data-title="Admin Panel"></div>
+    <section class="content">
+        <h2>Welcome, <span id="username"></span> !<br>What would you like to do?</h2>
     </section>
-    <h2>Welcome, <span id="username"></span>!</h2>
-    <div class="sidebar">
-        <button class="sidebar-button-2">&times;</button>
-        <ul class="different-data">
-            <li class="manage-users" style="list-style-type: none;" id="manage-users">Manage Users</li>
-            <li class="upload-projects" style="list-style-type: none;" id="upload-projects">Upload Projects</li>
-            <li class="upload-resume" style="list-style-type: none;" id="upload-resume">Upload Resume</li>
-            <li class="edit-profile" style="list-style-type: none;" id="edit-profile">Edit Profile</li>
-            <li class="home" style="list-style-type: none;" id="home">Home</li>
-        </ul>
-        <ul>
-            <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
-        </ul> 
-    </div>
+
+    <script>
+        (async () => {
+            const res = await fetch('../api/check-session.php');
+            const data = await res.json();
+            if (!data.loggedIn || !data.isAdmin) {
+                window.location.href = '../pages/login.html';
+            }
+        })();
+    </script>
     <script src="../assets/scripts/dashboard-script.js"></script>
 </body>
 </html>

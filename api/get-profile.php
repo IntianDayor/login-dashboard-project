@@ -3,16 +3,11 @@ include "auth-check.php";
 requireLogin();
 
 header('Content-Type: application/json');
-include "db.php";
+require_once __DIR__ . '/db.php';
 
 $sql = "SELECT description, profile_picture FROM profile WHERE id = 1 LIMIT 1";
-
 $result = $conn->query($sql);
+$profile = $result->fetch_assoc();
 
-$profiles = [];
-while ($row = $result->fetch_assoc()) {
-    $profiles[] = $row;
-}
-
-echo json_encode($profiles);
+echo json_encode($profile ?? (object)[]);
 ?>

@@ -3,29 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../assets/uploads/images/icons/icons8-portfolio-50-3.png">
+    <link rel="stylesheet" href="../assets/styles/content.css">
     <link rel="stylesheet" href="../assets/styles/global.css">
     <title>Dashboard | Christian Dior Feraer</title>
 </head>
 <body class="dashboard">
-    <!-- Topbar and Sidebar -->
-    <section class="topbar">
-        <h1 style="font-size: 24px;">User Dashboard</h1>
-        <button class="home-button" id="home">&#8962;</button>
-        <button class="sidebar-button">&equiv;</button>
+    <div id="sidebar-container" data-title="Dashboard"></div>
+    <section class="content">
+        <h2>Welcome, <span id="username"></span> !<br>What would you like to do?</h2>
+        <div class="dashboard-wrapper">
+            <div class="dashboard-wrapper">
+                <div class="dashboard-navbar">
+                    <h3 onclick="window.location.href = '../pages/profile.html'">View my Profile!</h3>
+                    <h3 onclick="window.location.href = '../pages/view-resume.html'">View my Resume!</h3>
+                    <h3 onclick="window.location.href = '../pages/projects-user.html'">View my Projects!</h3>
+                </div>
+                <div class="dashboard-desc">
+                    <h2>About this project</h2>
+                    <hr>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore
+                        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi
+                        ut
+                        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                        culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur
+                        adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                        minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                        mollit anim id est laborum.</p>
+                </div>
+            </div>
     </section>
-    <h2>Welcome, <span id="username"></span>!</h2>
-    <div class="sidebar">
-        <button class="sidebar-button-2">&times;</button>
-        <ul class="different-data">
-            <li class="resume" style="list-style-type: none;" id="resume">Resume</li>
-            <li class="experience" style="list-style-type: none;" id="profile">Profile</li>
-            <li class="projects" style="list-style-type: none;" id="projects">Projects</li>
-            <li class="home" style="list-style-type: none;" id="home">Home</li>
-        </ul>
-        <ul>
-            <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
-        </ul> 
-    </div>
     <script src="../assets/scripts/dashboard-script.js"></script>
 </body>
+
 </html>

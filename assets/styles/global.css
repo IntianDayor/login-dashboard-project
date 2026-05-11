@@ -14,9 +14,6 @@ body {
 body.dashboard,
 body.admin {
     background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
 }
 
@@ -28,8 +25,21 @@ body.auth {
     height: 100vh;
 }
 
-h2 {
-    color: #333;
+body.dashboard > .content > h2 {
+    width: 100%;
+    text-align: center;
+}
+
+body.admin > .content > h2 {
+    width: 100%;
+    text-align: center;
+    transform: translateY(100px);
+}
+
+.dashboard .content,
+.admin .content {
+    flex-direction: column;
+    align-items: center;
 }
 
 /*Topbar & Sidebar */

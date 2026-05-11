@@ -8,9 +8,18 @@ include "db.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $title = $_POST['title'] ?? '';
-    $description = $_POST['description'] ?? '';
-    $project_link = $_POST['link'] ?? null;
+    $title = trim($_POST['title'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $project_link = trim($_POST['link'] ?? '') ?: null;
+
+    if (empty($title)) {
+        echo json_encode(["success" => false, "message" => "Project title is required."]);
+        exit;
+    }
+    if (strlen($title) > 255) {
+        echo json_encode(["success" => false, "message" => "Title too long. Maximum 255 characters."]);
+        exit;
+    }
 
     // Insert Projects First
     $stmt = $conn->prepare("
@@ -52,7 +61,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     continue;
                 }
 
-                $imageName = uniqid() . '_' . $_FILES['images']['name'][$key];
+                $mimeToExt = [
+                    'image/jpeg' => 'jpg',
+                    'image/png'  => 'png',
+                    'image/webp' => 'webp',
+                    'image/gif'  => 'gif',
+                ];
+                $safeExt   = $mimeToExt[$fileMime];
+                $imageName = uniqid() . '.' . $safeExt;
+                
                 $imagePath = "assets/uploads/images/projects/" . $imageName;
 
                 // Skip DB insert for this image if move failed

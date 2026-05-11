@@ -7,30 +7,11 @@
     <link rel="stylesheet" href="../assets/styles/global.css">
     <!-- Content-specific styles -->
     <link rel="stylesheet" href="../assets/styles/content.css">
-    <title>Manage Users || Admin Dashboard</title>
+    <title>Manage Users | Admin Dashboard</title>
 </head>
 <body>
     <main class="manage-users-page">
-
-        <!-- Topbar and Sidebar -->
-        <section class="topbar">
-            <h1 style="font-size: 24px;">Manage Users</h1>
-            <button class="home-button" id="home">&#8962;</button>
-            <button class="sidebar-button">&equiv;</button>
-        </section>
-        <div class="sidebar">
-            <button class="sidebar-button-2">&times;</button>
-        <ul class="different-data">
-            <li class="manage-users" style="list-style-type: none;" id="manage-users">Manage Users</li>
-            <li class="upload-projects" style="list-style-type: none;" id="upload-projects">Upload Projects</li>
-            <li class="upload-resume" style="list-style-type: none;" id="upload-resume">Upload Resume</li>
-            <li class="edit-profile" style="list-style-type: none;" id="edit-profile">Edit Profile</li>
-            <li class="home" style="list-style-type: none;" id="home">Home</li>
-        </ul>
-        <ul>
-            <li class="log-out" style="list-style-type: none;" id="log-out">Log Out</li>
-        </ul>
-        </div>
+        <div id="sidebar-container" data-title="Manage Users"></div>
         <!-- Manage Users Content -->
         <section class="content">
             <div class="user-management">
@@ -38,9 +19,11 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Username</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Created</th>
+                            <th>Role</th>
                         </tr>
                     </thead>
                     <tbody id="users-table-body">
@@ -51,6 +34,15 @@
         </section>
 
     </main>
+    <script>
+        (async () => {
+            const res = await fetch('../api/check-session.php');
+            const data = await res.json();
+            if (!data.loggedIn || !data.isAdmin) {
+                window.location.href = '../pages/login.html';
+            }
+        })();
+    </script>
     <!-- Dashboard Script -->
     <script src="../assets/scripts/dashboard-script.js"></script>
     <!-- Manage Users Script -->

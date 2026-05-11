@@ -3,9 +3,9 @@ include "auth-check.php";
 requireAdmin();
 
 header("Content-Type: application/json");
-include "db.php";
+require_once __DIR__ . '/db.php';
 
-$sql = "SELECT id, username, name, email, DATE(`created_at`) AS created_at FROM users";
+$sql = "SELECT id, username, name, email, DATE(`created_at`) AS created_at, role FROM users";
 
 $result = $conn->query($sql);
 
