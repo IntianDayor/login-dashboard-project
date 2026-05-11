@@ -203,8 +203,9 @@ th, td {
 
 .dashboard-wrapper {
     width: 90vw;
-    height: 80vh;
+    min-height: fit-content;
     margin-top: 20px;
+    margin-bottom: 20px;
     padding: 10px;
     box-sizing: border-box;
 }
