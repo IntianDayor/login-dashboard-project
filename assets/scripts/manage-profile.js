@@ -4,6 +4,17 @@
 const editForm = document.querySelector(".edit-profile-form");
 
 if (editForm) {
+
+    // Edit Description
+    fetch("../api/get-profile.php")
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.description && window.profileQuill) {
+                window.profileQuill.root.innerHTML = data.description;
+            }
+        })
+        .catch(err => console.error("Failed to load profile:", err));
+
     editForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -25,12 +36,12 @@ if (editForm) {
             const result = await response.json();
 
             if (result.success) {
-                alert(result.message);
+                showToast(result.message);
             } else {
-                alert("Error: " + result.message);
+                showToast("Error: " + result.message);
             }
         } catch (error) {
-            alert("Something went wrong: " + error.message);
+            showToast("Something went wrong: " + error.message);
         }
     });
 }

@@ -19,13 +19,13 @@ if (uploadForm) {
             const result = await response.json();
 
             if (result.success) {
-                alert(result.message);
+                showToast(result.message);
                 uploadForm.reset();
             } else {
-                alert("Error: " + result.message);
+                showToast("Error: " + result.message);
             }
         } catch (error) {
-            alert("Upload failed: " + error.message);
+            showToast("Upload failed: " + error.message);
         }
     });
 }
@@ -61,6 +61,7 @@ if (resumeContainer) {
         `;
     })
     .catch(error => {
-        alert("Error loading resume");
+        resumeContainer.innerHTML = "<p>Failed to load resume. Please try again.</p>";
+        console.error("Error loading resume:", error);
     });
 }

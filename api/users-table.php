@@ -4,7 +4,6 @@ requireAdmin();
 verifyCsrf();
 
 header("Content-Type: application/json");
-require_once __DIR__ . '/db.php';
 
 $sql = "SELECT id, username, name, email, DATE(`created_at`) AS created_at, role FROM users";
 

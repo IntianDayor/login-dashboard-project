@@ -1,3 +1,28 @@
+// =============== ALERT MSG ================ //
+
+function showToast(message, type = 'error', duration = 3000) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => toast.classList.add('show'));
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => toast.remove());
+    }, duration);
+}
+
 // =============== DASHBOARD SCRIPT ============== //
 
 // Verify session server-side on every page load
@@ -41,6 +66,7 @@ function logout(redirectPath) {
     fetch("../api/logout.php", { method: "POST", headers: { "X-CSRF-Token": getCsrfToken() } }).finally(() => {
         localStorage.removeItem("username");
         localStorage.removeItem("isAdmin");
+        localStorage.removeItem("csrf_token");
         window.location.href = redirectPath;
     });
 } 

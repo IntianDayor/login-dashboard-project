@@ -3,7 +3,6 @@ include "auth-check.php";
 requireLogin();
 
 header("Content-Type: application/json");
-require_once __DIR__ . '/db.php';
 
 $sql = "
 SELECT 

@@ -69,7 +69,7 @@ async function setRole(userId, newRole, selectEl, prevRole) {
 
         const result = await response.json();
         if (!result.success) {
-            alert('Failed to update role: ' + (result.error || 'Unknown error'));
+            showToast('Failed to update role: ' + (result.error || 'Unknown error'));
             selectEl.value = prevRole;
         } else {
             selectEl.dataset.prev = newRole;

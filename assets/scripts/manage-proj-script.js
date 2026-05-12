@@ -54,13 +54,13 @@ addProjectbtn?.addEventListener('click', async (e) => {
         });
         const result = await response.json();
         if (result.success) {
-            alert('Project uploaded successfully!');
+            showToast('Project uploaded successfully!');
         } else {
-            alert('Failed to upload project: ' + result.message);
+            showToast('Failed to upload project: ' + result.message);
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while uploading the project.');
+        showToast('An error occurred while uploading the project.');
     }
 });
 
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-// Open project link in new tab or show alert if no link provided
+// Open project link in new tab or show showToast if no link provided
 function openProjectLink(card) {
     const link = card.dataset.link;
 
@@ -139,7 +139,7 @@ function openProjectLink(card) {
     if (link && /^https?:\/\//i.test(link.trim())) {
         window.open(link, "_blank");
     } else {
-        alert("This project has no link yet.");
+        showToast("This project has no link yet.");
     }
 }
 

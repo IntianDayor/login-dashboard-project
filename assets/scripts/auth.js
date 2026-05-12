@@ -1,3 +1,28 @@
+// =============== ALERT MSG ================ //
+
+function showToast(message, type = 'error', duration = 3000) {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => toast.classList.add('show'));
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => toast.remove());
+    }, duration);
+}
+
 // =============== AUTH SCRIPT ============== //
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = form.querySelector('input[type="password"]').value;
 
             if (!username || !password) {
-                alert("Please enter both username and password");
+                showToast("Please enter both username and password")
                 return;
             }
             try {
@@ -27,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const result = await response.json();
 
                 if (!result.success) {
-                    alert(result.message || "Login failed");
+                    showToast(result.message || "Login failed")
                     return;
                 }
 
@@ -39,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     ? "../admin/admin-panel.html"
                     : "dashboard.html";
             } catch (err) {
-                alert("Network error. Please try again.");
+                showToast("Network error. Please try again.")
                 console.error(err);
             }
         });
@@ -63,17 +88,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById('email').value;
 
             if (!username || !password || !fullname || !email) {
-                alert("Please fill in all fields");
+                showToast("Please fill in all fields")
                 return;
             }
 
             if (password.length < 6) {
-                alert("Password must be at least 6 characters long");
+                showToast("Password must be at least 6 characters long")
                 return;
             }
 
             if (password !== confirmPassword) {
-                alert("Passwords do not match");
+                showToast("Passwords do not match")
                 return;
             }
             try {
@@ -91,14 +116,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         "Username already taken": "Username already exists. Please choose another.",
                         "Email already registered": "Email already registered. Please use another email.",
                     };
-                    alert(MSG[result.message] ?? "Signup failed");
+                    showToast(MSG[result.message] ?? "Signup failed")
                     return;
                 }
 
-                alert("Account created!");
+                showToast("Account created!", false)
                 window.location.href = "login.html";
             } catch (err) {
-                alert("Network error. Please try again");
+                showToast("Network error. Please try again")
                 console.error(err);
             }
 
