@@ -23,6 +23,43 @@ function showToast(message, type = 'error', duration = 3000) {
     }, duration);
 }
 
+// ============= CONDIRMATION MODAL =============//
+
+function confirmAction(message) {
+    return new Promise(resolve => {
+
+        let overlay = document.getElementById('confirm-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'confirm-overlay';
+            overlay.innerHTML = `
+                <div id="confirm-box">
+                    <p id="confirm-message"></p>
+                    <div class="confirm-actions">
+                        <button id="confirm-cancel-btn">Cancel</button>
+                        <button id="confirm-ok-btn">Confirm</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        document.getElementById('confirm-message').textContent = message;
+        overlay.classList.add('active');
+
+        document.getElementById('confirm-ok-btn').onclick = () => {
+            overlay.classList.remove('active');
+            resolve(true);
+        };
+
+        document.getElementById('confirm-cancel-btn').onclick = () => {
+            overlay.classList.remove('active');
+            resolve(false);
+        };
+
+    });
+}
+
 // =============== DASHBOARD SCRIPT ============== //
 
 // Verify session server-side on every page load
@@ -50,6 +87,8 @@ async function verifySession(requireAdmin = false) {
         document.querySelectorAll('button[type="submit"], #add-project, #upload-resume-btn').forEach(btn => {
             btn.disabled = false;
         });
+
+        return data;
 
     } catch (err) {
         window.location.href = '../pages/login.html';

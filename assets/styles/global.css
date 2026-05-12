@@ -282,6 +282,74 @@ body.admin > .content > h2 {
 .toast.success { background: #e8f8e8; color: #27ae60; border-left: 4px solid #27ae60; }
 .toast.info    { background: #e8f0fe; color: #2c5fdb; border-left: 4px solid #2c5fdb; }
 
+/* =============================
+    CONFIRMATION MODAL STYLES
+============================== */
+
+#confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+#confirm-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+#confirm-overlay.active #confirm-box {
+    transform: scale(1);
+}
+
+#confirm-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 28px;
+    max-width: 360px;
+    width: 90%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+    text-align: center;
+    transform: scale(0.85);
+    transition: transform 0.2s ease;
+}
+
+#confirm-box p {
+    margin: 0 0 20px;
+    font-size: 0.95em;
+    color: #333;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.confirm-actions button {
+    padding: 9px 22px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#confirm-cancel-btn {
+    background: #e9e9e9;
+    color: #444;
+}
+
+#confirm-ok-btn {
+    background: #007BFF;
+    color: white;
+}
+
 /* ========================= 
        MOBILE PORT
 ========================= */

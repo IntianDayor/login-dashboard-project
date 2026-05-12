@@ -23,11 +23,14 @@ if (backToManageProjectsButton) {
     });
 }
 
-// Upload Projects Script //
+// Upload/Delete Projects Script //
 
 const addProjectbtn = document.getElementById('add-project');
 addProjectbtn?.addEventListener('click', async (e) => {
     e.preventDefault();
+
+    const confirmed = await confirmAction('Are you sure you want to upload this project?');
+    if (!confirmed) return;
 
     const formData = new FormData();
     formData.append('title', document.getElementById('project-title').value);
@@ -64,6 +67,31 @@ addProjectbtn?.addEventListener('click', async (e) => {
     }
 });
 
+async function deleteProject(id, cardElement) {
+    const confirmed = await confirmAction('Delete this project? This cannot be undone.');
+    if (!confirmed) return;
+    try {
+        const response = await fetch('../api/delete-project.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': getCsrfToken()
+            },
+            body: JSON.stringify({ id })
+        });
+        const result = await response.json();
+        if (result.success) {
+            cardElement.remove();
+            showToast('Project deleted.');
+        } else {
+            showToast('Error: ' + result.message);
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('An error occurred while deleting.');
+    }
+}
+
 // View Projects Script //
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -77,6 +105,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             container.innerHTML = "<p>No projects found.</p>";
             return;
         }
+
+        const session = await verifySession(false);
+        const isAdmin = session?.isAdmin ?? false;
 
         container.innerHTML = data.map(project => {
 
@@ -105,6 +136,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 data-link="${esc(project.project_link)}"
                 onclick="openProjectLink(this)">
                     <h3>${esc(project.title)}</h3>
+                    ${isAdmin ? `
+                    <button class="delete-project-btn"
+                        onclick="event.stopPropagation(); deleteProject(${project.id}, this.closest('.project-card'))">
+                        🗑 Delete
+                    </button>` : ''}
                     <div class="project-description">${DOMPurify.sanitize(project.description)}</div>
 
                     <div class="project-images">

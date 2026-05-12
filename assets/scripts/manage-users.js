@@ -52,7 +52,8 @@ function displayUsers(users) {
 }
 
 async function setRole(userId, newRole, selectEl, prevRole) {
-    if (!confirm(`Change this user's role to "${newRole}"?`)) {
+    const confirmed = await confirmAction(`Change this user's role to "${newRole}"?`);
+    if (!confirmed) {
         selectEl.value = prevRole;
         return;
     }

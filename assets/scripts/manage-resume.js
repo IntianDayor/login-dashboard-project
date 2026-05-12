@@ -7,6 +7,9 @@ if (uploadForm) {
     uploadForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        const confirmed = await confirmAction('This will replace your current resume. Continue?');
+        if (!confirmed) return;
+        
         const formData = new FormData(uploadForm);
 
         try {

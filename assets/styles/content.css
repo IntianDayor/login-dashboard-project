@@ -125,7 +125,7 @@ th, td {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
 }
 
-/*-----Projects Page Styles-----*/
+/*-----Upload Projects Page Styles-----*/
 .input-project {
     display: flex;
     flex-direction: column;
@@ -137,7 +137,7 @@ th, td {
 .back-to-manage-projects {
     position: fixed;
     top: 80px;
-    left: 5px;
+    left: 16px;
     padding: 10px 20px;
     background-color: #007BFF;
     color: #fff;
@@ -146,12 +146,26 @@ th, td {
     font-size: 0.9rem;
     white-space: nowrap;
     border: none;
+    z-index: 100;
 }
 
 .user-view:hover,
 .back-to-manage-projects:hover {
     background-color: #0056b3;
 }
+
+.delete-project-btn {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85em;
+    margin-bottom: 10px;
+}
+.delete-project-btn:hover { background: #c53030; }
+
 /*-----Upload Resume Page Styles-----*/
 .upload-resume-wrapper {
     display: flex;
@@ -572,6 +586,7 @@ th, td {
        MOBILE PORT
 ========================= */
 
+/* Average Tablet View */
 @media (max-width: 1024px) {
     /* Project grid: 2 columns on tablet */
     .project-cards {
@@ -579,6 +594,7 @@ th, td {
     }
 }
 
+/* Average Mobile View */
 @media (max-width: 768px) {
 
     /* Project grid: single column on mobile */
@@ -655,8 +671,16 @@ th, td {
     .back-to-manage-projects {
         position: static;
         display: block;
-        width: fit-content;
-        margin: 0 auto 16px auto;
+        width: 100%;
+        margin: 0 0 16px 0;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .upload-projects form {
+        width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
     }
 
     /* Table: allow horizontal scroll instead of overflow */

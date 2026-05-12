@@ -18,6 +18,9 @@ if (editForm) {
     editForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        const confirmed = await confirmAction('Are you sure you want to save these changes?');
+        if (!confirmed) return;
+
         const formData = new FormData(editForm);
 
         // Get Quill content, sanitize it with DOMPurify, append to formData
