@@ -34,6 +34,12 @@ if (strlen($password) < 6) {
     exit;
 }
 
+// Validate Email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(["success" => false, "message" => "Invalid email address."]);
+    exit;
+}
+
 // Check if username already exists
 $sql = "SELECT id FROM users WHERE username = ?";
 $stmt = $conn->prepare($sql);

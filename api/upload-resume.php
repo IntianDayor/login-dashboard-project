@@ -39,8 +39,9 @@ if (!move_uploaded_file($tmpname, $uploadDir . $newName)) {
 }
 
 // Only runs if file was saved successfully
+$filePath = "assets/uploads/resumes/" . $newName;
 $stmt = $conn->prepare("INSERT INTO resumes (file_name, file_path) VALUES (?, ?)");
-$stmt->bind_param("ss", $safeName, $newName);
+$stmt->bind_param("ss", $safeName, $filePath);
 $stmt->execute();
 
 echo json_encode(["success" => true, "message" => "Resume uploaded successfully"]);

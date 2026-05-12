@@ -21,7 +21,8 @@ function sess_read($id) {
 function sess_write($id, $data) {
     $conn = getConn();
     if (!$conn) return false;
-    $expires = date('Y-m-d H:i:s', time() + 3600);
+    $lifetime = (int) ini_get('session.gc_maxlifetime') ?: 3600;
+    $expires = date('Y-m-d H:i:s', time() + $lifetime);
     $stmt = $conn->prepare("
         INSERT INTO sessions (id, data, expires) VALUES (?, ?, ?)
         ON DUPLICATE KEY UPDATE data = VALUES(data), expires = VALUES(expires)
@@ -42,7 +43,7 @@ function sess_gc($maxlifetime) {
     $conn = getConn();
     if (!$conn) return false;
     $conn->query("DELETE FROM sessions WHERE expires < NOW()");
-    return true;
+    return $conn->affected_rows >= 0 ? $conn->affected_rows : true;
 }
 
 session_set_save_handler('sess_open','sess_close','sess_read','sess_write','sess_destroy','sess_gc');

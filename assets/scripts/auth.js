@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         form?.addEventListener("submit", async (event) => {
             event.preventDefault();
-            
+
             const username = form.querySelector('input[type="text"]').value;
             const password = form.querySelector('input[type="password"]').value;
 
@@ -17,27 +17,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Please enter both username and password");
                 return;
             }
+            try {
+                const response = await fetch("../api/login.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
 
-            const response = await fetch("../api/login.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
-            });
+                const result = await response.json();
 
-            const result = await response.json();
+                if (!result.success) {
+                    alert(result.message || "Login failed");
+                    return;
+                }
 
-            if (!result.success) {
-                alert(result.message || "Login failed");
-                return;
+                localStorage.setItem("username", result.user.username);
+                localStorage.setItem("isAdmin", result.isAdmin);
+                localStorage.setItem("csrf_token", result.csrf_token);
+
+                window.location.href = result.isAdmin
+                    ? "../admin/admin-panel.html"
+                    : "dashboard.html";
+            } catch (err) {
+                alert("Network error. Please try again.");
+                console.error(err);
             }
-
-            localStorage.setItem("username", result.user.username);
-            localStorage.setItem("isAdmin", result.isAdmin);
-            localStorage.setItem("csrf_token", result.csrf_token);
-
-            window.location.href = result.isAdmin
-                ? "../admin/admin-panel.html"
-                : "dashboard.html";
         });
 
         // Go to signup page
@@ -52,11 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
         form?.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            const username = form.querySelector('input[type="text"]').value;
-            const password = form.querySelector('input[type="password"]').value;
-            const confirmPassword = form.querySelectorAll('input[type="password"]')[1].value;
-            const fullname = document.getElementById("fullname").value;
-            const email = form.querySelector('input[type="email"]').value;
+            const username = document.getElementById('username-reg').value;
+            const password = document.getElementById('create').value;
+            const confirmPassword = document.getElementById('confirmpass').value;
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
 
             if (!username || !password || !fullname || !email) {
                 alert("Please fill in all fields");
@@ -72,27 +76,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Passwords do not match");
                 return;
             }
+            try {
+                const response = await fetch("../api/signup.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password, fullname, email })
+                });
 
-            const response = await fetch("../api/signup.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password, fullname, email })
-            });
+                const result = await response.json();
 
-            const result = await response.json();
+                // Handle specific error messages from the server
+                if (!result.success) {
+                    const MSG = {
+                        "Username already taken": "Username already exists. Please choose another.",
+                        "Email already registered": "Email already registered. Please use another email.",
+                    };
+                    alert(MSG[result.message] ?? "Signup failed");
+                    return;
+                }
 
-            // Handle specific error messages from the server
-            if (!result.success) {
-                const MSG = {
-                    "Username already taken":   "Username already exists. Please choose another.",
-                    "Email already registered": "Email already registered. Please use another email.",
-                };
-                alert(MSG[result.message] ?? "Signup failed");
-                return;
+                alert("Account created!");
+                window.location.href = "login.html";
+            } catch (err) {
+                alert("Network error. Please try again");
+                console.error(err);
             }
-
-            alert("Account created!");
-            window.location.href = "login.html";
 
         });
 

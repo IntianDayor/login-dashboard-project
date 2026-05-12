@@ -247,3 +247,22 @@ body.admin > .content > h2 {
 #show-password:hover {
     cursor: pointer;
 }
+
+/* ========================= 
+       MOBILE PORT
+========================= */
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 75%;
+    }
+
+    .log-in,
+    .sign-up {
+        width: 90vw;
+        max-width: 400px;
+    }
+
+    .log-in label  { left: 78%; }
+    .sign-up label { left: 85%; }
+}

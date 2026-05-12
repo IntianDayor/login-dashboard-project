@@ -36,23 +36,19 @@ if (editForm) {
 }
 
 // VIEW PROFILE PAGE (user) //
-const profilePictureDiv  = document.getElementById("profile-picture");
+const profilePictureDiv = document.getElementById("profile-picture");
 const profileDescription = document.getElementById("profile-description");
 
 if (profilePictureDiv || profileDescription) {
     fetch("../api/get-profile.php")
         .then(res => res.json())
         .then(data => {
-            if (!data.length) return;
-
-            const profile = data[0];
-
-            if (profilePictureDiv && profile.profile_picture) {
-                profilePictureDiv.innerHTML = `<img src="../${profile.profile_picture}" alt="Profile Picture">`;
+            if (!data) return;
+            if (profilePictureDiv && data.profile_picture) {
+                profilePictureDiv.innerHTML = `<img src="../${data.profile_picture}" alt="Profile Picture">`;
             }
-
-            if (profileDescription && profile.description) {
-                profileDescription.innerHTML = DOMPurify.sanitize(profile.description);
+            if (profileDescription && data.description) {
+                profileDescription.innerHTML = DOMPurify.sanitize(data.description);
             }
         })
         .catch(err => console.error("Failed to load profile:", err));

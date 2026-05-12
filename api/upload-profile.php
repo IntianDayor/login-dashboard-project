@@ -4,7 +4,6 @@ requireAdmin();
 verifyCsrf();
 
 header('Content-Type: application/json');
-include "db.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["success" => false, "message" => "Invalid request method"]);
@@ -30,7 +29,8 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
         exit;
     }
 
-    $extension = strtolower(pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION));
+    $mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    $extension = $mimeToExt[$mime];
     $newName   = uniqid('profile_', true) . '.' . $extension;
     $uploadDir = __DIR__ . "/../assets/uploads/images/profile/";
 

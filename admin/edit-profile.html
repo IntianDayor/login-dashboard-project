@@ -27,15 +27,6 @@
             </form>
         </section>
     </main>
-    <script>
-        (async () => {
-            const res = await fetch('../api/check-session.php');
-            const data = await res.json();
-            if (!data.loggedIn || !data.isAdmin) {
-                window.location.href = '../pages/login.html';
-            }
-        })();
-    </script>
     <script src="../assets/scripts/dashboard-script.js"></script>
     <!-- DOMPurify for XSS protection -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>

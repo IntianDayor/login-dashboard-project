@@ -4,7 +4,9 @@ const userTableBody = document.getElementById('users-table-body');
 
 async function fetchUsers() {
     try {
-        const response = await fetch("../api/users-table.php");
+        const response = await fetch("../api/users-table.php", {
+            headers: { "X-CSRF-Token": getCsrfToken() }
+        });
         const result = await response.json();
         displayUsers(result);
     } catch (error) {
@@ -36,18 +38,22 @@ function displayUsers(users) {
             select.appendChild(opt);
         });
 
-        select.addEventListener('change', () => setRole(user.id, select.value, select));
+        select.dataset.prev = user.role;
+        select.addEventListener('change', () => {
+            const prev = select.dataset.prev;
+            setRole(user.id, select.value, select, prev);
+        });
+        
         roleTd.appendChild(select);
         row.appendChild(roleTd);
-
         userTableBody.appendChild(row);
+
     });
 }
 
-async function setRole(userId, newRole, selectEl) {
+async function setRole(userId, newRole, selectEl, prevRole) {
     if (!confirm(`Change this user's role to "${newRole}"?`)) {
-        // Revert the dropdown if cancelled
-        selectEl.value = selectEl.value === 'admin' ? 'user' : 'admin';
+        selectEl.value = prevRole;
         return;
     }
 
@@ -60,15 +66,17 @@ async function setRole(userId, newRole, selectEl) {
             },
             body: JSON.stringify({ id: userId, role: newRole })
         });
-    
+
         const result = await response.json();
         if (!result.success) {
             alert('Failed to update role: ' + (result.error || 'Unknown error'));
-            selectEl.value = selectEl.value === 'admin' ? 'user' : 'admin'; // revert
+            selectEl.value = prevRole;
+        } else {
+            selectEl.dataset.prev = newRole;
         }
     } catch (err) {
         console.error('Set role error:', err);
-        selectEl.value = selectEl.value === 'admin' ? 'user' : 'admin'; // revert
+        selectEl.value = prevRole;
     }
 }
 

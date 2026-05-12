@@ -12,16 +12,6 @@
     <section class="content">
         <h2>Welcome, <span id="username"></span> !<br>What would you like to do?</h2>
     </section>
-
-    <script>
-        (async () => {
-            const res = await fetch('../api/check-session.php');
-            const data = await res.json();
-            if (!data.loggedIn || !data.isAdmin) {
-                window.location.href = '../pages/login.html';
-            }
-        })();
-    </script>
     <script src="../assets/scripts/dashboard-script.js"></script>
 </body>
 </html>

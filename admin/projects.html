@@ -13,10 +13,10 @@
 </head>
 <body>
     <main class="upload-projects">
-        <div id="sidebar-container" data-title="Projects"></div>
         <section class="content">
+            <div id="sidebar-container" data-title="Projects"></div>
+            <div class="user-view" id="user-view">&#128065; User View</div>
             <form action="">
-                <div class="user-view" id="user-view">&#128065; User View</div>
                 <div class="input-project">
                     <input type="text" placeholder="Project Title" id="project-title">
                     <!-- Quill editor replaces textarea -->
@@ -29,15 +29,6 @@
             </form>
         </section>
     </main>
-    <script>
-        (async () => {
-            const res = await fetch('../api/check-session.php');
-            const data = await res.json();
-            if (!data.loggedIn || !data.isAdmin) {
-                window.location.href = '../pages/login.html';
-            }
-        })();
-    </script>
     <script src="../assets/scripts/dashboard-script.js"></script>
     <!-- DOMPurify for XSS protection -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>

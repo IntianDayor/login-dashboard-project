@@ -16,22 +16,13 @@
         <!-- Upload Resume Content -->
         <section class="content">
             <div class="upload-resume-wrapper">
-                <form action="../api/upload-resume.php" method="POST" enctype="multipart/form-data">
+                <form action="">
                     <input type="file" name="resume" accept=".pdf" required>
                     <button type="submit">Upload Resume</button>
                 </form>
             </div>
         </section>
     </main>
-    <script>
-        (async () => {
-            const res = await fetch('../api/check-session.php');
-            const data = await res.json();
-            if (!data.loggedIn || !data.isAdmin) {
-                window.location.href = '../pages/login.html';
-            }
-        })();
-    </script>
     <script src="../assets/scripts/dashboard-script.js"></script>
     <script src="../assets/scripts/manage-resume.js"></script>
 </body>

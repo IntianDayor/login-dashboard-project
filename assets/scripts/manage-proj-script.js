@@ -135,7 +135,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 function openProjectLink(card) {
     const link = card.dataset.link;
 
-    if (link && link.trim() !== "") {
+    // Validates link before opening
+    if (link && /^https?:\/\//i.test(link.trim())) {
         window.open(link, "_blank");
     } else {
         alert("This project has no link yet.");

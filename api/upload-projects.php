@@ -4,7 +4,6 @@ requireAdmin();
 verifyCsrf();
 
 header("Content-Type: application/json");
-include "db.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

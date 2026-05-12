@@ -104,7 +104,6 @@ th, td {
     text-align: left;
     font-weight: bold;
     font-size: large;
-    width: 100vh;
 }
 
 .user-management select {
@@ -144,6 +143,9 @@ th, td {
     color: #fff;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    border: none;
 }
 
 .user-view:hover,
@@ -523,4 +525,150 @@ th, td {
     padding-right: 5px;
     padding-bottom: 5px;
     margin-top: 90px;
+}
+
+/*----- Resume Page Styles -----*/
+.resume-viewer-title {
+    text-align: center;
+    margin: 10px;
+}
+
+.resume-viewer-frame-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100vh - 120px);
+}
+
+.resume-viewer-frame {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+}
+
+.resume-viewer-actions {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.resume-open-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #4a90d9;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.resume-open-btn:hover {
+    background-color: #357abd;
+}
+
+/* ========================= 
+       MOBILE PORT
+========================= */
+
+@media (max-width: 1024px) {
+    /* Project grid: 2 columns on tablet */
+    .project-cards {
+        grid-template-columns: repeat(2, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Project grid: single column on mobile */
+    .project-cards {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+
+    /* Dashboard navbar: wrap cards vertically */
+    .dashboard-navbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-navbar h3 {
+        text-align: center;
+        margin: 4px 0;
+    }
+
+    .dashboard-desc {
+        margin: 15px;
+        padding: 15px;
+    }
+
+    /* Resume: full width */
+    .resume-wrapper {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .resume-content {
+        width: 95%;
+        margin: 80px 10px 20px;
+        padding: 15px;
+    }
+
+    /* Profile: stack picture above text */
+    .profile-wrapper {
+        width: 100%;
+    }
+
+    .profile-content {
+        width: 95%;
+        margin: 80px 10px 20px;
+        padding: 15px;
+        padding-top: 220px;
+    }
+
+    .profile-content .profile-picture {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 150px;
+    }
+
+    .profile-content .profile-fullname {
+        margin-right: 0;
+        text-align: center;
+    }
+
+    .profile-content .profile-description {
+        margin-top: 0;
+    }
+
+    /* Upload resume form: full width */
+    .upload-resume-wrapper {
+        width: 95%;
+        min-height: auto;
+    }
+
+    .user-view,
+    .back-to-manage-projects {
+        position: static;
+        display: block;
+        width: fit-content;
+        margin: 0 auto 16px auto;
+    }
+
+    /* Table: allow horizontal scroll instead of overflow */
+    .user-management {
+        overflow-x: auto;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    th, td {
+        font-size: medium;
+        padding: 8px;
+        width: auto;
+    }
 }

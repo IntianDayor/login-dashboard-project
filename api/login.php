@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/bootstrap.php';
+header("Content-Type: application/json");
 
 // Brute-force protection: max 5 attempts per 15 minutes
 $attemptKey = 'login_attempts_' . md5($_SERVER['REMOTE_ADDR']);
@@ -10,8 +11,6 @@ if (!empty($_SESSION[$lockoutKey]) && time() < $_SESSION[$lockoutKey]) {
     echo json_encode(["success" => false, "message" => "Too many attempts. Try again in {$wait} minute(s)."]);
     exit;
 }
-
-header("Content-Type: application/json");
 
 $data = json_decode(file_get_contents("php://input"), true);
 
