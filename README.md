@@ -116,42 +116,6 @@ This project is configured for one-click deployment on Railway.
 | `DB_PASS` | MySQL password |
 | `DB_NAME` | MySQL database name |
 
-## Project Journey
-
-This project started in **March 2026** and went through several major phases:
-
-**Phase 1 — XAMPP & phpMyAdmin**
-Started the project locally using XAMPP as the development environment with phpMyAdmin for database management. Ran into environment-specific errors that were difficult to debug and resolve on XAMPP.
-
-**Phase 2 — Migration to Laragon**
-Migrated the entire project to Laragon for a more stable local development experience. Laragon's cleaner Apache + MySQL setup resolved the issues encountered in XAMPP and allowed development to continue smoothly.
-
-**Phase 3 — Learning Docker**
-With the project working locally on Laragon, began learning Docker from scratch. Wrote a `Dockerfile` line by line to understand every instruction, then set up `docker-compose` to run PHP and MySQL together in containers, replicating the production environment locally.
-
-**Phase 4 — Deployment to Railway**
-Deployed the containerized app to Railway with a managed MySQL database. Encountered and resolved several real-world deployment issues along the way:
-
-- **Missing build dependencies** — Railway's clean Linux environment didn't have `git` or `zip` installed, causing Composer to fail when installing packages. Fixed by explicitly installing them in the Dockerfile with `apt-get`.
-
-- **Apache MPM conflict** (`AH00534: More than one MPM loaded`) — The `php:8.2-apache` base image had conflicting Apache process managers on Railway's Linux platform. Resolved by switching to a clean `ubuntu:22.04` base image for full control over the Apache configuration.
-
-- **PHP environment variables not readable** — On Ubuntu + Apache, Railway's injected environment variables weren't accessible via `$_ENV`. Fixed by switching to `getenv()` which reads system environment variables directly, regardless of how they were injected.
-
-- **phpdotenv crashing without `.env` file** — The app used `$dotenv->load()` which throws an exception if no `.env` file exists. Since Docker and Railway inject credentials as environment variables instead of a file, switched to `$dotenv->safeLoad()` which silently skips the missing file.
-
-- **Database tables not existing on Railway** — The `init.sql` file auto-runs in docker-compose on first startup, but Railway's managed MySQL doesn't have this mechanism. Tables had to be manually created by running `init.sql` in Railway's Database query editor.
-
-- **PHP errors breaking JSON responses** — PHP was outputting error notices before the JSON response, causing `Unexpected end of JSON input` on the frontend. Fixed by adding a `php.ini` config file with `display_errors = Off` so errors are logged server-side instead of printed to the browser.
-
-- **Railway query editor mangling bcrypt hashes** — Railway's MySQL query editor treated `$` signs in bcrypt password hashes as variable references, corrupting the stored hash. Worked around by using MySQL's `CONCAT()` function to split the hash string and avoid the `$` parsing issue.
-
-- **CSRF token invalid on file uploads (deployment only)** — File uploads worked perfectly locally but consistently failed with `Invalid CSRF token` on Railway. After extensive debugging:
-  - **Root cause 1 — Race condition:** The JS was calling `verifySession()` inside the submit handler, which triggered a second `check-session.php` request that regenerated the token *after* the page-load token was already stored in `localStorage`. The upload then sent the old token while the server had a new one. Fixed by removing `await verifySession(true)` from all upload handlers and relying solely on the page-load call.
-  - **Root cause 2 — Multi-container sessions:** Railway runs multiple container instances. PHP sessions stored in `/tmp` are local to each container, so `check-session.php` might run on Container A (writing the token) while `upload-resume.php` hits Container B (where the session doesn't exist). Fixed by implementing a **database-backed session handler** (`session-db.php`) that stores all session data in a shared MySQL `sessions` table, so every container reads the same session.
-  - **Root cause 3 — HTTP header case normalization:** Even after fixing sessions, the CSRF check still failed because `getallheaders()` is case-sensitive and Railway's Apache was normalizing `X-CSRF-Token` to lowercase. Fixed by wrapping with `array_change_key_case(getallheaders(), CASE_LOWER)` and reading `x-csrf-token` instead.
-
-
 ## What I Learned Building This
 
 ### 🐳 DevOps & Deployment
