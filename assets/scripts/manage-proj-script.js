@@ -120,9 +120,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     <div class="slider-viewport">
                         <div class="slider-track">
-                            ${project.images.map(img => 
-                                `<img src="../${img}" onclick="event.stopPropagation(); openImageModal(this.src)">`
-                            ).join("")}
+                            ${project.images.map(img =>
+                `<img src="../${img}" onclick="event.stopPropagation(); openImageModal(this.src)">`
+            ).join("")}
                         </div>
                     </div>
 
@@ -133,15 +133,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             return `
                 <div class="project-card"
-                data-link="${esc(project.project_link)}"
-                onclick="openProjectLink(this)">
+                data-link="${esc(project.project_link)}">
                     <h3>${esc(project.title)}</h3>
                     ${isAdmin ? `
                     <button class="delete-project-btn"
                         onclick="event.stopPropagation(); deleteProject(${project.id}, this.closest('.project-card'))">
                         🗑 Delete
                     </button>` : ''}
-                    <div class="project-description">${DOMPurify.sanitize(project.description)}</div>
+                    <div class="project-description">
+                    ${DOMPurify.sanitize(project.description, 
+                        { ALLOWED_TAGS: 
+                            ['p', 'br', 'strong', 'em', 'u', 'ol', 'ul', 'li', 'a'],
+                         ADD_ATTR: ['href', 'target', 'rel'] })}
+                    </div>
 
                     <div class="project-images">
                         ${imagesHTML}
@@ -161,11 +165,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Initialize sliders AFTER modal is in the DOM
         initSliders();
 
+        // Add click handler to each card
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // If click came from a link inside description, let it open naturally
+                if (e.target.closest('a')) return;
+                // Otherwise open the project link
+                openProjectLink(card);
+            });
+        });
 
         // Make description links clickable without triggering card click
         document.querySelectorAll('.project-description a').forEach(link => {
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
             link.addEventListener('click', (e) => {
-                e.stopPropagation();  // stops the card's openProjectLink from firing
+                e.stopPropagation(); // Stops the cards openProjectLink from firing
             });
         });
 
