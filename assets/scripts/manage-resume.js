@@ -51,12 +51,12 @@ if (resumeContainer) {
             <h3 class="resume-viewer-title">Christian Dior Feraer's Latest Resume</h3>
             <div class="resume-viewer-frame-wrapper">
                 <iframe class="resume-viewer-frame"
-                    src="../assets/uploads/resumes/${resume.file_path}">
+                    src="../${resume.file_path}">
                 </iframe>
             </div>
             <div class="resume-viewer-actions">
                 <a class="resume-open-btn"
-                    href="../assets/uploads/resumes/${resume.file_path}"
+                    href="../${resume.file_path}"
                     target="_blank">
                     Open Fullscreen
                 </a>
