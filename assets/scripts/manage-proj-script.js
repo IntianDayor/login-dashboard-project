@@ -161,6 +161,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Initialize sliders AFTER modal is in the DOM
         initSliders();
 
+
+        // Make description links clickable without triggering card click
+        document.querySelectorAll('.project-description a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.stopPropagation();  // stops the card's openProjectLink from firing
+            });
+        });
+
     } catch (err) {
         console.error(err);
         container.innerHTML = "<p>Error loading projects.</p>";

@@ -49,12 +49,12 @@ function confirmAction(message) {
 
         document.getElementById('confirm-ok-btn').onclick = () => {
             overlay.classList.remove('active');
-            resolve(true);
+            setTimeout(() => resolve(true), 200); // Wait for animation
         };
 
         document.getElementById('confirm-cancel-btn').onclick = () => {
             overlay.classList.remove('active');
-            resolve(false);
+            setTimeout(() => resolve(false), 200); // Wait for animation
         };
 
     });

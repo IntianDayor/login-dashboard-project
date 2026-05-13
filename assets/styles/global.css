@@ -303,10 +303,6 @@ body.admin > .content > h2 {
     opacity: 1;
 }
 
-#confirm-overlay.active #confirm-box {
-    transform: scale(1);
-}
-
 #confirm-box {
     background: #fff;
     border-radius: 10px;
@@ -317,6 +313,10 @@ body.admin > .content > h2 {
     text-align: center;
     transform: scale(0.85);
     transition: transform 0.2s ease;
+}
+
+#confirm-overlay.active #confirm-box {
+    transform: scale(1);
 }
 
 #confirm-box p {
