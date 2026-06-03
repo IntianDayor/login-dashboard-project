@@ -2,6 +2,7 @@
 include "auth-check.php";
 requireAdmin();
 verifyCsrf();
+include "r2.php";
 
 header("Content-Type: application/json");
 
@@ -16,30 +17,21 @@ if (!in_array($mime, ['application/pdf'])) {
     exit;
 }
 
-// Reject files over 5MB
-$maxSize = 5 * 1024 * 1024; // 5MB in bytes
+$maxSize = 5 * 1024 * 1024;
 if ($_FILES['resume']['size'] > $maxSize) {
     echo json_encode(["success" => false, "message" => "File too large. Maximum size is 5MB."]);
     exit;
 }
 
 $filename = $_FILES['resume']['name'];
-$tmpname = $_FILES['resume']['tmp_name'];
+$tmpname  = $_FILES['resume']['tmp_name'];
 
-// Unique File Name to avoid overwriting and replaces any character that isn't a letter, number, dot, dash, or underscore with a "_".
 $safeName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
-$newName = time() . "_" . $safeName;
+$newName  = time() . "_" . $safeName;
 
-$uploadDir = __DIR__ . "/../assets/uploads/resumes/";
+$r2Key    = "resumes/" . $newName;
+$filePath = uploadToR2($tmpname, $r2Key, 'application/pdf');
 
-// Check if move succeeded before touching the database
-if (!move_uploaded_file($tmpname, $uploadDir . $newName)) {
-    echo json_encode(["success" => false, "message" => "Failed to save file. Check folder permissions."]);
-    exit;
-}
-
-// Only runs if file was saved successfully
-$filePath = "assets/uploads/resumes/" . $newName;
 $stmt = $conn->prepare("INSERT INTO resumes (file_name, file_path) VALUES (?, ?)");
 $stmt->bind_param("ss", $safeName, $filePath);
 $stmt->execute();

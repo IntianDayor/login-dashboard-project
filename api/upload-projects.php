@@ -2,13 +2,14 @@
 include "auth-check.php";
 requireAdmin();
 verifyCsrf();
+include "r2.php";
 
 header("Content-Type: application/json");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $title = trim($_POST['title'] ?? '');
-    $description = trim($_POST['description'] ?? '');
+    $title        = trim($_POST['title'] ?? '');
+    $description  = trim($_POST['description'] ?? '');
     $project_link = trim($_POST['link'] ?? '') ?: null;
 
     if (empty($title)) {
@@ -20,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Insert Projects First
     $stmt = $conn->prepare("
         INSERT INTO projects (title, description, project_link)
         VALUES (?, ?, ?)
@@ -29,18 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
 
-        // Get the inserted project ID
         $project_id = $stmt->insert_id;
 
-        // Handle MULTIPLE preview images
         if (!empty($_FILES['images']['name'][0])) {
 
-            $uploadDir = __DIR__ . "/../assets/uploads/images/projects/";
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-
-            // Insert into previews table
             $imgStmt = $conn->prepare("
                 INSERT INTO project_previews (project_id, image_path)
                 VALUES (?, ?)
@@ -48,14 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($_FILES['images']['tmp_name'] as $key => $tmpName) {
 
-                // Skip files over 5MB
                 if ($_FILES['images']['size'][$key] > 5 * 1024 * 1024) {
                     continue;
                 }
 
-                // Validate MIME type — only allow real images
                 $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-                $fileMime = mime_content_type($_FILES['images']['tmp_name'][$key]);
+                $fileMime     = mime_content_type($_FILES['images']['tmp_name'][$key]);
                 if (!in_array($fileMime, $allowedMimes)) {
                     continue;
                 }
@@ -68,18 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ];
                 $safeExt   = $mimeToExt[$fileMime];
                 $imageName = uniqid() . '.' . $safeExt;
-                
-                $imagePath = "assets/uploads/images/projects/" . $imageName;
 
-                // Skip DB insert for this image if move failed
-                if (!move_uploaded_file($tmpName, $uploadDir . $imageName)) {
-                    continue;
-                }
+                $r2Key     = "images/projects/" . $imageName;
+                $imagePath = uploadToR2($tmpName, $r2Key, $fileMime);
 
                 $imgStmt->bind_param("is", $project_id, $imagePath);
                 $imgStmt->execute();
             }
-            
+
             $imgStmt->close();
         }
 
@@ -89,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
     } else {
-        error_log("Project insert failed: " . $stmt->error); // logs to server, invisible to users
+        error_log("Project insert failed: " . $stmt->error);
         echo json_encode([
             "success" => false,
             "message" => "Failed to upload project. Please try again."

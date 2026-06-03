@@ -2,6 +2,7 @@
 include "auth-check.php";
 requireAdmin();
 verifyCsrf();
+include "r2.php";
 
 header('Content-Type: application/json');
 
@@ -11,13 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $description = trim($_POST['description'] ?? '');
-$imagePath = null;
+$imagePath   = null;
 
-// Handle image upload
 if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
 
     $allowed = ['image/jpeg', 'image/png', 'image/webp'];
-    $mime = mime_content_type($_FILES['profile_picture']['tmp_name']);
+    $mime    = mime_content_type($_FILES['profile_picture']['tmp_name']);
 
     if ($_FILES['profile_picture']['size'] > 2 * 1024 * 1024) {
         echo json_encode(["success" => false, "message" => "Image too large. Maximum size is 2MB."]);
@@ -32,21 +32,11 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
     $mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
     $extension = $mimeToExt[$mime];
     $newName   = uniqid('profile_', true) . '.' . $extension;
-    $uploadDir = __DIR__ . "/../assets/uploads/images/profile/";
 
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
-
-    if (!move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadDir . $newName)) {
-        echo json_encode(["success" => false, "message" => "Failed to save image"]);
-        exit;
-    }
-
-    $imagePath = "assets/uploads/images/profile/" . $newName;
+    $r2Key     = "images/profile/" . $newName;
+    $imagePath = uploadToR2($_FILES['profile_picture']['tmp_name'], $r2Key, $mime);
 }
 
-// Save to DB
 if ($imagePath !== null) {
     $stmt = $conn->prepare("
         INSERT INTO profile (id, description, profile_picture)
