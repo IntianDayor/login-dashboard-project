@@ -4,12 +4,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
     apache2 \
-    php8.1 \
-    php8.1-mysql \
-    php8.1-zip \
-    php8.1-xml \
-    php8.1-mbstring \
-    libapache2-mod-php8.1 \
+    php8.3 \
+    php8.3-mysql \
+    php8.3-zip \
+    php8.3-xml \
+    php8.3-mbstring \
+    libapache2-mod-php8.3 \
     git \
     zip \
     unzip \
@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN a2enmod rewrite php8.1
+RUN a2enmod rewrite php8.3
 
 WORKDIR /var/www/html
 
@@ -36,7 +36,7 @@ RUN echo '<Directory /var/www/html>\n\
 
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-COPY php.ini /etc/php/8.1/apache2/conf.d/custom.ini
+COPY php.ini /etc/php/8.3/apache2/conf.d/custom.ini
 
 RUN echo 'RedirectMatch ^/$ /pages/login.html' >> /etc/apache2/apache2.conf
 
