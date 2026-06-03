@@ -59,7 +59,7 @@ if (profilePictureDiv || profileDescription) {
         .then(data => {
             if (!data) return;
             if (profilePictureDiv && data.profile_picture) {
-                profilePictureDiv.innerHTML = `<img src="../${data.profile_picture}" alt="Profile Picture">`;
+                profilePictureDiv.innerHTML = `<img src="${data.profile_picture.startsWith('http') ? data.profile_picture : '../' + data.profile_picture}" alt="Profile Picture">`;
             }
             if (profileDescription && data.description) {
                 profileDescription.innerHTML = DOMPurify.sanitize(data.description);
