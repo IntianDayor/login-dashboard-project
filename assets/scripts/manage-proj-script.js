@@ -96,7 +96,7 @@ async function deleteProject(id, cardElement) {
 
 document.addEventListener("DOMContentLoaded", async () => {
     const container = document.querySelector(".project-cards");
-
+    if (!container) return;
     try {
         const res = await fetch("../api/get-projects.php");
         const data = await res.json();
