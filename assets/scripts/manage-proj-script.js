@@ -120,8 +120,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     <div class="slider-viewport">
                         <div class="slider-track">
-                            ${project.images.map(img =>
-                `<img src="../${img}" onclick="event.stopPropagation(); openImageModal(this.src)">`
+                           ${project.images.map(img =>
+                `<img src="${img.startsWith('http') ? img : '../' + img}" onclick="event.stopPropagation(); openImageModal(this.src)">`
             ).join("")}
                         </div>
                     </div>
