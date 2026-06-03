@@ -3,6 +3,9 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    && add-apt-repository ppa:ondrej/php \
+    && apt-get update && apt-get install -y \
     apache2 \
     php8.3 \
     php8.3-mysql \
