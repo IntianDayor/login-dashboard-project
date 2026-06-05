@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                showToast("Account created!", false)
+                showToast("Account created!", 'success')
                 window.location.href = "login.html";
             } catch (err) {
                 showToast("Network error. Please try again")
