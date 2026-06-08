@@ -22,7 +22,7 @@ if (uploadForm) {
             const result = await response.json();
 
             if (result.success) {
-                showToast(result.message);
+                showToast(result.message, 'success');
                 uploadForm.reset();
             } else {
                 showToast("Error: " + result.message);

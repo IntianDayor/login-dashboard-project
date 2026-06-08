@@ -57,7 +57,7 @@ addProjectbtn?.addEventListener('click', async (e) => {
         });
         const result = await response.json();
         if (result.success) {
-            showToast('Project uploaded successfully!');
+            showToast('Project uploaded successfully!', 'success');
         } else {
             showToast('Failed to upload project: ' + result.message);
         }
@@ -82,7 +82,7 @@ async function deleteProject(id, cardElement) {
         const result = await response.json();
         if (result.success) {
             cardElement.remove();
-            showToast('Project deleted.');
+            showToast('Project deleted.', 'success');
         } else {
             showToast('Error: ' + result.message);
         }

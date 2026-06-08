@@ -43,3 +43,13 @@ CREATE TABLE IF NOT EXISTS sessions (
     data TEXT NOT NULL,
     expires DATETIME NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    attempts INT NOT NULL DEFAULT 0,
+    locked_until DATETIME NULL,
+    last_attempt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_login_attempt (username, ip_address)
+);

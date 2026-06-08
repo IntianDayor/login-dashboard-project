@@ -3,13 +3,14 @@ include "auth-check.php";
 requireAdmin();
 verifyCsrf();
 include "r2.php";
+include "sanitize.php";
 
 header("Content-Type: application/json");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $title        = trim($_POST['title'] ?? '');
-    $description  = trim($_POST['description'] ?? '');
+    $description  = sanitizeRichText(trim($_POST['description'] ?? ''));
     $project_link = trim($_POST['link'] ?? '') ?: null;
 
     if (empty($title)) {

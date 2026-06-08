@@ -1,6 +1,7 @@
 <?php
 
-require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/auth-check.php';
+verifyCsrf();
 
 header("Content-Type: application/json");
 

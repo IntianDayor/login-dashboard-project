@@ -39,7 +39,7 @@ if (editForm) {
             const result = await response.json();
 
             if (result.success) {
-                showToast(result.message);
+                showToast(result.message, 'success');
             } else {
                 showToast("Error: " + result.message);
             }

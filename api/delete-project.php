@@ -2,6 +2,7 @@
 include "auth-check.php";
 requireAdmin();
 verifyCsrf();
+include "r2.php";
 
 header("Content-Type: application/json");
 
@@ -18,14 +19,26 @@ if (!$id) {
     exit;
 }
 
-// Get image paths before deleting so we can remove the files from disk
+// Get image paths before deleting so we can remove stored objects.
 $imgStmt = $conn->prepare("SELECT image_path FROM project_previews WHERE project_id = ?");
 $imgStmt->bind_param("i", $id);
 $imgStmt->execute();
 $imgResult = $imgStmt->get_result();
 while ($row = $imgResult->fetch_assoc()) {
-    $filePath = __DIR__ . "/../" . $row['image_path'];
-    if (file_exists($filePath)) unlink($filePath);
+    $imagePath = $row['image_path'];
+    $r2Key = getR2KeyFromPublicUrl($imagePath);
+
+    if ($r2Key !== null) {
+        deleteFromR2($r2Key);
+        continue;
+    }
+
+    $localPath = realpath(__DIR__ . "/../" . ltrim($imagePath, "/\\"));
+    $uploadsRoot = realpath(__DIR__ . "/../assets/uploads");
+
+    if ($localPath && $uploadsRoot && strpos($localPath, $uploadsRoot) === 0 && is_file($localPath)) {
+        unlink($localPath);
+    }
 }
 $imgStmt->close();
 

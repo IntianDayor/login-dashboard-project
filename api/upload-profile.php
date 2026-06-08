@@ -3,6 +3,7 @@ include "auth-check.php";
 requireAdmin();
 verifyCsrf();
 include "r2.php";
+include "sanitize.php";
 
 header('Content-Type: application/json');
 
@@ -11,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$description = trim($_POST['description'] ?? '');
+$description = sanitizeRichText(trim($_POST['description'] ?? ''));
 $imagePath   = null;
 
 if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
