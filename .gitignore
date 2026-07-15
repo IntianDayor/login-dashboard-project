@@ -121,6 +121,7 @@ build/
 *.db
 *.sqlite
 *.sqlite3
+backup.sql
 
 # PHP specific
 vendor/
