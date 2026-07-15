@@ -69,7 +69,7 @@ The primary goal of this project is to present myself as a **professional** in a
 * **Encrypted Database Connections** — Production database connections use SSL/TLS via a CA-verified connection.
 * **Environment Variable Security** — Sensitive credentials are stored outside the source code, injected via the hosting platform's environment variable manager and GitHub Actions encrypted secrets.
 
----
+--- 
 
 ## Technology Stack
 
