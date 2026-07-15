@@ -1,0 +1,52 @@
+name: Database Backup to R2
+
+on:
+  schedule:
+    # Runs every Sunday at 3:00 AM UTC — adjust the cron expression if you want a different schedule
+    - cron: '0 3 * * 0'
+  # Lets you trigger a backup manually from the Actions tab, anytime
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo (to access ca.pem)
+        uses: actions/checkout@v4
+
+      - name: Install MySQL client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
+      - name: Dump database from Aiven
+        env:
+          DB_HOST: ${{ secrets.AIVEN_HOST }}
+          DB_PORT: ${{ secrets.AIVEN_PORT }}
+          DB_USER: ${{ secrets.AIVEN_USER }}
+          DB_PASS: ${{ secrets.AIVEN_PASSWORD }}
+        run: |
+          mysqldump \
+            --host="$DB_HOST" \
+            --port="$DB_PORT" \
+            --user="$DB_USER" \
+            --password="$DB_PASS" \
+            --ssl-ca=ca.pem \
+            --single-transaction \
+            --set-gtid-purged=OFF \
+            defaultdb --result-file=backup.sql
+
+      - name: Confirm AWS CLI is available
+        run: aws --version
+
+      - name: Upload backup to R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+        run: |
+          DATE_STAMP=$(date +%Y-%m-%d)
+          # Keeps a dated copy for history...
+          aws s3 cp backup.sql "s3://${{ secrets.R2_BUCKET }}/backups/backup-$DATE_STAMP.sql" \
+            --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+          # ...and always overwrites a "latest" copy for quick, predictable access
+          aws s3 cp backup.sql "s3://${{ secrets.R2_BUCKET }}/backups/latest.sql" \
+            --endpoint-url "https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
