@@ -9,6 +9,9 @@ if (uploadForm) {
 
         const confirmed = await confirmAction('This will replace your current resume. Continue?');
         if (!confirmed) return;
+
+        const submitButton = uploadForm.querySelector('button[type="submit"]');
+        setButtonLoading(submitButton, true, 'Uploading...');
         
         const formData = new FormData(uploadForm);
 
@@ -29,6 +32,8 @@ if (uploadForm) {
             }
         } catch (error) {
             showToast("Upload failed: " + error.message);
+        } finally {
+            setButtonLoading(submitButton, false);
         }
     });
 }
@@ -37,9 +42,11 @@ if (uploadForm) {
 const resumeContainer = document.querySelector(".resume-content");
 
 if (resumeContainer) {
+    showContentLoading(resumeContainer, 'Loading resume...');
     fetch("../api/get-resumes.php")
     .then(res => res.json())
     .then(data => {
+        clearContentLoading(resumeContainer);
         if (data.length === 0) {
             resumeContainer.innerHTML = "<p>No resume uploaded yet.</p>";
             return;
@@ -64,6 +71,7 @@ if (resumeContainer) {
         `;
     })
     .catch(error => {
+        clearContentLoading(resumeContainer);
         resumeContainer.innerHTML = "<p>Failed to load resume. Please try again.</p>";
         console.error("Error loading resume:", error);
     });

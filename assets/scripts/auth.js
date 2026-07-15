@@ -23,6 +23,35 @@ function showToast(message, type = 'error', duration = 3000) {
     }, duration);
 }
 
+// =============== LOADING STATUS ================ //
+function setFormLoading(form, isLoading, loadingText) {
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (!submitButton) return;
+
+    if (isLoading) {
+        submitButton.dataset.defaultText = submitButton.textContent;
+        submitButton.disabled = true;
+        submitButton.setAttribute('aria-busy', 'true');
+        submitButton.innerHTML = `<span class="button-spinner" aria-hidden="true"></span>${loadingText}`;
+        form.querySelectorAll('input, button').forEach((element) => {
+            if (element !== submitButton && !element.disabled) {
+                element.disabled = true;
+                element.dataset.loadingDisabled = 'true';
+            }
+        });
+        form.querySelectorAll('p').forEach((element) => element.classList.add('is-disabled'));
+    } else {
+        submitButton.disabled = false;
+        submitButton.removeAttribute('aria-busy');
+        submitButton.textContent = submitButton.dataset.defaultText;
+        form.querySelectorAll('[data-loading-disabled]').forEach((element) => {
+            element.disabled = false;
+            delete element.dataset.loadingDisabled;
+        });
+        form.querySelectorAll('.is-disabled').forEach((element) => element.classList.remove('is-disabled'));
+    }
+}
+
 // =============== AUTH SCRIPT ============== //
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -42,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 showToast("Please enter both username and password")
                 return;
             }
+
+            setFormLoading(form, true, 'Logging in...');
             try {
                 const response = await fetch("../api/login.php", {
                     method: "POST",
@@ -66,6 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 showToast("Network error. Please try again.")
                 console.error(err);
+            } finally {
+                setFormLoading(form, false);
             }
         });
 
@@ -101,6 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 showToast("Passwords do not match")
                 return;
             }
+
+            setFormLoading(form, true, 'Creating account...');
             try {
                 const response = await fetch("../api/signup.php", {
                     method: "POST",
@@ -125,6 +160,8 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 showToast("Network error. Please try again")
                 console.error(err);
+            } finally {
+                setFormLoading(form, false);
             }
 
         });

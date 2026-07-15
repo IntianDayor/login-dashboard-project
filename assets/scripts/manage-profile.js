@@ -4,22 +4,31 @@
 const editForm = document.querySelector(".edit-profile-form");
 
 if (editForm) {
+    if (window.profileQuill) {
+        window.profileQuill.root.innerHTML = '<p class="content-loading"><span class="content-spinner" aria-hidden="true"></span>Loading profile...</p>';
+    }
 
     // Edit Description
     fetch("../api/get-profile.php")
         .then(res => res.json())
         .then(data => {
-            if (data && data.description && window.profileQuill) {
-                window.profileQuill.root.innerHTML = data.description;
+            if (window.profileQuill) {
+                window.profileQuill.root.innerHTML = data?.description || '';
             }
         })
-        .catch(err => console.error("Failed to load profile:", err));
+        .catch(err => {
+            if (window.profileQuill) window.profileQuill.root.textContent = 'Failed to load profile.';
+            console.error("Failed to load profile:", err);
+        });
 
     editForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const confirmed = await confirmAction('Are you sure you want to save these changes?');
         if (!confirmed) return;
+
+        const submitButton = editForm.querySelector('button[type="submit"]');
+        setButtonLoading(submitButton, true, 'Saving...');
 
         const formData = new FormData(editForm);
 
@@ -45,6 +54,8 @@ if (editForm) {
             }
         } catch (error) {
             showToast("Something went wrong: " + error.message);
+        } finally {
+            setButtonLoading(submitButton, false);
         }
     });
 }
@@ -54,16 +65,29 @@ const profilePictureDiv = document.getElementById("profile-picture");
 const profileDescription = document.getElementById("profile-description");
 
 if (profilePictureDiv || profileDescription) {
+    if (profilePictureDiv) showContentLoading(profilePictureDiv, 'Loading profile...');
+    if (profileDescription) showContentLoading(profileDescription, 'Loading profile...');
     fetch("../api/get-profile.php")
         .then(res => res.json())
         .then(data => {
-            if (!data) return;
-            if (profilePictureDiv && data.profile_picture) {
+            if (profilePictureDiv && data?.profile_picture) {
                 profilePictureDiv.innerHTML = `<img src="${data.profile_picture.startsWith('http') ? data.profile_picture : '../' + data.profile_picture}" alt="Profile Picture">`;
+            } else if (profilePictureDiv) {
+                profilePictureDiv.innerHTML = '';
             }
-            if (profileDescription && data.description) {
+            if (profileDescription && data?.description) {
                 profileDescription.innerHTML = DOMPurify.sanitize(data.description);
+            } else if (profileDescription) {
+                profileDescription.innerHTML = '';
             }
+            clearContentLoading(profilePictureDiv);
+            clearContentLoading(profileDescription);
         })
-        .catch(err => console.error("Failed to load profile:", err));
+        .catch(err => {
+            clearContentLoading(profilePictureDiv);
+            clearContentLoading(profileDescription);
+            if (profilePictureDiv) profilePictureDiv.innerHTML = '<p>Failed to load profile.</p>';
+            if (profileDescription) profileDescription.innerHTML = '<p>Failed to load profile.</p>';
+            console.error("Failed to load profile:", err);
+        });
 }

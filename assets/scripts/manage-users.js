@@ -3,6 +3,7 @@
 const userTableBody = document.getElementById('users-table-body');
 
 async function fetchUsers() {
+    userTableBody.innerHTML = '<tr><td colspan="6"><div class="content-loading"><span class="content-spinner" aria-hidden="true"></span>Loading users...</div></td></tr>';
     try {
         const response = await fetch("../api/users-table.php", {
             headers: { "X-CSRF-Token": getCsrfToken() }
@@ -59,6 +60,7 @@ async function setRole(userId, newRole, selectEl, prevRole) {
     }
 
     try {
+        selectEl.disabled = true;
         const response = await fetch('../api/set-role.php', {
             method: 'POST',
             headers: {
@@ -78,6 +80,8 @@ async function setRole(userId, newRole, selectEl, prevRole) {
     } catch (err) {
         console.error('Set role error:', err);
         selectEl.value = prevRole;
+    } finally {
+        selectEl.disabled = false;
     }
 }
 

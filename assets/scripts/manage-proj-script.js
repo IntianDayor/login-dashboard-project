@@ -32,6 +32,8 @@ addProjectbtn?.addEventListener('click', async (e) => {
     const confirmed = await confirmAction('Are you sure you want to upload this project?');
     if (!confirmed) return;
 
+    setButtonLoading(addProjectbtn, true, 'Uploading...');
+
     const formData = new FormData();
     formData.append('title', document.getElementById('project-title').value);
 
@@ -64,12 +66,16 @@ addProjectbtn?.addEventListener('click', async (e) => {
     } catch (error) {
         console.error('Error:', error);
         showToast('An error occurred while uploading the project.');
+    } finally {
+        setButtonLoading(addProjectbtn, false);
     }
 });
 
 async function deleteProject(id, cardElement) {
     const confirmed = await confirmAction('Delete this project? This cannot be undone.');
     if (!confirmed) return;
+    const deleteButton = cardElement.querySelector('.delete-project-btn');
+    setButtonLoading(deleteButton, true, 'Deleting...');
     try {
         const response = await fetch('../api/delete-project.php', {
             method: 'POST',
@@ -89,6 +95,8 @@ async function deleteProject(id, cardElement) {
     } catch (err) {
         console.error(err);
         showToast('An error occurred while deleting.');
+    } finally {
+        if (cardElement.isConnected) setButtonLoading(deleteButton, false);
     }
 }
 
@@ -97,9 +105,11 @@ async function deleteProject(id, cardElement) {
 document.addEventListener("DOMContentLoaded", async () => {
     const container = document.querySelector(".project-cards");
     if (!container) return;
+    showContentLoading(container, 'Loading projects...');
     try {
         const res = await fetch("../api/get-projects.php");
         const data = await res.json();
+        clearContentLoading(container);
 
         if (!data.length) {
             container.innerHTML = "<p>No projects found.</p>";
@@ -186,6 +196,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } catch (err) {
         console.error(err);
+        clearContentLoading(container);
         container.innerHTML = "<p>Error loading projects.</p>";
     }
 });

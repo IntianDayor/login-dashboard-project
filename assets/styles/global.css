@@ -205,6 +205,64 @@ body.admin > .content > h2 {
 .log-in button:hover { background-color: #0056b3; }
 .sign-up button:hover { color: #0056b3; }
 
+.log-in button:disabled,
+.sign-up button:disabled {
+    cursor: wait;
+    opacity: 0.75;
+}
+
+.button-spinner {
+    display: inline-block;
+    width: 0.9em;
+    height: 0.9em;
+    margin-right: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: button-spin 0.7s linear infinite;
+    vertical-align: -0.1em;
+}
+
+.is-disabled {
+    pointer-events: none;
+    opacity: 0.55;
+}
+
+.content-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 100px;
+    color: #555;
+}
+
+.content-spinner {
+    width: 22px;
+    height: 22px;
+    border: 3px solid rgba(0, 123, 255, 0.2);
+    border-top-color: #007BFF;
+    border-radius: 50%;
+    animation: button-spin 0.7s linear infinite;
+}
+
+#page-loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.88);
+    color: #333;
+    font-weight: 600;
+}
+
+@keyframes button-spin {
+    to { transform: rotate(360deg); }
+}
+
 /* Small links */
 .log-in p,
 .sign-up p {

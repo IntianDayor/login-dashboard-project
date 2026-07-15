@@ -23,6 +23,42 @@ function showToast(message, type = 'error', duration = 3000) {
     }, duration);
 }
 
+function setButtonLoading(button, isLoading, loadingText = 'Loading...') {
+    if (!button) return;
+
+    if (isLoading) {
+        button.dataset.defaultText = button.textContent;
+        button.disabled = true;
+        button.setAttribute('aria-busy', 'true');
+        button.innerHTML = `<span class="button-spinner" aria-hidden="true"></span>${loadingText}`;
+    } else {
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+        button.textContent = button.dataset.defaultText;
+    }
+}
+
+function showContentLoading(container, message = 'Loading...') {
+    if (!container) return;
+    container.setAttribute('aria-busy', 'true');
+    container.innerHTML = `<div class="content-loading"><span class="content-spinner" aria-hidden="true"></span>${message}</div>`;
+}
+
+function clearContentLoading(container) {
+    container?.removeAttribute('aria-busy');
+}
+
+function setPageLoading(isLoading) {
+    let overlay = document.getElementById('page-loading-overlay');
+    if (isLoading && !overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'page-loading-overlay';
+        overlay.innerHTML = '<span class="content-spinner" aria-hidden="true"></span><span>Loading page...</span>';
+        document.body.appendChild(overlay);
+    }
+    if (!isLoading) overlay?.remove();
+}
+
 // ============= CONDIRMATION MODAL =============//
 
 function confirmAction(message) {
@@ -126,10 +162,13 @@ if (!username) {
 
 // Server-side session verification for admin pages
 (async () => {
-    if (onAdminPage) {
-        await verifySession(true);
-    } else if (onUserPage) {
-        await verifySession(false);
+    if (onAdminPage || onUserPage) {
+        setPageLoading(true);
+        try {
+            await verifySession(onAdminPage);
+        } finally {
+            setPageLoading(false);
+        }
     }
 })();
 
@@ -147,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handles Sidebars Both Admin and User
     const sidebarPath = onAdminPage ? '../admin/admin-sidebar.html' : '../pages/user-sidebar.html';
+    showContentLoading(document.getElementById('sidebar-container'), 'Loading navigation...');
 
     fetch(sidebarPath)
         .then(res => res.text())
@@ -172,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             logoutBtn?.addEventListener('click', () => {
                 const path = onAdminPage ? '../pages/login.html' : 'login.html';
+                setButtonLoading(logoutBtn, true, 'Logging out...');
                 logout(path);
             });
 
@@ -198,5 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.href = href;
                 });
             });
+        })
+        .catch(() => {
+            document.getElementById('sidebar-container')?.replaceChildren();
+            showToast('Navigation failed to load. Please refresh the page.');
         });
 });
