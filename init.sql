@@ -53,3 +53,9 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     last_attempt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_login_attempt (username, ip_address)
 );
+
+CREATE TABLE IF NOT EXISTS dashboard_content (
+    id INT PRIMARY KEY DEFAULT 1,
+    content TEXT NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

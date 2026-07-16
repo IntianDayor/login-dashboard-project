@@ -23,74 +23,49 @@
             <div class="dashboard-desc">
                 <h2>About this project</h2>
                 <hr>
-                <p> This project is a full-stack Login Dashboard and Content Management System (CMS) that I developed to
-                    strengthen my understanding of modern web application development, secure authentication systems,
-                    cloud storage integration, and deployment workflows. </p>
-                <p> The application is built around a secure authentication system where users must log in before
-                    accessing protected areas of the platform. Session-based authentication and access control
-                    mechanisms are implemented to ensure that user data and dashboard functionality remain secure from
-                    unauthorized access. </p>
-                <p> Once authenticated, users are directed to a centralized dashboard that serves as the main control
-                    panel of the system. The dashboard provides an organized interface for managing personal
-                    information, project portfolios, resumes, and other content through a CMS-like environment designed
-                    for both usability and scalability. </p>
-                <p> One of the core features of the system is project management. Users can create, edit, update, and
-                    display project entries through an interactive interface that communicates with backend services to
-                    process and retrieve data dynamically. This functionality demonstrates full CRUD (Create, Read,
-                    Update, Delete) operations and seamless frontend-backend integration. </p>
-                <p> The platform also includes profile management capabilities, allowing users to maintain and update
-                    personal information that is displayed throughout the application. These features help simulate
-                    real-world portfolio and account management systems commonly found in professional web platforms.
+                <div data-dashboard-about-content><p>This project is my full-stack personal portfolio and custom Content Management System (CMS). It
+                    provides a central place to present my profile, resume, and projects while giving authorized users a
+                    secure dashboard for managing that content.</p>
+                <p>The application uses session-based authentication, protected routes, and role-based access control
+                    to separate administrator and standard-user experiences. Administrative tools support profile,
+                    resume, project, and user-role management through API-driven requests and full CRUD workflows.</p>
+                <p>Rich-text profile and project content is created with Quill.js and sanitized with DOMPurify before
+                    it is stored or displayed. Mutating requests use CSRF tokens, passwords are hashed with PHP's
+                    password hashing tools, and environment variables keep deployment credentials out of the codebase.
                 </p>
-                <p> A major component of the project is its file management system. Users can upload resumes, profile
-                    images, and other assets, which are stored using Cloudflare R2 object storage. This implementation
-                    allowed me to gain practical experience working with cloud-based storage solutions, handling file
-                    uploads securely, generating accessible file URLs, and integrating third-party cloud services into a
-                    web application. </p>
-                <p> The backend architecture is designed around API-driven request handling, enabling efficient
-                    communication between the frontend and server-side logic. Environment variables are used to securely
-                    manage sensitive configuration settings, credentials, and deployment-specific information while
-                    maintaining clean and maintainable code. </p>
-                <p> On the frontend, I focused on creating a responsive and interactive user experience using modular
-                    JavaScript. Dynamic navigation, event-driven interactions, form validation, asynchronous requests,
-                    and real-time UI updates were implemented to provide a smooth and modern user experience. </p>
-                <p> For development, I utilized Laragon as my local development environment to streamline server
-                    management and testing. To ensure consistency across environments and better simulate
-                    production-ready workflows, the application was containerized using Docker. This allowed me to gain
-                    hands-on experience with containerized development, dependency management, and deployment
-                    preparation. </p>
-                <p> After development and testing were completed, the application was successfully deployed to a live
-                    environment. This process provided valuable experience in configuring production environments,
-                    managing cloud resources, handling deployment pipelines, and maintaining application stability
-                    outside of local development. </p>
+                <p>Project images, profile images, and resumes are stored in Cloudflare R2 through its S3-compatible
+                    API. The MySQL database is hosted independently on Aiven with an encrypted SSL/TLS connection,
+                    allowing application containers to be rebuilt or migrated without losing content or uploaded files.
+                </p>
+                <p>The current release also improves the interface during asynchronous work: login, signup, uploads,
+                    saves, deletions, navigation, and content retrieval now show loading feedback, disable in-progress
+                    controls, and provide clearer failure states. This makes dashboard interactions more responsive and
+                    prevents duplicate submissions.</p>
+                <p>The application is developed locally with Laragon and Docker, deployed as a Docker web service on
+                    Render, and backed up through GitHub Actions. A weekly workflow stores both dated MySQL snapshots
+                    and a latest backup in Cloudflare R2 to support reliable recovery across hosting platforms.</p>
                 <h3>Technologies and Concepts Practiced</h3>
                 <ul>
-                    <li>Secure authentication and session management</li>
-                    <li>Role-based access control and protected routes</li>
-                    <li>Full CRUD operations for content management</li>
-                    <li>Backend API development and request handling</li>
-                    <li>Cloudflare R2 object storage integration</li>
-                    <li>File upload processing and validation</li>
-                    <li>Frontend and backend integration</li>
-                    <li>Modular JavaScript architecture</li>
-                    <li>Responsive dashboard and CMS design</li>
-                    <li>Environment variable configuration and security</li>
-                    <li>MySQL database management</li>
-                    <li>Local development using Laragon</li>
-                    <li>Containerized development with Docker</li>
-                    <li>Full-stack application deployment and maintenance</li>
+                    <li>Session authentication, role-based access control, and CSRF protection</li>
+                    <li>Full CRUD content management with PHP APIs and MySQL</li>
+                    <li>Rich-text editing and XSS protection with Quill.js and DOMPurify</li>
+                    <li>Cloudflare R2 storage through the AWS SDK for PHP</li>
+                    <li>Encrypted Aiven MySQL connections and environment-based configuration</li>
+                    <li>Responsive, accessible loading states and asynchronous UI feedback</li>
+                    <li>Dockerized development and deployment on Render</li>
+                    <li>Automated GitHub Actions database backups to Cloudflare R2</li>
                 </ul>
                 <h3>What I Learned</h3>
-                <p> Through this project, I gained practical experience building a production-style web application from
-                    start to finish. I learned how authentication systems, content management features, cloud storage
-                    services, backend APIs, databases, and deployment workflows work together within a real-world
-                    application architecture. The project significantly improved my understanding of full-stack
-                    development while exposing me to tools and practices commonly used in professional software
-                    development environments. </p>
+                <p>Through this project, I have gained practical experience designing a production-style application
+                    across frontend, backend, cloud, security, and DevOps concerns. It continues to strengthen my
+                    understanding of secure content management, persistent cloud infrastructure, accessible user
+                    feedback, deployment workflows, and maintainable full-stack architecture.</p></div>
             </div>
         </div>
     </section>
     <script src="../assets/scripts/dashboard-script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
+    <script src="../assets/scripts/manage-dashboard-content.js"></script>
 </body>
 
 </html>

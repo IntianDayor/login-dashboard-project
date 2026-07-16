@@ -1,7 +1,7 @@
 <?php
 
 function sanitizeRichText(string $html): string {
-    $allowedTags = '<p><br><strong><em><u><ol><ul><li><a>';
+    $allowedTags = '<p><br><h3><strong><em><u><ol><ul><li><a>';
     $clean = strip_tags($html, $allowedTags);
 
     return preg_replace_callback(

@@ -208,6 +208,76 @@ th, td {
     margin-bottom: 20px;
 }
 
+/*----- Dashboard Content Manager -----*/
+.admin-panel-content {
+    width: min(1100px, 92vw);
+    margin: 0 auto 40px;
+}
+
+.dashboard-content-manager {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 24px;
+    padding: 24px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
+}
+
+.dashboard-content-manager h3,
+.dashboard-content-manager p {
+    margin-top: 0;
+}
+
+.dashboard-content-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.dashboard-content-heading h3 { margin-bottom: 0; }
+
+#dashboard-content-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#dashboard-content-editor {
+    min-height: 260px;
+    background: #fff;
+}
+
+.dashboard-content-manager button {
+    padding: 10px 14px;
+    color: #fff;
+    background: #007BFF;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dashboard-content-manager button:hover { background: #0056b3; }
+
+.dashboard-content-manager .dashboard-desc {
+    margin: 0;
+}
+
+.dashboard-content-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.dashboard-content-manager .secondary-button {
+    background: #6c757d;
+}
+
+.dashboard-content-manager .secondary-button:hover {
+    background: #565e64;
+}
+
 /*==========USER VIEW PAGE STYLES==========*/
 
 /*-----Dashboard Page Styles-----*/
@@ -657,6 +727,15 @@ th, td {
     .dashboard-desc {
         margin: 15px;
         padding: 15px;
+    }
+
+    .dashboard-content-manager {
+        padding: 16px;
+    }
+
+    .dashboard-content-heading {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     /* Resume: full width */
