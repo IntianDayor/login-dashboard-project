@@ -133,36 +133,15 @@ th, td {
     margin-bottom: 20px;
 }
 
-.user-view,
-.back-to-manage-projects {
-    position: fixed;
-    top: 80px;
-    left: 16px;
-    padding: 10px 20px;
-    background-color: #007BFF;
-    color: #fff;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    border: none;
-    z-index: 100;
-}
-
 .project-toolbar {
     position: fixed;
-    top: 122px;
+    top: 80px;
     left: 16px;
     z-index: 100;
 }
 
 .project-upload-panel.is-hidden {
     display: none;
-}
-
-.user-view:hover,
-.back-to-manage-projects:hover {
-    background-color: #0056b3;
 }
 
 .delete-project-btn {
@@ -1005,15 +984,7 @@ th, td {
         min-height: auto;
     }
 
-    .user-view,
-    .back-to-manage-projects {
-        position: static;
-        display: block;
-        width: 100%;
-        margin: 0 0 16px 0;
-        text-align: center;
-        box-sizing: border-box;
-    }
+
 
     .upload-projects form {
         width: 100%;
