@@ -132,6 +132,7 @@ sequenceDiagram
 | View dashboard, profile, projects, and resumes | Authenticated user or admin | `requireLogin()` |
 | Edit dashboard content | Admin | `requireAdmin()` + CSRF |
 | Upload profile, projects, and resumes | Admin | `requireAdmin()` + CSRF |
+| Update project details | Admin | `requireAdmin()` + CSRF |
 | Delete a project | Admin | `requireAdmin()` + CSRF |
 | List users / change roles | Admin | `requireAdmin()` + CSRF |
 | Log out | Authenticated session with valid token | CSRF token validation then session-cookie and server-session destruction |
@@ -179,6 +180,7 @@ Deleting a project removes its preview rows and attempts to delete each matching
 | `upload-profile.php` | Save profile text and optional image | Admin + CSRF | `profile`, R2 |
 | `get-projects.php` | Read projects with preview images | Logged in | `projects`, `project_previews` |
 | `upload-projects.php` | Create project and upload images | Admin + CSRF | `projects`, `project_previews`, R2 |
+| `update-project.php` | Update an existing project and replace preview images | Admin + CSRF | `projects`, `project_previews`, R2 |
 | `delete-project.php` | Delete project and associated images | Admin + CSRF | `projects`, `project_previews`, R2 |
 | `get-resumes.php` | Read uploaded resume metadata | Logged in | `resumes` |
 | `upload-resume.php` | Upload resume PDF | Admin + CSRF | `resumes`, R2 |
@@ -267,10 +269,10 @@ flowchart TB
     Action -->|"backups/backup-YYYY-MM-DD.sql\nbackups/latest.sql"| R2
 ```
 
-- **Local Docker:** `docker-compose.yml` starts the app and a MySQL 8.0 service, mounts the working tree, initializes the schema from `init.sql`, and persists database files in the `db_data` volume.
-- **Production:** the Dockerfile installs Apache, PHP 8.3, required PHP extensions, Composer dependencies, and enables PHP/URL rewriting. `Render` hosts this container; MySQL and R2 are independent managed services.
-- **Configuration:** `.env` is loaded by PHP locally; hosting/CI environments inject credentials as environment variables. Database SSL is activated when `DB_SSL_CA` is set.
-- **Recovery subsystem:** the GitHub Actions workflow takes a TLS-protected MySQL dump every Sunday and uploads both an immutable dated snapshot and an overwriteable `latest.sql` to R2. It can also run manually.
+- **Local Docker:** `docker-compose.yml` starts the app container and a MySQL 8.0 service with `DB_HOST=db`, `DB_USER=appuser`, `DB_PASS=apppassword`, and `DB_NAME=fprojectdb_mysql`. The app source is mounted into `/var/www/html`, `init.sql` seeds the schema at container startup, and MySQL data is persisted in the `db_data` volume.
+- **Production:** the Dockerfile builds an Apache + PHP 8.3 web service, installs required PHP extensions and Composer dependencies, enables URL rewriting, and serves the repository content as the application. Render hosts the built container, while MySQL and Cloudflare R2 remain independent managed services.
+- **Configuration:** PHP loads environment values via `phpdotenv` in local development, while production and CI inject credentials through environment variables. Database SSL is enabled when `DB_SSL_CA` is provided for CA-verified connections.
+- **Recovery subsystem:** `.github/workflows/db-backup.yml` runs `mysqldump` against Aiven using the committed `ca.pem` certificate, then uploads both a dated SQL snapshot and `latest.sql` to Cloudflare R2 via the AWS CLI. The workflow runs weekly and can also be triggered manually.
 
 ## 8. Security boundaries and controls
 
@@ -296,6 +298,7 @@ Key controls include password hashing, session-ID regeneration after successful 
 | MySQL availability | Authentication, sessions, all CMS data, and dashboard page protection depend on it. |
 | R2 availability | New uploads and project deletion depend on the R2 API; already-stored assets are delivered from the configured public R2 URL. |
 | Correct environment variables | Required for DB connection, R2 client credentials, R2 bucket/public URL, and optional SSL CA path. |
+| AWS CLI in CI | GitHub Actions uses the AWS CLI to upload backup artifacts to Cloudflare R2. |
 | CDN-hosted Quill and DOMPurify | Editing pages and safe rich-text rendering load these browser libraries from cdnjs. |
 | GitHub Actions secrets and `ca.pem` | Required for scheduled production database backups. |
 
