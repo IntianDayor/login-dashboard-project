@@ -1,9 +1,12 @@
 // ====== MANAGE PROJECT SCRIPTS ====== //
 
 function esc(str) {
-    const d = document.createElement("div");
-    d.textContent = str ?? "";
-    return d.innerHTML;
+    return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
 }
 
 // Script for managing project view and user preview navigation //
@@ -26,6 +29,18 @@ if (backToManageProjectsButton) {
 // Upload/Delete Projects Script //
 
 const addProjectbtn = document.getElementById('add-project');
+const editProjectsToggle = document.getElementById('edit-projects-toggle');
+const projectManagementList = document.getElementById('project-management-list');
+const projectUploadPanel = document.getElementById('project-upload-panel');
+
+editProjectsToggle?.addEventListener('click', () => {
+    if (!projectManagementList) return;
+    const isVisible = projectManagementList.style.display !== 'none';
+    projectManagementList.style.display = isVisible ? 'none' : 'grid';
+    projectUploadPanel?.classList.toggle('is-hidden', !isVisible);
+    editProjectsToggle.textContent = isVisible ? 'Edit Projects' : 'Hide Projects';
+});
+
 addProjectbtn?.addEventListener('click', async (e) => {
     e.preventDefault();
 
@@ -100,6 +115,137 @@ async function deleteProject(id, cardElement) {
     }
 }
 
+function createProjectEditForm(project) {
+    const descriptionValue = project.description || '';
+    return `
+        <form class="project-edit-form" data-project-id="${project.id}">
+            <div>
+                <label>Project Title</label>
+                <input type="text" name="title" value="${esc(project.title)}" required>
+            </div>
+            <div>
+                <label>Project Description</label>
+                <div class="project-edit-description-editor"></div>
+                <textarea name="description" hidden>${esc(descriptionValue)}</textarea>
+            </div>
+            <div>
+                <label>Project Link</label>
+                <input type="text" name="link" value="${esc(project.project_link || '')}" placeholder="https://example.com">
+            </div>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="replace_${project.id}" name="replace_existing" value="1">
+                <label for="replace_${project.id}">Replace existing preview images</label>
+            </div>
+            <div>
+                <label>Preview Images</label>
+                <input type="file" name="images[]" multiple accept="image/*">
+            </div>
+            <div class="edit-actions">
+                <button type="submit" class="save-project-btn">Save</button>
+                <button type="button" class="cancel-project-btn">Cancel</button>
+            </div>
+        </form>
+    `;
+}
+
+function initProjectEditEditors() {
+    document.querySelectorAll('.project-edit-description-editor').forEach((editorElement) => {
+        if (editorElement.dataset.initialized === 'true') return;
+
+        const formElement = editorElement.closest('form');
+        const descriptionField = formElement?.querySelector('textarea[name="description"]');
+
+        if (!formElement || !descriptionField) return;
+
+        const quill = new Quill(editorElement, {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['link'],
+                    ['clean']
+                ]
+            }
+        });
+
+        if (descriptionField.value) {
+            quill.root.innerHTML = descriptionField.value;
+        }
+
+        const syncDescription = () => {
+            descriptionField.value = DOMPurify.sanitize(quill.root.innerHTML);
+        };
+
+        quill.on('text-change', syncDescription);
+        syncDescription();
+        editorElement.dataset.initialized = 'true';
+    });
+}
+
+async function saveProject(projectId, formElement) {
+    const saveButton = formElement.querySelector('.save-project-btn');
+    const titleInput = formElement.querySelector('input[name="title"]');
+    const descriptionInput = formElement.querySelector('textarea[name="description"]');
+    const linkInput = formElement.querySelector('input[name="link"]');
+    const replaceExistingInput = formElement.querySelector('input[name="replace_existing"]');
+    const imageInput = formElement.querySelector('input[type="file"]');
+
+    if (!titleInput.value.trim()) {
+        showToast('Project title is required.');
+        return;
+    }
+
+    setButtonLoading(saveButton, true, 'Saving...');
+
+    const formData = new FormData();
+    formData.append('id', projectId);
+    formData.append('title', titleInput.value.trim());
+    formData.append('description', DOMPurify.sanitize(descriptionInput.value));
+    formData.append('link', linkInput.value.trim());
+    if (replaceExistingInput?.checked) {
+        formData.append('replace_existing', '1');
+    }
+
+    if (imageInput?.files?.length) {
+        Array.from(imageInput.files).forEach(file => formData.append('images[]', file));
+    }
+
+    try {
+        const response = await fetch('../api/update-project.php', {
+            method: 'POST',
+            headers: { 'X-CSRF-Token': getCsrfToken() },
+            body: formData
+        });
+        const result = await response.json();
+        if (result.success) {
+            showToast('Project updated successfully.', 'success');
+            window.location.reload();
+        } else {
+            showToast(result.message || 'Unable to update project.');
+        }
+    } catch (err) {
+        console.error(err);
+        showToast('An error occurred while updating the project.');
+    } finally {
+        setButtonLoading(saveButton, false);
+    }
+}
+
+function toggleProjectEditMode(card, showForm) {
+    const content = card.querySelector('.project-content');
+    const formWrapper = card.querySelector('.project-edit-wrapper');
+    if (!content || !formWrapper) return;
+
+    if (showForm) {
+        content.style.display = 'none';
+        formWrapper.style.display = 'block';
+    } else {
+        content.style.display = 'block';
+        formWrapper.style.display = 'none';
+    }
+}
+
 // View Projects Script //
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -144,25 +290,39 @@ document.addEventListener("DOMContentLoaded", async () => {
             return `
                 <div class="project-card"
                 data-link="${esc(project.project_link)}">
-                    <h3>${esc(project.title)}</h3>
-                    ${isAdmin ? `
-                    <button class="delete-project-btn"
-                        onclick="event.stopPropagation(); deleteProject(${project.id}, this.closest('.project-card'))">
-                        🗑 Delete
-                    </button>` : ''}
-                    <div class="project-description">
-                    ${DOMPurify.sanitize(project.description, 
-                        { ALLOWED_TAGS: 
-                            ['p', 'br', 'strong', 'em', 'u', 'ol', 'ul', 'li', 'a'],
-                         ADD_ATTR: ['href', 'target', 'rel'] })}
-                    </div>
+                    <div class="project-content">
+                        <h3>${esc(project.title)}</h3>
+                        ${isAdmin ? `
+                        <div class="project-actions">
+                            <button class="edit-project-btn"
+                                onclick="event.stopPropagation(); toggleProjectEditMode(this.closest('.project-card'), true)">
+                                ✏ Edit
+                            </button>
+                            <button class="delete-project-btn"
+                                onclick="event.stopPropagation(); deleteProject(${project.id}, this.closest('.project-card'))">
+                                🗑 Delete
+                            </button>
+                        </div>` : ''}
+                        <div class="project-description">
+                        ${DOMPurify.sanitize(project.description, 
+                            { ALLOWED_TAGS: 
+                                ['p', 'br', 'strong', 'em', 'u', 'ol', 'ul', 'li', 'a'],
+                             ADD_ATTR: ['href', 'target', 'rel'] })}
+                        </div>
 
-                    <div class="project-images">
-                        ${imagesHTML}
+                        <div class="project-images">
+                            ${imagesHTML}
+                        </div>
                     </div>
+                    ${isAdmin ? `
+                    <div class="project-edit-wrapper" style="display:none;">
+                        ${createProjectEditForm(project)}
+                    </div>` : ''}
                 </div>
             `;
         }).join("");
+
+        initProjectEditEditors();
 
         // Build and append image modal to the DOM
         const modal = document.createElement("div");
@@ -178,10 +338,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Add click handler to each card
         document.querySelectorAll('.project-card').forEach(card => {
             card.addEventListener('click', (e) => {
+                if (e.target.closest('a, .project-edit-form, .project-actions, .project-edit-wrapper')) return;
                 // If click came from a link inside description, let it open naturally
                 if (e.target.closest('a')) return;
                 // Otherwise open the project link
                 openProjectLink(card);
+            });
+        });
+
+        document.querySelectorAll('.project-edit-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const card = form.closest('.project-card');
+                const projectId = form.dataset.projectId;
+                await saveProject(projectId, form);
+                if (card) toggleProjectEditMode(card, false);
+            });
+        });
+
+        document.querySelectorAll('.cancel-project-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = button.closest('.project-card');
+                if (card) toggleProjectEditMode(card, false);
             });
         });
 

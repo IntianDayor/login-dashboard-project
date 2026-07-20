@@ -15,9 +15,14 @@
     <main class="upload-projects">
         <section class="content">
             <div id="sidebar-container" data-title="Projects"></div>
-            <form action="">
-                <div class="user-view" id="user-view">&#128065; User View</div>
-                <div class="input-project">
+            <div class="user-view" id="user-view">&#128065; User View</div>
+            <div class="project-toolbar">
+                <button id="edit-projects-toggle" class="edit-projects-toggle" type="button">Edit Projects</button>
+            </div>
+            <div id="project-management-list" class="project-cards" style="display:none;"></div>
+            <div id="project-upload-panel" class="project-upload-panel">
+                <form action="">
+                    <div class="input-project">
                     <input type="text" placeholder="Project Title" id="project-title">
                     <!-- Quill editor replaces textarea -->
                     <label>Project Description:</label>
@@ -25,8 +30,9 @@
                     <input type="file" multiple accept="image/*" id="project-image">
                     <input type="text" placeholder="Project Link" id="project-link">
                     <button id="add-project">Add Project</button>
-                </div>
-            </form>
+                    </div>
+                </form>
+            </div>
         </section>
     </main>
     <script src="../assets/scripts/dashboard-script.js"></script>
