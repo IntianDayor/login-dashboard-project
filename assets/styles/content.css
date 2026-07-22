@@ -6,75 +6,87 @@
 
 /* CONTENT CONTAINER */
 .dashboard .content {
-    background-color: #f0f0f0;
+    background: transparent;
 }
+
 .content {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    background-color: #f4f4f4;
+    background: transparent;
     cursor: default;
-    padding-top: 90px;
+    padding: 110px 24px 40px;
+}
+
+.content h1,
+.content h2,
+.content h3 {
+    color: var(--text);
 }
 
 /* BUTTONS & INPUTS */
 
-.input-project input[type="text"]{
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.input-project input[type="text"] {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
     cursor: text;
+    background: var(--surface-soft);
 }
 
 .upload-resume-wrapper input[type="file"],
 .edit-profile-form input[type="file"],
 .input-project input[type="file"] {
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
     cursor: pointer;
+    background: var(--surface-soft);
 }
 
 .upload-resume-wrapper input[type="file"]:hover,
 .edit-profile-form input[type="file"]:hover,
 .input-project input[type="file"]:hover,
 .input-project input[type="text"]:hover {
-    border-color: #007BFF;
+    border-color: var(--primary);
 }
 
 .upload-resume-wrapper input[type="file"]::file-selector-button,
 .edit-profile-form input[type="file"]::file-selector-button,
 .input-project input[type="file"]::file-selector-button {
-    padding: 10px;
-    background-color: #007BFF;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
 }
 
 .upload-resume-wrapper input[type="file"]::file-selector-button:hover,
 .edit-profile-form input[type="file"]::file-selector-button:hover,
 .input-project input[type="file"]::file-selector-button:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, var(--primary-strong) 0%, #7c3aed 100%);
 }
 
-.upload-resume-wrapper button, 
+.upload-resume-wrapper button,
 .edit-profile-form button,
 .input-project button {
-    padding: 10px;
-    background-color: #007BFF;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
 }
 
-.upload-resume-wrapper button:hover, 
+.upload-resume-wrapper button:hover,
 .edit-profile-form button:hover,
 .input-project button:hover {
-    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(37, 99, 235, 0.24);
 }
 
 
@@ -82,60 +94,76 @@
 
 /*-----Manage Users Page Styles-----*/
 .user-management {
-    margin: 20px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 0 20px;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    width: min(1100px, 100%);
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+    border-radius: 16px;
 }
 
 thead {
-    background-color: #007BFF;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
 }
 
 th, td {
-    padding: 12px;
+    padding: 12px 14px;
     text-align: left;
-    font-weight: bold;
-    font-size: large;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border);
+}
+
+tr:last-child td {
+    border-bottom: none;
 }
 
 .user-management select {
-    padding: 10px;
-    background-color: #007BFF;
+    padding: 10px 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .user-management select:hover {
-    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.2);
 }
 
 .user-management select:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.16);
 }
 
 /*-----Upload Projects Page Styles-----*/
 .input-project {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 20px;
+    background: var(--surface);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 
 .project-toolbar {
     position: fixed;
-    top: 80px;
+    top: 86px;
     left: 16px;
     z-index: 100;
 }
@@ -145,16 +173,16 @@ th, td {
 }
 
 .delete-project-btn {
-    background: #e53e3e;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
     border: none;
-    padding: 6px 14px;
-    border-radius: 5px;
+    padding: 8px 14px;
+    border-radius: 999px;
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: 0.9rem;
     margin-bottom: 10px;
 }
-.delete-project-btn:hover { background: #c53030; }
+.delete-project-btn:hover { background: #b91c1c; }
 
 /*-----Upload Resume Page Styles-----*/
 .upload-resume-wrapper {
@@ -162,12 +190,13 @@ th, td {
     justify-content: center;
     align-items: center;
     min-height: 30vh;
-    width: 30vw;
-    background-color: white;
+    width: min(460px, 92vw);
+    background: var(--surface);
     margin: 40px auto;
     box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 
 .upload-resume-wrapper form {
@@ -175,7 +204,7 @@ th, td {
     flex-direction: column;
     gap: 20px;
     width: 100%;
-    padding: 20px;
+    padding: 24px;
 }
 
 /*----- Edit Profile Page Styles -----*/
@@ -183,13 +212,13 @@ th, td {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 100%;
-    max-width: 500px;
+    width: min(560px, 100%);
     margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
-    border-radius: 5px;
+    padding: 24px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
 }
 .input-profile {
     display: flex;
@@ -210,9 +239,10 @@ th, td {
     gap: 20px;
     margin-top: 24px;
     padding: 24px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 2px 8px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 
 .dashboard-content-manager h3,
@@ -238,18 +268,20 @@ th, td {
 #dashboard-content-editor {
     min-height: 260px;
     background: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--border);
 }
 
 .dashboard-content-manager button {
     padding: 10px 14px;
     color: #fff;
-    background: #007BFF;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     border: 0;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
 }
 
-.dashboard-content-manager button:hover { background: #0056b3; }
+.dashboard-content-manager button:hover { transform: translateY(-1px); }
 
 .dashboard-content-manager .dashboard-desc {
     margin: 0;
@@ -261,11 +293,7 @@ th, td {
 }
 
 .dashboard-content-manager .secondary-button {
-    background: #6c757d;
-}
-
-.dashboard-content-manager .secondary-button:hover {
-    background: #565e64;
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
 }
 
 /*==========USER VIEW PAGE STYLES==========*/
@@ -278,7 +306,7 @@ th, td {
 }
 
 .dashboard-wrapper {
-    width: 90vw;
+    width: min(1100px, 92vw);
     min-height: fit-content;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -291,50 +319,57 @@ th, td {
     justify-self: center;
     justify-content: center;
     align-items: center;
-    color: #f4f4f4;
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 20px;
-    border: solid #e0e0e0;
+    color: var(--text);
+    background: var(--surface);
+    padding: 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
 }
 
 .dashboard-navbar h3 {
-    background-color: #007BFF;
-    border-radius: 15px;
-    padding: 10px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 14px;
     margin: 6px;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.16);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .dashboard-navbar h3:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    transform: translateY(-5px);
+    box-shadow: 0 14px 22px rgba(37, 99, 235, 0.24);
+    transform: translateY(-3px);
     cursor: pointer;
 }
 
 .dashboard-desc {
     box-sizing: border-box;
-    background-color: #fff;
-    padding: 30px;
-    margin: 30px;
-    border-radius: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    background: var(--surface);
+    padding: 28px;
+    margin: 24px 0;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
 }
 
 .dashboard-desc h2 {
     margin-bottom: 10px;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .dashboard-desc hr {
     margin: 0 0 20px 0;
+    border: none;
+    border-top: 1px solid var(--border);
 }
 
 .dashboard-desc p {
     margin: 0;
-    line-height: 1.6;
+    line-height: 1.7;
+    color: var(--muted);
 }
 
 /*-----View Resume Page Styles-----*/
@@ -344,19 +379,19 @@ th, td {
     justify-content: center;
     align-items: center;
     min-height: 80vh;
-    width: 70vw;
-    background-color: #f4f4f4;
+    width: min(1000px, 92vw);
     margin: 40px auto;
 }
 
 .resume-content {
-    width: 60%;
-    max-width: 800px;
-    padding: 20px;
+    width: 100%;
+    max-width: 900px;
+    padding: 24px;
     margin: 100px auto 40px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
     box-sizing: border-box;
 }
 
@@ -370,16 +405,16 @@ th, td {
 
 .edit-projects-toggle {
     padding: 10px 16px;
-    background-color: #007BFF;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
 }
 
 .edit-projects-toggle:hover {
-    background-color: #0056b3;
+    transform: translateY(-1px);
 }
 
 .project-actions {
@@ -391,42 +426,42 @@ th, td {
 
 .project-actions button,
 .project-edit-form button {
-    padding: 10px 12px;
-    background-color: #007BFF;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
 }
 
 .project-actions button:hover,
 .project-edit-form button:hover {
-    background-color: #0056b3;
+    transform: translateY(-1px);
 }
 
 .project-actions .edit-project-btn {
-    background-color: #007BFF;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: white;
 }
 
 .project-actions .delete-project-btn,
 .project-edit-form .cancel-project-btn {
-    background-color: #e53e3e;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
 }
 
 .project-actions .delete-project-btn:hover,
 .project-edit-form .cancel-project-btn:hover {
-    background-color: #c53030;
+    background: #b91c1c;
 }
 
 .project-actions .save-project-btn {
-    background-color: #28a745;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
 }
 
 .project-actions .save-project-btn:hover {
-    background-color: #218838;
+    background: #15803d;
 }
 
 .project-cards {
@@ -441,13 +476,13 @@ th, td {
 }
 
 .project-card {
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
     padding: 20px;
-    min-height: 200px;
+    min-height: 220px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     max-width: 100%;
@@ -455,21 +490,21 @@ th, td {
 }
 
 .project-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 34px rgba(15, 23, 42, 0.12);
     cursor: pointer;
 }
 
 .project-card h3 {
     margin: 0 0 10px 0;
-    color: #333;
-    font-size: 1.2rem;
+    color: var(--text);
+    font-size: 1.15rem;
 }
 
 .project-edit-wrapper {
     margin-top: 12px;
     padding-top: 12px;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid var(--border);
 }
 
 .project-edit-form {
@@ -477,15 +512,15 @@ th, td {
     flex-direction: column;
     gap: 14px;
     padding: 16px;
-    background-color: #f8f9fa;
-    border: 1px solid #e5e5e5;
-    border-radius: 5px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 16px;
 }
 
 .project-edit-form label {
     font-size: 0.95rem;
-    font-weight: 500;
-    color: #333;
+    font-weight: 600;
+    color: var(--text);
     margin-bottom: 4px;
     display: block;
 }
@@ -493,41 +528,42 @@ th, td {
 .project-edit-form input[type="text"],
 .project-edit-form input[type="file"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
     box-sizing: border-box;
     font-family: inherit;
     font-size: 0.95rem;
+    background: var(--surface);
 }
 
 .project-edit-form input[type="text"]:focus,
 .project-edit-form input[type="file"]:focus {
     outline: none;
-    border-color: #007BFF;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .project-edit-form input[type="file"]::file-selector-button {
     padding: 8px 12px;
-    background-color: #007BFF;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
     margin-right: 8px;
 }
 
 .project-edit-form input[type="file"]::file-selector-button:hover {
-    background-color: #0056b3;
+    transform: translateY(-1px);
 }
 
 .project-edit-description-editor {
-    background: white;
+    background: var(--surface);
     min-height: 150px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
 }
 
 .project-edit-description-editor .ql-container {
@@ -540,9 +576,9 @@ th, td {
 }
 
 .project-edit-description-editor .ql-toolbar {
-    border: 1px solid #ccc;
-    border-radius: 4px 4px 0 0;
-    background-color: #f8f9fa;
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 0 0;
+    background-color: var(--surface-soft);
 }
 
 .project-edit-form input[type="checkbox"] {
@@ -576,42 +612,42 @@ th, td {
 .project-edit-form .save-project-btn,
 .project-edit-form button[type="submit"] {
     padding: 10px 18px;
-    background-color: #28a745;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
-    transition: background-color 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .project-edit-form .save-project-btn:hover,
 .project-edit-form button[type="submit"]:hover {
-    background-color: #218838;
+    transform: translateY(-1px);
 }
 
 .project-edit-form .cancel-project-btn {
     padding: 10px 18px;
-    background-color: #e53e3e;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
-    transition: background-color 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .project-edit-form .cancel-project-btn:hover {
-    background-color: #c53030;
+    transform: translateY(-1px);
 }
 
 .project-card p {
     margin: 0;
-    color: #666;
+    color: var(--muted);
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
     word-wrap: break-word;
     overflow-wrap: break-word;
     flex-grow: 1;
@@ -627,25 +663,25 @@ th, td {
 
 .projects-hint {
     text-align: center;
-    background-color: #007BFF;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: white;
     max-width: 340px;
     width: 100%;
     padding: 10px 20px;
-    border-radius: 240px;
+    border-radius: 999px;
     font-size: 0.9rem;
     margin: 20px 0 0 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.16);
 }
 
 .projects-hint:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 14px 24px rgba(37, 99, 235, 0.24);
     cursor: pointer;
 }
 
 .project-description a {
-    color: #007BFF;
+    color: var(--primary);
     text-decoration: underline;
     pointer-events: auto;
 }
@@ -653,9 +689,9 @@ th, td {
 
 /* Rich text description wrapper */
 .project-description {
-    color: #666;
+    color: var(--muted);
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 500px;
@@ -684,7 +720,7 @@ th, td {
 .slider-viewport {
     width: 100%;
     overflow: hidden;
-    border-radius: 8px;
+    border-radius: 12px;
 }
 
 .slider-track {
@@ -698,7 +734,7 @@ th, td {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     flex-shrink: 0;
 }
@@ -707,7 +743,7 @@ th, td {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
 }
 
@@ -715,12 +751,14 @@ th, td {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0,0,0,0.6);
+    background: rgba(15, 23, 42, 0.72);
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 50%;
     z-index: 5;
+    width: 38px;
+    height: 38px;
 }
 
 .slide-btn.left {
@@ -732,7 +770,7 @@ th, td {
 }
 
 .slide-btn:hover {
-    background: rgba(0,0,0,0.85);
+    background: rgba(15, 23, 42, 0.92);
 }
 
 .image-modal {
@@ -742,7 +780,7 @@ th, td {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(15, 23, 42, 0.9);
     z-index: 1000;
     justify-content: center;
     align-items: center;
@@ -756,7 +794,7 @@ th, td {
 .image-modal img {
     max-width: 90%;
     max-height: 90%;
-    border-radius: 8px;
+    border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -772,7 +810,7 @@ th, td {
 }
 
 .image-modal .close-modal:hover {
-    color: #007BFF;
+    color: var(--primary);
 }
 
 /*-----Profile Page Styles-----*/
@@ -782,64 +820,66 @@ th, td {
     justify-content: center;
     align-items: center;
     min-height: 80vh;
-    width: 70vw;
-    background-color: #f4f4f4;
+    width: min(980px, 92vw);
     margin: 40px auto;
 }
 
 .profile-content {
     position: relative;
-    width: 90%;
-    max-width: 800px;
-    padding: 20px;
+    width: 100%;
+    max-width: 900px;
+    padding: 24px;
     margin: 100px auto 40px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
     box-sizing: border-box;
 }
 
 .profile-content .profile-fullname {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #333;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
     margin-bottom: 10px;
-    margin-right: 210px;
+    margin-right: 230px;
 }
 
 .profile-content .profile-picture {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 24px;
+    right: 24px;
     width: 200px;
     height: 200px;
     border-radius: 50%;
     object-fit: cover;
-    background-color: #007BFF;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.2);
+    padding: 4px;
 }
 
 .profile-content .profile-picture img {
     width: 100%;
     height: 100%;
-    padding: 2px;
     object-fit: cover;
     border-radius: 50%;
     object-position: center top;
-    margin-bottom: 10px;
 }
 
 .profile-content .profile-description {
     display: block;
-    border-radius: 5px;
+    border-radius: 14px;
     padding: 10px 5px 5px 5px;
     margin-top: 90px;
-    line-height: 1.6;
+    line-height: 1.7;
+    color: var(--muted);
 }
 
 /*----- Resume Page Styles -----*/
 .resume-viewer-title {
     text-align: center;
     margin: 10px;
+    color: var(--text);
 }
 
 .resume-viewer-frame-wrapper {
@@ -853,8 +893,9 @@ th, td {
 .resume-viewer-frame {
     width: 100%;
     height: 100%;
-    border: 1px solid #ccc;
-    border-radius: 12px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
 }
 
 .resume-viewer-actions {
@@ -865,16 +906,16 @@ th, td {
 .resume-open-btn {
     display: inline-block;
     padding: 12px 24px;
-    background-color: #4a90d9;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
     color: white;
     text-decoration: none;
-    border-radius: 6px;
-    font-weight: 500;
-    transition: background-color 0.3s;
+    border-radius: 999px;
+    font-weight: 600;
+    transition: transform 0.2s ease;
 }
 
 .resume-open-btn:hover {
-    background-color: #357abd;
+    transform: translateY(-1px);
 }
 
 /* ========================= 
@@ -883,7 +924,6 @@ th, td {
 
 /* Average Tablet View */
 @media (max-width: 1024px) {
-    /* Project grid: 2 columns on tablet */
     .project-cards {
         grid-template-columns: repeat(2, minmax(280px, 1fr));
     }
@@ -891,8 +931,10 @@ th, td {
 
 /* Average Mobile View */
 @media (max-width: 768px) {
+    .content {
+        padding: 96px 14px 28px;
+    }
 
-    /* Project grid: single column on mobile */
     .project-cards {
         grid-template-columns: 1fr;
         padding: 10px;
@@ -911,10 +953,10 @@ th, td {
         max-width: 100%;
     }
 
-    /* Dashboard navbar: wrap cards vertically */
     .dashboard-navbar {
         flex-direction: column;
         align-items: stretch;
+        border-radius: 20px;
     }
 
     .dashboard-navbar h3 {
@@ -923,8 +965,8 @@ th, td {
     }
 
     .dashboard-desc {
-        margin: 15px;
-        padding: 15px;
+        margin: 15px 0;
+        padding: 18px;
     }
 
     .dashboard-content-manager {
@@ -936,7 +978,6 @@ th, td {
         flex-direction: column;
     }
 
-    /* Resume: full width */
     .resume-wrapper {
         width: 100%;
         margin: 10px 0;
@@ -948,7 +989,6 @@ th, td {
         padding: 15px;
     }
 
-    /* Profile: stack picture above text */
     .profile-wrapper {
         width: 100%;
     }
@@ -978,13 +1018,10 @@ th, td {
         margin-top: 0;
     }
 
-    /* Upload resume form: full width */
     .upload-resume-wrapper {
         width: 95%;
         min-height: auto;
     }
-
-
 
     .upload-projects form {
         width: 100%;
@@ -992,15 +1029,14 @@ th, td {
         box-sizing: border-box;
     }
 
-    /* Table: allow horizontal scroll instead of overflow */
     .user-management {
         overflow-x: auto;
-        margin: 10px;
+        margin: 10px 0;
         padding: 10px;
     }
 
     th, td {
-        font-size: medium;
+        font-size: 0.9rem;
         padding: 8px;
         width: auto;
     }
