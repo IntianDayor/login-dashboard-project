@@ -149,6 +149,15 @@ tr:last-child td {
 }
 
 /*-----Upload Projects Page Styles-----*/
+#project-upload-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-top: 20px;
+}
+
 .input-project {
     display: flex;
     flex-direction: column;
@@ -220,6 +229,65 @@ tr:last-child td {
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
 }
+
+#description-editor,
+#project-description-editor {
+    background: var(--surface) !important;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.ql-snow .ql-toolbar,
+.ql-snow .ql-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 999px;
+}
+
+.ql-snow .ql-toolbar {
+    padding: 10px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ql-snow .ql-toolbar button,
+.ql-snow .ql-toolbar .ql-picker-label,
+.ql-snow .ql-toolbar .ql-picker-item {
+    background: var(--surface-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.ql-snow .ql-toolbar button:hover,
+.ql-snow .ql-toolbar .ql-picker-label:hover,
+.ql-snow .ql-toolbar .ql-picker-item:hover {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.ql-snow .ql-toolbar .ql-active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: white;
+}
+
+.ql-snow .ql-editor {
+    background: var(--surface);
+    color: var(--text);
+    min-height: 150px;
+}
+
 .input-profile {
     display: flex;
     flex-direction: column;
@@ -267,7 +335,7 @@ tr:last-child td {
 
 #dashboard-content-editor {
     min-height: 260px;
-    background: #fff;
+    background: var(--surface);
     border-radius: 12px;
     border: 1px solid var(--border);
 }

@@ -58,6 +58,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.querySelector("form");
 
+    const darkModePreference = localStorage.getItem('darkMode');
+    const isDarkMode = darkModePreference === 'true';
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    }
+
+    const authThemeToggle = document.createElement('button');
+    authThemeToggle.className = 'theme-toggle';
+    authThemeToggle.type = 'button';
+    authThemeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    authThemeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const enabled = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', enabled ? 'true' : 'false');
+        authThemeToggle.textContent = enabled ? '☀️' : '🌙';
+    });
+    form?.parentNode?.insertBefore(authThemeToggle, form);
+
     // ================= LOGIN PAGE ================= //
     if (document.body.classList.contains("auth") && window.location.pathname.includes("login")) {
 

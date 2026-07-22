@@ -184,6 +184,13 @@ document.addEventListener('DOMContentLoaded', () => {
         usernameDisplay.textContent = username || 'Guest';
     }
 
+    // Load theme preference
+    const darkModePreference = localStorage.getItem('darkMode');
+    const isDarkMode = darkModePreference === 'true';
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    }
+
     // Handles Sidebars Both Admin and User
     const sidebarPath = onAdminPage ? '../admin/admin-sidebar.html' : '../pages/user-sidebar.html';
     showContentLoading(document.getElementById('sidebar-container'), 'Loading navigation...');
@@ -200,15 +207,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.querySelector('.page-title').textContent = title;
             }
 
+            const topbar = container.querySelector('.topbar');
+            if (topbar) {
+                const themeToggleBtn = document.createElement('button');
+                themeToggleBtn.className = 'theme-toggle';
+                themeToggleBtn.type = 'button';
+                themeToggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                topbar.insertBefore(themeToggleBtn, topbar.querySelector('.home-button'));
+            }
+
             // Attach sidebar events
             const sidebar  = document.querySelector('.sidebar');
             const openBtn  = document.querySelector('.sidebar-button');
             const closeBtn = document.querySelector('.sidebar-button-2');
             const logoutBtn = document.getElementById('log-out');
             const homeBtn   = document.getElementById('home');
+            const themeToggle = document.querySelector('.theme-toggle');
 
             openBtn?.addEventListener('click', () => sidebar?.classList.add('active'));
             closeBtn?.addEventListener('click', () => sidebar?.classList.remove('active'));
+
+            themeToggle?.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const enabled = document.body.classList.contains('dark-mode');
+                localStorage.setItem('darkMode', enabled ? 'true' : 'false');
+                themeToggle.textContent = enabled ? '☀️' : '🌙';
+            });
 
             logoutBtn?.addEventListener('click', () => {
                 const path = onAdminPage ? '../pages/login.html' : 'login.html';

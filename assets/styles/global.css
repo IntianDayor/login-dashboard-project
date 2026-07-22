@@ -17,6 +17,38 @@
     --radius-lg: 24px;
     --radius-md: 16px;
     --radius-sm: 10px;
+
+    --page-bg: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+    --auth-bg: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+    --topbar-bg: rgba(255, 255, 255, 0.88);
+    --topbar-border: rgba(226, 232, 240, 0.8);
+    --sidebar-bg: linear-gradient(180deg, #14213d 0%, #0f172a 100%);
+    --sidebar-text: white;
+    --sidebar-item-hover: rgba(255, 255, 255, 0.12);
+    --sidebar-action-bg: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode {
+    --bg: #0f172a;
+    --surface: #111827;
+    --surface-soft: #1f2937;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --primary: #60a5fa;
+    --primary-strong: #3b82f6;
+    --accent: #a78bfa;
+    --border: #334155;
+    --shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+
+    --page-bg: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+    --auth-bg: linear-gradient(135deg, #111827 0%, #0f172a 100%);
+    --topbar-bg: rgba(15, 23, 42, 0.94);
+    --topbar-border: rgba(100, 116, 139, 0.16);
+    --sidebar-bg: linear-gradient(180deg, #020617 0%, #111827 100%);
+    --sidebar-text: #e2e7f3;
+    --sidebar-item-hover: rgba(255, 255, 255, 0.14);
+    --sidebar-action-bg: rgba(255, 255, 255, 0.12);
+    --sidebar-shadow: -28px 0 60px rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -27,13 +59,13 @@ body {
     font-family: 'Inter', Arial, sans-serif;
     margin: 0;
     color: var(--text);
-    background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+    background: var(--page-bg);
     min-height: 100vh;
 }
 
 body.dashboard,
 body.admin {
-    background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+    background: var(--page-bg);
     min-height: 100vh;
 }
 
@@ -46,7 +78,7 @@ body.auth {
     background:
         radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 28%),
         radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.18), transparent 24%),
-        linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+        var(--auth-bg);
 }
 
 body.dashboard > .content > h2,
@@ -69,14 +101,14 @@ body.admin > .content > h2 {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.88);
+    background: var(--topbar-bg);
     backdrop-filter: blur(16px);
     color: var(--text);
     padding: 14px 24px;
     box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
     height: 74px;
     z-index: 999;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    border-bottom: 1px solid var(--topbar-border);
 }
 
 .sidebar {
@@ -85,11 +117,11 @@ body.admin > .content > h2 {
     right: -100%;
     width: min(320px, 90vw);
     height: 100%;
-    background: linear-gradient(180deg, #14213d 0%, #0f172a 100%);
-    color: white;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
     transition: right 0.3s ease-out;
     z-index: 1000;
-    box-shadow: -20px 0 40px rgba(15, 23, 42, 0.22);
+    box-shadow: var(--sidebar-shadow, -20px 0 40px rgba(15, 23, 42, 0.22));
     padding: 24px 18px 18px;
 }
 
@@ -133,6 +165,29 @@ body.admin > .content > h2 {
     justify-content: center;
 }
 
+.theme-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    right: 118px;
+    top: 18px;
+    color: var(--text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.theme-toggle:hover {
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--primary);
+}
+
 .sidebar-button, .home-button { color: var(--text); }
 .sidebar-button-2 { color: white; }
 
@@ -165,7 +220,7 @@ body.admin > .content > h2 {
     right: 12px;
     left: 12px;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--sidebar-action-bg);
     border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
@@ -197,7 +252,7 @@ body.admin > .content > h2 {
 .different-data .projects:hover,
 .different-data .home:hover,
 .log-out:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: var(--sidebar-item-hover);
     transform: translateX(2px);
 }
 
@@ -212,6 +267,13 @@ body.admin > .content > h2 {
     box-shadow: var(--shadow);
     border: 1px solid rgba(255, 255, 255, 0.7);
     width: min(440px, 100%);
+}
+
+body.dark-mode .log-in,
+body.dark-mode .sign-up {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
 /* Titles */
@@ -323,6 +385,10 @@ body.admin > .content > h2 {
     font-weight: 600;
 }
 
+body.dark-mode #page-loading-overlay {
+    background: rgba(15, 23, 42, 0.9);
+}
+
 @keyframes button-spin {
     to { transform: rotate(360deg); }
 }
@@ -339,36 +405,68 @@ body.admin > .content > h2 {
     color: var(--primary);
 }
 
+.log-in .theme-toggle,
+.sign-up .theme-toggle {
+    position: static;
+    right: auto;
+    top: auto;
+    margin-bottom: 18px;
+}
+
 .log-in p { width: 80px; }
 .sign-up p { width: 155px; }
 
 .log-in p:hover,
 .sign-up p:hover { color: var(--primary-strong); }
 
-/* Show password icon */
+/* Show password checkbox */
 .log-in label,
 .sign-up label {
-    font-size: 0.8rem;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    width: 30px;
-    height: 20px;
-    color: transparent;
-    transition: color 0.2s;
-}
-
-.log-in label { left: 84%; bottom: 37px; }
-.sign-up label { left: 91%; bottom: 37px; }
-
-.log-in label:hover,
-.sign-up label:hover {
-    color: inherit;
-}
-
-#show-password:hover {
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
     cursor: pointer;
+    margin-left: 4px;
+    margin-bottom: 10px;
+    user-select: none;
+}
+
+.log-in label input[type="checkbox"],
+.sign-up label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-soft);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.log-in label input[type="checkbox"]:checked,
+.sign-up label input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-color: transparent;
+}
+
+.log-in label input[type="checkbox"]:checked::after,
+.sign-up label input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.8rem;
+}
+
+.log-in label:hover input[type="checkbox"],
+.sign-up label:hover input[type="checkbox"] {
+    border-color: var(--primary);
 }
 
 /* ========================= 
