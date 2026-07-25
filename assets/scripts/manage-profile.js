@@ -71,7 +71,7 @@ if (profilePictureDiv || profileDescription) {
         .then(res => res.json())
         .then(data => {
             if (profilePictureDiv && data.profile_picture) {
-                profilePictureDiv.innerHTML = `<img src="${toImageSrc(data.profile_picture)}" alt="Profile Picture">`;
+                profilePictureDiv.innerHTML = `<img src="${toImageSrc(data.profile_picture)}" alt="Profile Picture" loading="lazy" decoding="async">`;
             } else if (profilePictureDiv) {
                 profilePictureDiv.innerHTML = '';
             }

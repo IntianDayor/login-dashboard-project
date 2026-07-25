@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="slider-viewport">
                         <div class="slider-track">
                            ${project.images.map(img =>
-                `<img src="${toImageSrc(img)}" onclick="event.stopPropagation(); openImageModal(this.src)">`
+                `<img src="${toImageSrc(img)}" alt="${esc(project.title)} preview" loading="lazy" decoding="async" onclick="event.stopPropagation(); openImageModal(this.src)">`
             ).join("")}
                         </div>
                     </div>
@@ -314,7 +314,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         modal.className = "image-modal";
         modal.id = "imageModal";
         modal.onclick = closeImageModal;
-        modal.innerHTML = `<span class="close-modal">&times;</span><img id="modalImage" src="" alt="Zoomed image">`;
+        modal.innerHTML = `<span class="close-modal">&times;</span><img id="modalImage" src="" alt="Zoomed image" loading="lazy" decoding="async">`;
         container.appendChild(modal);
 
         // Initialize sliders AFTER modal is in the DOM

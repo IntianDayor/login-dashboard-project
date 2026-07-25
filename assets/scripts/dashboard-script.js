@@ -53,7 +53,19 @@ function setPageLoading(isLoading) {
     if (isLoading && !overlay) {
         overlay = document.createElement('div');
         overlay.id = 'page-loading-overlay';
-        overlay.innerHTML = '<span class="content-spinner" aria-hidden="true"></span><span>Loading page...</span>';
+        overlay.setAttribute('role', 'status');
+        overlay.setAttribute('aria-live', 'polite');
+        overlay.innerHTML = `
+            <div class="page-loading-card">
+                <div class="page-loading-mark" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="page-loading-copy">
+                    <span class="page-loading-eyebrow">Please wait</span>
+                    <span class="page-loading-title">Getting your workspace ready</span>
+                </div>
+                <span class="page-loading-bar" aria-hidden="true"><span></span></span>
+            </div>`;
         document.body.appendChild(overlay);
     }
     if (!isLoading) overlay?.remove();
