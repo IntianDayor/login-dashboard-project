@@ -70,8 +70,8 @@ if (profilePictureDiv || profileDescription) {
     fetch("../api/get-profile.php")
         .then(res => res.json())
         .then(data => {
-            if (profilePictureDiv && data?.profile_picture) {
-                profilePictureDiv.innerHTML = `<img src="${data.profile_picture.startsWith('http') ? data.profile_picture : '../' + data.profile_picture}" alt="Profile Picture">`;
+            if (profilePictureDiv && data.profile_picture) {
+                profilePictureDiv.innerHTML = `<img src="${toImageSrc(data.profile_picture)}" alt="Profile Picture">`;
             } else if (profilePictureDiv) {
                 profilePictureDiv.innerHTML = '';
             }

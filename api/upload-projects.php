@@ -60,8 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $safeExt   = $mimeToExt[$fileMime];
                 $imageName = uniqid() . '.' . $safeExt;
 
-                $r2Key     = "images/projects/" . $imageName;
-                $imagePath = uploadToR2($tmpName, $r2Key, $fileMime);
+                $r2Key = "images/projects/" . $imageName;
+
+                try {
+                    $imagePath = uploadToR2($tmpName, $r2Key, $fileMime);
+                } catch (\Aws\S3\Exception\S3Exception $e) {
+                    error_log("R2 upload failed for project image '$r2Key': " . $e->getMessage());
+                    continue; // skip this image, keep processing the rest
+                }
 
                 $imgStmt->bind_param("is", $project_id, $imagePath);
                 $imgStmt->execute();

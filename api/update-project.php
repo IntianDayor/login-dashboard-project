@@ -59,7 +59,11 @@ if ($replaceExisting) {
         $r2Key = getR2KeyFromPublicUrl($imagePath);
 
         if ($r2Key !== null) {
-            deleteFromR2($r2Key);
+            try {
+                deleteFromR2($r2Key);
+            } catch (\Aws\S3\Exception\S3Exception $e) {
+                error_log("R2 delete failed for key '$r2Key' during project update: " . $e->getMessage());
+            }
             continue;
         }
 
@@ -106,7 +110,13 @@ if (!empty($_FILES['images']['name'][0])) {
         $imageName = uniqid() . '.' . $safeExt;
 
         $r2Key = "images/projects/" . $imageName;
-        $imagePath = uploadToR2($tmpName, $r2Key, $fileMime);
+
+        try {
+            $imagePath = uploadToR2($tmpName, $r2Key, $fileMime);
+        } catch (\Aws\S3\Exception\S3Exception $e) {
+            error_log("R2 upload failed for '$r2Key' during project update: " . $e->getMessage());
+            continue;
+        }
 
         $imgStmt->bind_param("is", $projectId, $imagePath);
         $imgStmt->execute();

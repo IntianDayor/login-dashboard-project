@@ -34,8 +34,15 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
     $extension = $mimeToExt[$mime];
     $newName   = uniqid('profile_', true) . '.' . $extension;
 
-    $r2Key     = "images/profile/" . $newName;
-    $imagePath = uploadToR2($_FILES['profile_picture']['tmp_name'], $r2Key, $mime);
+    $r2Key = "images/profile/" . $newName;
+
+    try {
+        $imagePath = uploadToR2($_FILES['profile_picture']['tmp_name'], $r2Key, $mime);
+    } catch (\Aws\S3\Exception\S3Exception $e) {
+        error_log("R2 upload failed for profile picture '$r2Key': " . $e->getMessage());
+        echo json_encode(["success" => false, "message" => "Failed to upload profile picture. Please try again later."]);
+        exit;
+    }
 }
 
 if ($imagePath !== null) {

@@ -29,7 +29,12 @@ while ($row = $imgResult->fetch_assoc()) {
     $r2Key = getR2KeyFromPublicUrl($imagePath);
 
     if ($r2Key !== null) {
-        deleteFromR2($r2Key);
+        try {
+            deleteFromR2($r2Key);
+        } catch (\Aws\S3\Exception\S3Exception $e) {
+            error_log("R2 delete failed for key '$r2Key': " . $e->getMessage());
+            // Continue anyway — we still want the DB rows removed even if the R2 object couldn't be deleted
+        }
         continue;
     }
 

@@ -29,8 +29,15 @@ $tmpname  = $_FILES['resume']['tmp_name'];
 $safeName = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
 $newName  = time() . "_" . $safeName;
 
-$r2Key    = "resumes/" . $newName;
-$filePath = uploadToR2($tmpname, $r2Key, 'application/pdf');
+$r2Key = "resumes/" . $newName;
+
+try {
+    $filePath = uploadToR2($tmpname, $r2Key, 'application/pdf');
+} catch (\Aws\S3\Exception\S3Exception $e) {
+    error_log("R2 upload failed for resume '$r2Key': " . $e->getMessage());
+    echo json_encode(["success" => false, "message" => "Failed to upload resume. Please try again later."]);
+    exit;
+}
 
 $stmt = $conn->prepare("INSERT INTO resumes (file_name, file_path) VALUES (?, ?)");
 $stmt->bind_param("ss", $safeName, $filePath);

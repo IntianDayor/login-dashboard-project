@@ -96,6 +96,15 @@ function confirmAction(message) {
     });
 }
 
+function toImageSrc(path) {
+    if (!path) return '';
+    if (path.startsWith('http')) {
+        const key = path.substring(path.indexOf('images/'));
+        return `../api/get-image.php?key=${encodeURIComponent(key)}`;
+    }
+    return `../api/get-image.php?key=${encodeURIComponent(path)}`;
+}
+
 // =============== DASHBOARD SCRIPT ============== //
 
 // Verify session server-side on every page load
