@@ -4,7 +4,7 @@
 
 ## 1. System at a glance
 
-The application is a server-rendered static-page frontend with JavaScript-driven API calls. PHP API endpoints enforce authentication and authorization, persist application data and sessions in MySQL, and store uploaded binary assets in Cloudflare R2. The application itself is disposable: persistent state is kept outside the web container.
+The application is a server-rendered static-page frontend with JavaScript-driven API calls. PHP API endpoints enforce authentication and authorization, persist application data and sessions in MySQL, and store uploaded binary assets in Cloudflare R2. Images are served back to the browser through an authenticated backend proxy rather than the R2 public URL directly; resumes (PDFs) are still delivered from the R2 public URL. The application itself is disposable: persistent state is kept outside the web container.
 
 ```mermaid
 flowchart LR
@@ -14,7 +14,7 @@ flowchart LR
     Web["Apache + PHP 8.3\nDocker web application"]
     DB[("MySQL 8.0\ncontent, users, sessions")]
     R2[("Cloudflare R2\nimages, PDFs, SQL backups")]
-    CDN["R2 public URL\nasset delivery"]
+    CDN["R2 public URL\nPDF delivery"]
     GHA["GitHub Actions\nweekly DB backup"]
 
     Visitor --> Browser
@@ -22,7 +22,8 @@ flowchart LR
     Browser -->|"pages/admin + fetch /api"| Web
     Web -->|"mysqli; SSL when configured"| DB
     Web -->|"AWS SDK; S3-compatible API"| R2
-    Browser -->|"loads persisted images / PDFs"| CDN
+    Browser -->|"images via api/get-image.php\nproxied, authenticated"| Web
+    Browser -->|"loads resume PDFs directly"| CDN
     CDN --> R2
     GHA -->|"mysqldump over TLS"| DB
     GHA -->|"dated + latest SQL snapshots"| R2
@@ -35,7 +36,7 @@ flowchart TB
     subgraph Client["Client layer — browser"]
         Public["User pages\ndashboard, profile, projects, resume"]
         AdminUI["Admin pages\ncontent, profile, projects, resume, users"]
-        SharedJS["Shared client subsystem\ndashboard-script.js\nsession check, CSRF header, sidebar, logout"]
+        SharedJS["Shared client subsystem\ndashboard-script.js\nsession check, CSRF header, sidebar, logout,\ntoImageSrc() image-proxy URL helper"]
         FeatureJS["Feature scripts\nauth, profile, projects, resume, users, dashboard content"]
         Editors["Quill rich-text editor\nDOMPurify client sanitization"]
     end
@@ -46,7 +47,8 @@ flowchart TB
         Guard["Security guard subsystem\nrequireLogin, requireAdmin, verifyCsrf"]
         Sanitizer["Rich-text sanitizer\nallowed tags + safe http(s) links"]
         Upload["Upload subsystem\nMIME, size, filename/key validation"]
-        R2Adapter["R2 adapter\nAWS SDK S3Client"]
+        ImageProxy["Image proxy subsystem\nget-image.php\nkey allowlist, authenticated S3 read"]
+        R2Adapter["R2 adapter\nAWS SDK S3Client\nupload / delete / get, wrapped in try/catch"]
         SessionHandler["Custom PHP session handler\nread/write/GC in MySQL"]
     end
 
@@ -62,10 +64,13 @@ flowchart TB
     AdminUI --> FeatureJS
     SharedJS --> Endpoints
     FeatureJS --> Endpoints
+    SharedJS -->|"builds ../api/get-image.php?key=..."| ImageProxy
     Endpoints --> Bootstrap
     Endpoints --> Guard
     Endpoints --> Sanitizer
     Endpoints --> Upload
+    ImageProxy --> Guard
+    ImageProxy --> R2Adapter
     Bootstrap --> SessionHandler
     Bootstrap --> MySQL
     SessionHandler --> MySQL
@@ -78,8 +83,8 @@ flowchart TB
 
 - `pages/` is the standard-user experience: dashboard, profile, project gallery, and resume viewer.
 - `admin/` provides CMS pages: profile/project/resume uploads, user-role management, and editable dashboard content.
-- `assets/scripts/dashboard-script.js` is the cross-cutting browser module. It performs server-side session verification on page load, stores the current CSRF token in `localStorage`, loads the correct sidebar fragment, and handles logout.
-- Feature scripts use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals.
+- `assets/scripts/dashboard-script.js` is the cross-cutting browser module. It performs server-side session verification on page load, stores the current CSRF token in `localStorage`, loads the correct sidebar fragment, handles logout, and exposes `toImageSrc(path)` — a shared helper that converts a stored image path (legacy full R2 URL or bare key) into a proxied `../api/get-image.php?key=...` URL. Because this file loads on every page before feature scripts, `toImageSrc()` is available globally without duplication.
+- Feature scripts use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals. Project and profile rendering call `toImageSrc()` rather than constructing R2 URLs directly.
 - Quill is used only when editing rich text. DOMPurify sanitizes that HTML in the browser before it is submitted and again before it is inserted into the DOM.
 
 ### API and application subsystem
@@ -88,7 +93,8 @@ flowchart TB
 - `db.php` loads environment variables with `phpdotenv` and creates a `mysqli` connection. If `DB_SSL_CA` is configured, it connects using the CA certificate and MySQL SSL.
 - `session-db.php` replaces PHP's default file session storage with a database-backed handler. Session data expires after the configured PHP lifetime (currently 3,600 seconds).
 - `auth-check.php` centralizes the three endpoint guards: authenticated session required, admin role required, and matching `X-CSRF-Token` required.
-- `r2.php` hides Cloudflare R2 behind four helpers: create S3 client, upload object, extract a key from a public URL, and delete object.
+- `r2.php` hides Cloudflare R2 behind four helpers: create S3 client, upload object, extract a key from a public URL, and delete object. All calls into this adapter from endpoint code are wrapped in `try/catch` around `\Aws\S3\Exception\S3Exception`, so an R2-side failure (invalid/expired credentials, wrong bucket, network issue) returns a clean JSON error instead of an uncaught fatal error and an empty HTTP response body.
+- `get-image.php` is a read-side proxy: it validates the requested `key` against an allowlist pattern (`images/projects/...` or `images/profile/...`), requires an authenticated session (`requireLogin()`), then performs an authenticated `getObject` call via the R2 adapter and streams the bytes back with the object's content type and a one-day cache header. This replaces direct browser requests to the R2 public development URL (`pub-*.r2.dev`), which is not intended for production traffic and is subject to undocumented rate limits.
 
 ## 3. Authentication and authorization flow
 
@@ -130,6 +136,7 @@ sequenceDiagram
 | --- | --- | --- |
 | Sign up and log in | Unauthenticated visitor | Input validation; bcrypt-compatible `password_hash`/`password_verify`; login-attempt throttling |
 | View dashboard, profile, projects, and resumes | Authenticated user or admin | `requireLogin()` |
+| Load a profile or project image | Authenticated user or admin | `requireLogin()` + key allowlist (`get-image.php`) |
 | Edit dashboard content | Admin | `requireAdmin()` + CSRF |
 | Upload profile, projects, and resumes | Admin | `requireAdmin()` + CSRF |
 | Update project details | Admin | `requireAdmin()` + CSRF |
@@ -137,7 +144,7 @@ sequenceDiagram
 | List users / change roles | Admin | `requireAdmin()` + CSRF |
 | Log out | Authenticated session with valid token | CSRF token validation then session-cookie and server-session destruction |
 
-The browser’s `localStorage` values are used for initial UI routing and carrying the CSRF token, but the API makes the final access decision from the server-side session stored in MySQL.
+The browser's `localStorage` values are used for initial UI routing and carrying the CSRF token, but the API makes the final access decision from the server-side session stored in MySQL.
 
 ## 4. Content and upload flows
 
@@ -150,12 +157,16 @@ flowchart LR
     E -->|"Rich text"| F["Server sanitizes allowed HTML\nand http(s) links"]
     E -->|"Image / PDF"| G["Check MIME type + size\ncreate unique object key"]
     F --> H[("MySQL content tables")]
-    G --> I["AWS SDK uploads to R2"]
+    G --> I["AWS SDK uploads to R2\n(try/catch around S3Exception)"]
     I --> J[("Cloudflare R2 object")]
-    I --> K["Public R2 URL"]
+    I --> K["Stored path/URL"]
     K --> H
-    H --> L["GET API returns content + public URLs"]
-    L --> M["Browser renders DOMPurify-cleaned content\nor loads asset directly from R2 public URL"]
+    H --> L["GET API returns content + stored image paths"]
+    L --> M{"Asset type"}
+    M -->|"Image"| N["Browser requests api/get-image.php?key=...\n(dashboard-script.js toImageSrc helper)"]
+    N --> O["Authenticated S3 getObject via R2 adapter"]
+    O --> P["Browser renders image from proxy response"]
+    M -->|"PDF / rich text"| Q["Browser loads resume from R2 public URL\nor renders DOMPurify-cleaned content"]
 ```
 
 Upload limits enforced by the server:
@@ -166,7 +177,7 @@ Upload limits enforced by the server:
 | Project image | JPEG, PNG, WebP, GIF | 5 MB each | `images/projects/` | `project_previews.image_path` |
 | Resume | PDF | 5 MB | `resumes/` | `resumes.file_path` |
 
-Deleting a project removes its preview rows and attempts to delete each matching R2 object. It also contains a legacy local-upload fallback that only permits deletion inside `assets/uploads`.
+Deleting or updating a project removes/replaces its preview rows and attempts to delete each matching R2 object; delete failures are caught and logged rather than aborting the request, so database cleanup still completes even if an R2 object can't be removed. It also contains a legacy local-upload fallback that only permits deletion inside `assets/uploads`.
 
 ## 5. API map
 
@@ -182,6 +193,7 @@ Deleting a project removes its preview rows and attempts to delete each matching
 | `upload-projects.php` | Create project and upload images | Admin + CSRF | `projects`, `project_previews`, R2 |
 | `update-project.php` | Update an existing project and replace preview images | Admin + CSRF | `projects`, `project_previews`, R2 |
 | `delete-project.php` | Delete project and associated images | Admin + CSRF | `projects`, `project_previews`, R2 |
+| `get-image.php` | Stream a profile or project image via authenticated R2 read | Logged in | R2 (read-only) |
 | `get-resumes.php` | Read uploaded resume metadata | Logged in | `resumes` |
 | `upload-resume.php` | Upload resume PDF | Admin + CSRF | `resumes`, R2 |
 | `dashboard-content.php` | Read/update dashboard About content | Read: logged in; write: admin + CSRF | `dashboard_content` |
@@ -248,7 +260,7 @@ erDiagram
     PROJECTS ||--o{ PROJECT_PREVIEWS : "has preview images"
 ```
 
-`profile` and `dashboard_content` are singleton tables: the application writes and reads row `id = 1`. Sessions are deliberately database records rather than application-container files, allowing a session to survive a container replacement as long as the database remains available.
+`profile` and `dashboard_content` are singleton tables: the application writes and reads row `id = 1`. Sessions are deliberately database records rather than application-container files, allowing a session to survive a container replacement as long as the database remains available. `profile.profile_picture` and `project_previews.image_path` may still contain legacy full R2 public URLs from before the image proxy was introduced; `toImageSrc()` on the client extracts the object key from either a full URL or a bare key before building the proxy request, so no data migration was required.
 
 ## 7. Deployment, configuration, and recovery
 
@@ -271,7 +283,7 @@ flowchart TB
 
 - **Local Docker:** `docker-compose.yml` starts the app container and a MySQL 8.0 service with `DB_HOST=db`, `DB_USER=appuser`, `DB_PASS=apppassword`, and `DB_NAME=fprojectdb_mysql`. The app source is mounted into `/var/www/html`, `init.sql` seeds the schema at container startup, and MySQL data is persisted in the `db_data` volume.
 - **Production:** the Dockerfile builds an Apache + PHP 8.3 web service, installs required PHP extensions and Composer dependencies, enables URL rewriting, and serves the repository content as the application. Render hosts the built container, while MySQL and Cloudflare R2 remain independent managed services.
-- **Configuration:** PHP loads environment values via `phpdotenv` in local development, while production and CI inject credentials through environment variables. Database SSL is enabled when `DB_SSL_CA` is provided for CA-verified connections.
+- **Configuration:** PHP loads environment values via `phpdotenv` in local development, while production and CI inject credentials through environment variables. Database SSL is enabled when `DB_SSL_CA` is provided for CA-verified connections. `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY` must stay in sync with the currently active Cloudflare R2 API token — deleting and recreating a token invalidates these values until Render's environment variables are updated and the service is redeployed.
 - **Recovery subsystem:** `.github/workflows/db-backup.yml` runs `mysqldump` against Aiven using the committed `ca.pem` certificate, then uploads both a dated SQL snapshot and `latest.sql` to Cloudflare R2 via the AWS CLI. The workflow runs weekly and can also be triggered manually.
 
 ## 8. Security boundaries and controls
@@ -285,20 +297,25 @@ flowchart LR
     CSRF --> Validation["Length, MIME, size, method validation"]
     Validation --> Sanitize["Server-side rich-text sanitization"]
     Sanitize --> Data["MySQL / R2"]
-    Data --> Output["JSON response / public asset URL"]
+    Data --> Output["JSON response / streamed image / public PDF URL"]
     Output --> Render["DOMPurify before HTML render"]
+
+    ImgReq["Browser image request\napi/get-image.php?key=..."] --> ImgAuth["requireLogin()"]
+    ImgAuth --> ImgAllow["Key allowlist regex\nimages/(projects|profile)/*"]
+    ImgAllow --> ImgRead["Authenticated S3 getObject"]
+    ImgRead --> Data
 ```
 
-Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text sanitization, and optional CA-verified encrypted database connections.
+Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text sanitization, optional CA-verified encrypted database connections, and — for image delivery — session-gated, key-allowlisted proxying of R2 reads rather than exposing the bucket via an unauthenticated public URL.
 
 ## 9. Important operational dependencies
 
 | Dependency | Why it matters |
 | --- | --- |
 | MySQL availability | Authentication, sessions, all CMS data, and dashboard page protection depend on it. |
-| R2 availability | New uploads and project deletion depend on the R2 API; already-stored assets are delivered from the configured public R2 URL. |
+| R2 availability | New uploads, project deletion/update, and **all image viewing** depend on the R2 API, since images are now served through the authenticated proxy rather than a public URL. Resume PDFs are still delivered from the R2 public URL and depend only on that URL resolving. |
+| Render application availability | Because images are proxied through `get-image.php`, image delivery now depends on the PHP application being reachable, not solely on R2/Cloudflare's edge. |
 | Correct environment variables | Required for DB connection, R2 client credentials, R2 bucket/public URL, and optional SSL CA path. |
 | AWS CLI in CI | GitHub Actions uses the AWS CLI to upload backup artifacts to Cloudflare R2. |
 | CDN-hosted Quill and DOMPurify | Editing pages and safe rich-text rendering load these browser libraries from cdnjs. |
 | GitHub Actions secrets and `ca.pem` | Required for scheduled production database backups. |
-
