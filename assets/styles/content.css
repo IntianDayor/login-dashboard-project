@@ -446,16 +446,21 @@ tr:last-child td {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
-    width: min(1000px, 92vw);
-    margin: 40px auto;
+    min-height: 0;
+    height: 100%;
+    width: min(1180px, 100%);
+    margin: 0 auto;
 }
 
 .resume-content {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    max-width: 900px;
-    padding: 24px;
-    margin: 100px auto 40px;
+    max-width: none;
+    height: 100%;
+    min-height: 0;
+    padding: 16px;
+    margin: 0;
     background: var(--surface);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
@@ -946,8 +951,9 @@ tr:last-child td {
 /*----- Resume Page Styles -----*/
 .resume-viewer-title {
     text-align: center;
-    margin: 10px;
+    margin: 0 0 8px;
     color: var(--text);
+    font-size: 1rem;
 }
 
 .resume-viewer-frame-wrapper {
@@ -955,7 +961,8 @@ tr:last-child td {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: calc(100vh - 120px);
+    flex: 1;
+    min-height: 0;
 }
 
 .resume-viewer-frame {
@@ -964,11 +971,48 @@ tr:last-child td {
     border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: var(--shadow);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.resume-preview-canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .resume-viewer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.resume-page-status {
+    min-width: 92px;
+    color: var(--muted);
+    font-size: 0.9rem;
     text-align: center;
-    margin-top: 10px;
+}
+
+.resume-page-btn {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.resume-page-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .resume-open-btn {
@@ -984,6 +1028,18 @@ tr:last-child td {
 
 .resume-open-btn:hover {
     transform: translateY(-1px);
+}
+
+/* Keep the complete viewer in the visible browser area. PDF scrolling, when
+   needed for a multi-page document, stays inside the native PDF viewer. */
+body.my-resume {
+    overflow: hidden;
+}
+
+.my-resume .content {
+    height: 100dvh;
+    min-height: 0;
+    padding: 86px 18px 16px;
 }
 
 /* ========================= 
@@ -1048,13 +1104,13 @@ tr:last-child td {
 
     .resume-wrapper {
         width: 100%;
-        margin: 10px 0;
+        margin: 0;
     }
 
     .resume-content {
-        width: 95%;
-        margin: 80px 10px 20px;
-        padding: 15px;
+        width: 100%;
+        margin: 0;
+        padding: 12px;
     }
 
     .profile-wrapper {

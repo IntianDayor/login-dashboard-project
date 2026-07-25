@@ -81,11 +81,13 @@ function confirmAction(message) {
             overlay = document.createElement('div');
             overlay.id = 'confirm-overlay';
             overlay.innerHTML = `
-                <div id="confirm-box">
+                <div id="confirm-box" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+                    <div class="confirm-icon" aria-hidden="true">!</div>
+                    <p class="confirm-title" id="confirm-title">Confirm action</p>
                     <p id="confirm-message"></p>
                     <div class="confirm-actions">
-                        <button id="confirm-cancel-btn">Cancel</button>
-                        <button id="confirm-ok-btn">Confirm</button>
+                        <button id="confirm-cancel-btn" type="button">Cancel</button>
+                        <button id="confirm-ok-btn" type="button">Confirm</button>
                     </div>
                 </div>
             `;
@@ -104,6 +106,8 @@ function confirmAction(message) {
             overlay.classList.remove('active');
             setTimeout(() => resolve(false), 200); // Wait for animation
         };
+
+        document.getElementById('confirm-cancel-btn').focus();
 
     });
 }
