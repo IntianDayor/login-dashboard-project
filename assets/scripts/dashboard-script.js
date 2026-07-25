@@ -62,7 +62,7 @@ function setPageLoading(isLoading) {
                 </div>
                 <div class="page-loading-copy">
                     <span class="page-loading-eyebrow">Please wait</span>
-                    <span class="page-loading-title">Getting your workspace ready</span>
+                    <span class="page-loading-title">Loading your page</span>
                 </div>
                 <span class="page-loading-bar" aria-hidden="true"><span></span></span>
             </div>`;
