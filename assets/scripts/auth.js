@@ -76,6 +76,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     form?.parentNode?.insertBefore(authThemeToggle, form);
 
+    function navigateWithAuthTransition(destination) {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            window.location.href = destination;
+            return;
+        }
+
+        document.body.classList.add('auth-leaving');
+        window.setTimeout(() => {
+            window.location.href = destination;
+        }, 280);
+    }
+
     // ================= LOGIN PAGE ================= //
     if (document.body.classList.contains("auth") && window.location.pathname.includes("login")) {
 
@@ -122,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Go to signup page
         document.getElementById("sign-up-button")?.addEventListener("click", () => {
-            window.location.href = "signup.html";
+            navigateWithAuthTransition("signup.html");
         });
     }
 
@@ -186,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Go back to login page
         document.getElementById("back-to-login")?.addEventListener("click", () => {
-            window.location.href = "login.html";
+            navigateWithAuthTransition("login.html");
         });
     }
 });

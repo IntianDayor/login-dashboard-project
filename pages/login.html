@@ -8,18 +8,29 @@
     <title>Feraer Portfolio</title>
 </head>
 <body class="auth">
-    <main class="log-in">
-        <h1>Portfolio Portal</h1>
-        <form action="">
-            <input type="text" placeholder="Username" name="username">
-            <input type="password" placeholder="Password" id="password" name="password">
-            <label><input type="checkbox" id="show-password" onclick="password.type = this.checked ? 'text' : 'password'">
-                Show
-            </label>
-            <button type="submit">Log In</button>
-            <p class="sign-up-button" id="sign-up-button">Signup Here</p>
-        </form>
-    </main>
+    <div class="auth-layout auth-login">
+        <main class="log-in auth-card">
+            <h1>Portfolio Portal</h1>
+            <form action="">
+                <input type="text" placeholder="Username" name="username">
+                <input type="password" placeholder="Password" id="password" name="password">
+                <label><input type="checkbox" id="show-password" onclick="password.type = this.checked ? 'text' : 'password'">
+                    Show password
+                </label>
+                <button type="submit">Log In</button>
+                <p class="sign-up-button" id="sign-up-button">Create an account</p>
+            </form>
+        </main>
+        <aside class="auth-intro" aria-label="Portfolio access information">
+            <span class="auth-intro__eyebrow">Welcome to my portfolio</span>
+            <h2>Explore the work behind the profile.</h2>
+            <p>Explore my recruiter dashboard for a closer look at my projects, technical capabilities, and the work behind this portfolio. Both registration and login are purely for demonstration, so you are welcome to use any name and email address—no personal information is required.</p>
+            <div class="demo-account">
+                <span>Demo viewer account</span>
+                <p><strong>Username:</strong> viewer<br><strong>Password:</strong> 123456</p>
+            </div>
+        </aside>
+    </div>
     <script src="../assets/scripts/auth.js"></script>
 </body>
 </html>

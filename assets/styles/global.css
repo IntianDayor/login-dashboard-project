@@ -311,6 +311,168 @@ body.dark-mode .sign-up {
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
+/* Split authentication experience */
+.auth-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1.1fr);
+    align-items: stretch;
+    width: min(1080px, 100%);
+    min-height: min(680px, calc(100vh - 48px));
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.68);
+    border-radius: 30px;
+    background: color-mix(in srgb, var(--surface) 72%, transparent);
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.14);
+}
+
+.auth-layout > * {
+    min-width: 0;
+}
+
+.auth-card.log-in,
+.auth-card.sign-up {
+    position: relative;
+    display: flex;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: center;
+    width: auto;
+    padding: clamp(36px, 6vw, 72px);
+    border: 0;
+    border-radius: 0;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    box-shadow: none;
+}
+
+.auth-card form {
+    width: min(100%, 380px);
+    margin: 0 auto;
+}
+
+.auth-card .theme-toggle {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 42px;
+    height: 42px;
+    margin: 0;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    z-index: 2;
+}
+
+.auth-card .theme-toggle:hover {
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.16);
+}
+
+.auth-intro {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(40px, 7vw, 86px);
+    overflow: hidden;
+    color: #eff6ff;
+    background: linear-gradient(145deg, #1e40af 0%, #2563eb 48%, #7c3aed 100%);
+}
+
+.auth-intro::before,
+.auth-intro::after {
+    position: absolute;
+    border-radius: 50%;
+    content: '';
+    pointer-events: none;
+}
+
+.auth-intro::before {
+    width: 310px;
+    height: 310px;
+    top: -150px;
+    right: -115px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.auth-intro::after {
+    width: 210px;
+    height: 210px;
+    bottom: -110px;
+    left: -85px;
+    background: rgba(15, 23, 42, 0.14);
+}
+
+.auth-intro > * {
+    position: relative;
+    z-index: 1;
+}
+
+.auth-intro__eyebrow,
+.demo-account > span {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.auth-intro__eyebrow {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.auth-intro h2 {
+    max-width: 480px;
+    margin: 14px 0 18px;
+    color: white;
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.12;
+    letter-spacing: -0.04em;
+}
+
+.auth-intro > p {
+    max-width: 500px;
+    margin: 0;
+    color: rgba(239, 246, 255, 0.88);
+    font-size: 0.98rem;
+    line-height: 1.72;
+}
+
+.demo-account {
+    width: min(100%, 360px);
+    margin-top: 30px;
+    padding: 18px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.16);
+    backdrop-filter: blur(12px);
+}
+
+.demo-account > span {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.demo-account p {
+    margin: 9px 0 0;
+    color: white;
+    line-height: 1.65;
+}
+
+.auth-login .auth-card { animation: auth-card-in-left 0.6s cubic-bezier(.22, .8, .25, 1) both; }
+.auth-login .auth-intro { animation: auth-panel-in-right 0.6s cubic-bezier(.22, .8, .25, 1) both; }
+.auth-signup .auth-intro { animation: auth-panel-in-left 0.6s cubic-bezier(.22, .8, .25, 1) both; }
+.auth-signup .auth-card { animation: auth-card-in-right 0.6s cubic-bezier(.22, .8, .25, 1) both; }
+
+body.auth.auth-leaving .auth-login .auth-card,
+body.auth.auth-leaving .auth-signup .auth-intro { animation: auth-leave-left 0.32s ease-in both; }
+
+body.auth.auth-leaving .auth-login .auth-intro,
+body.auth.auth-leaving .auth-signup .auth-card { animation: auth-leave-right 0.32s ease-in both; }
+
+@keyframes auth-card-in-left { from { opacity: 0; transform: translateX(-38px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes auth-card-in-right { from { opacity: 0; transform: translateX(38px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes auth-panel-in-left { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes auth-panel-in-right { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes auth-leave-left { to { opacity: 0; transform: translateX(-42px); } }
+@keyframes auth-leave-right { to { opacity: 0; transform: translateX(42px); } }
+
 /* Keep entered values and placeholders readable in every theme. */
 input,
 textarea,
@@ -775,4 +937,153 @@ body.dark-mode #page-loading-overlay {
 
     .log-in label  { left: 78%; }
     .sign-up label { left: 85%; }
+
+    body.auth {
+        display: block;
+        padding: 16px;
+    }
+
+    .auth-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        margin: 0 auto;
+        border-radius: 24px;
+    }
+
+    .auth-layout .auth-intro {
+        order: 1;
+    }
+
+    .auth-layout .auth-card {
+        order: 2;
+    }
+
+    .auth-card.log-in,
+    .auth-card.sign-up {
+        width: 100%;
+        max-width: none;
+        padding: 38px 26px;
+    }
+
+    .auth-card .theme-toggle {
+        top: 16px;
+        right: 16px;
+    }
+
+    .auth-intro {
+        padding: 38px 28px;
+    }
+
+    .auth-intro h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 540px) {
+    body.auth {
+        align-items: flex-start;
+        padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+    }
+
+    .auth-layout {
+        width: 100%;
+        border-radius: 20px;
+    }
+
+    .auth-intro {
+        min-height: 0;
+        padding: 30px 24px 28px;
+    }
+
+    .auth-intro h2 {
+        margin: 10px 0 12px;
+        font-size: clamp(1.7rem, 8vw, 2rem);
+        line-height: 1.16;
+    }
+
+    .auth-intro > p {
+        font-size: 0.9rem;
+        line-height: 1.58;
+    }
+
+    .demo-account {
+        width: 100%;
+        margin-top: 20px;
+        padding: 14px 16px;
+        border-radius: 14px;
+    }
+
+    .demo-account p {
+        font-size: 0.9rem;
+        line-height: 1.55;
+    }
+
+    .auth-card.log-in,
+    .auth-card.sign-up {
+        padding: 58px 22px 30px;
+    }
+
+    .auth-card form {
+        max-width: none;
+    }
+
+    .log-in h1,
+    .sign-up h1 {
+        margin-bottom: 20px;
+        font-size: 1.55rem;
+    }
+
+    .log-in input,
+    .sign-up input {
+        min-height: 48px;
+        padding: 12px 13px;
+        font-size: 16px;
+    }
+
+    .log-in label,
+    .sign-up label {
+        min-height: 28px;
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+    }
+
+    .log-in button,
+    .sign-up button {
+        min-height: 48px;
+        margin-top: 4px;
+    }
+
+    .auth-card .theme-toggle {
+        top: 14px;
+        right: 14px;
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .auth-intro {
+        padding: 26px 20px 24px;
+    }
+
+    .auth-card.log-in,
+    .auth-card.sign-up {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-login .auth-card,
+    .auth-login .auth-intro,
+    .auth-signup .auth-card,
+    .auth-signup .auth-intro,
+    body.auth.auth-leaving .auth-login .auth-card,
+    body.auth.auth-leaving .auth-login .auth-intro,
+    body.auth.auth-leaving .auth-signup .auth-card,
+    body.auth.auth-leaving .auth-signup .auth-intro {
+        animation: none;
+    }
 }

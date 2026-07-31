@@ -8,26 +8,37 @@
     <title>Register Account | To access Christian Dior Feraer's Info</title>
 </head>
 <body class="auth">
-    <main class="sign-up">
-        <form action="">
-            <h1>Register an Account</h1>
-            <input type="text" placeholder="Username" id="username-reg">
-            <input type="text" placeholder="Full Name" id="fullname">
-            <input type="email" placeholder="Email Address" id="email">
-            <input type="password" placeholder="Create Password" id="create">
-            <label>
-                <input type="checkbox" id="show-create" onclick="create.type = this.checked ? 'text' : 'password'">
-                Show
-            </label>
-            <input type="password" placeholder="Confirm Password" id="confirmpass">
-            <label>
-                <input type="checkbox" id="show-confirm" onclick="confirmpass.type = this.checked ? 'text' : 'password'">
-                Show
-            </label>
-            <button type="submit" id="signup">Sign Up</button>
-            <p class="back-to-login" id="back-to-login">Already have an Account?</p>
-        </form>
-    </main>
+    <div class="auth-layout auth-signup">
+        <aside class="auth-intro" aria-label="Portfolio access information">
+            <span class="auth-intro__eyebrow">Welcome to my portfolio</span>
+            <h2>Explore the work behind the profile.</h2>
+            <p>Explore my recruiter dashboard for a closer look at my projects, technical capabilities, and the work behind this portfolio. Both registration and login are purely for demonstration, so you are welcome to use any name and email address—no personal information is required.</p>
+            <div class="demo-account">
+                <span>Prefer a quick look?</span>
+                <p><strong>Username:</strong> viewer<br><strong>Password:</strong> 123456</p>
+            </div>
+        </aside>
+        <main class="sign-up auth-card">
+            <form action="">
+                <h1>Register an Account</h1>
+                <input type="text" placeholder="Username" id="username-reg">
+                <input type="text" placeholder="Full Name" id="fullname">
+                <input type="email" placeholder="Email Address" id="email">
+                <input type="password" placeholder="Create Password" id="create">
+                <label>
+                    <input type="checkbox" id="show-create" onclick="create.type = this.checked ? 'text' : 'password'">
+                    Show password
+                </label>
+                <input type="password" placeholder="Confirm Password" id="confirmpass">
+                <label>
+                    <input type="checkbox" id="show-confirm" onclick="confirmpass.type = this.checked ? 'text' : 'password'">
+                    Show password
+                </label>
+                <button type="submit" id="signup">Sign Up</button>
+                <p class="back-to-login" id="back-to-login">Already have an account?</p>
+            </form>
+        </main>
+    </div>
     <script src="../assets/scripts/auth.js"></script>
 </body>
 </html>
