@@ -259,8 +259,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     <div class="slider-viewport">
                         <div class="slider-track">
-                           ${project.images.map(img =>
-                `<img src="${toImageSrc(img)}" alt="${esc(project.title)} preview" loading="lazy" decoding="async" onclick="event.stopPropagation(); openImageModal(this.src)">`
+                           ${project.images.map((img, index) =>
+                `<img src="${toImageSrc(img)}" alt="${esc(project.title)} preview ${index + 1}" loading="lazy" decoding="async" onclick="event.stopPropagation(); openImageModal(this.closest('.project-slider'), ${index})">`
             ).join("")}
                         </div>
                     </div>
@@ -313,9 +313,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         const modal = document.createElement("div");
         modal.className = "image-modal";
         modal.id = "imageModal";
-        modal.onclick = closeImageModal;
-        modal.innerHTML = `<span class="close-modal">&times;</span><img id="modalImage" src="" alt="Zoomed image" loading="lazy" decoding="async">`;
+        modal.innerHTML = `
+            <div class="image-modal-content" role="dialog" aria-modal="true" aria-label="Project image preview">
+                <button class="close-modal" type="button" aria-label="Close image preview">&times;</button>
+                <button class="modal-nav modal-prev" type="button" aria-label="Previous image">&#10094;</button>
+                <img id="modalImage" src="" alt="" decoding="async">
+                <button class="modal-nav modal-next" type="button" aria-label="Next image">&#10095;</button>
+                <span class="modal-image-count" aria-live="polite"></span>
+            </div>`;
         container.appendChild(modal);
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) closeImageModal();
+        });
+        modal.querySelector('.close-modal').addEventListener('click', closeImageModal);
+        modal.querySelector('.modal-prev').addEventListener('click', () => changeModalImage(-1));
+        modal.querySelector('.modal-next').addEventListener('click', () => changeModalImage(1));
 
         // Initialize sliders AFTER modal is in the DOM
         initSliders();
@@ -379,13 +392,44 @@ function openProjectLink(card) {
 }
 
 // Image modal functions
-function openImageModal(src) {
+let modalImages = [];
+let modalImageIndex = 0;
+
+function openImageModal(slider, index) {
     const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    if (modal && modalImg) {
-        modalImg.src = src;
+    if (modal && slider) {
+        modalImages = Array.from(slider.querySelectorAll('.slider-track img')).map(image => ({
+            src: image.src,
+            alt: image.alt
+        }));
+        modalImageIndex = index;
+        updateModalImage();
         modal.classList.add('active');
     }
+}
+
+function updateModalImage() {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const counter = modal?.querySelector('.modal-image-count');
+    const previous = modal?.querySelector('.modal-prev');
+    const next = modal?.querySelector('.modal-next');
+    if (!modalImg || !modalImages.length) return;
+
+    const image = modalImages[modalImageIndex];
+    modalImg.src = image.src;
+    modalImg.alt = image.alt;
+    counter.textContent = `${modalImageIndex + 1} / ${modalImages.length}`;
+
+    const hasMultipleImages = modalImages.length > 1;
+    previous.hidden = !hasMultipleImages;
+    next.hidden = !hasMultipleImages;
+}
+
+function changeModalImage(direction) {
+    if (modalImages.length < 2) return;
+    modalImageIndex = (modalImageIndex + direction + modalImages.length) % modalImages.length;
+    updateModalImage();
 }
 
 function closeImageModal() {
@@ -397,8 +441,15 @@ function closeImageModal() {
 
 // Close modal on Escape key
 document.addEventListener('keydown', (e) => {
+    const isModalOpen = document.getElementById('imageModal')?.classList.contains('active');
+    if (!isModalOpen) return;
+
     if (e.key === 'Escape') {
         closeImageModal();
+    } else if (e.key === 'ArrowLeft') {
+        changeModalImage(-1);
+    } else if (e.key === 'ArrowRight') {
+        changeModalImage(1);
     }
 });
 
