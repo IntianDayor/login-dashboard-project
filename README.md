@@ -31,6 +31,12 @@ The primary goal of this project is to present myself as a **professional** in a
 * **GitHub Repository Integration** — Direct links to project source code repositories.
 * **Image Management** — Upload, update, and organize project images through the CMS.
 
+### ✉️ Contact
+
+* **Contact Form** — Signed-in visitors can send a message from the portfolio through the Contact Me page.
+* **Email Delivery** — Messages are delivered with SendGrid and use the visitor's submitted address as the reply-to address.
+* **Spam Mitigation** — A hidden honeypot field filters simple automated submissions without disrupting legitimate visitors.
+
 ### 🔐 User Authentication & Administration
 
 * **Secure Login System** — Authentication system protecting administrative functionality.
@@ -82,6 +88,7 @@ The primary goal of this project is to present myself as a **professional** in a
 | Security            | DOMPurify                        |
 | Cloud Storage       | Cloudflare R2                    |
 | Cloud SDK           | AWS SDK for PHP                  |
+| Email Delivery      | SendGrid Mail Send API           |
 | Web Server          | Apache (Ubuntu 22.04)            |
 | Containerization    | Docker                           |
 | Deployment          | Render                           |
@@ -146,7 +153,7 @@ This project is deployed as a Docker web service on Render, connected to a manag
 2. Provision a free MySQL database on Aiven and run `init.sql` against it to create the schema.
 3. Download the Aiven CA certificate and commit it to the repo root as `ca.pem`.
 4. Create a new Web Service on Render, connected to this GitHub repository, using the Docker environment.
-5. Configure environment variables on Render (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`, `DB_SSL_CA`, and the `R2_*` credentials).
+5. Configure environment variables on Render (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`, `DB_SSL_CA`, the `R2_*` credentials, `SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`, and `CONTACT_EMAIL`). `SENDGRID_FROM_EMAIL` must be a verified Sender Identity in SendGrid, and `CONTACT_EMAIL` is the inbox that receives contact-form messages.
 6. Deploy — Render builds the Docker image and starts the container automatically.
 7. Push updates to GitHub to trigger automatic redeployment.
 

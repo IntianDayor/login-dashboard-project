@@ -4,7 +4,7 @@
 
 ## 1. System at a glance
 
-The application is a server-rendered static-page frontend with JavaScript-driven API calls. PHP API endpoints enforce authentication and authorization, persist application data and sessions in MySQL, and store uploaded binary assets in Cloudflare R2. Images are served back to the browser through an authenticated backend proxy rather than the R2 public URL directly; resumes (PDFs) are still delivered from the R2 public URL. The application itself is disposable: persistent state is kept outside the web container.
+The application is a server-rendered static-page frontend with JavaScript-driven API calls. PHP API endpoints enforce authentication and authorization where required, persist application data and sessions in MySQL, send contact-form email through SendGrid, and store uploaded binary assets in Cloudflare R2. Images are served back to the browser through an authenticated backend proxy rather than the R2 public URL directly; resumes (PDFs) are still delivered from the R2 public URL. The application itself is disposable: persistent state is kept outside the web container.
 
 ```mermaid
 flowchart LR
@@ -14,6 +14,7 @@ flowchart LR
     Web["Apache + PHP 8.3\nDocker web application"]
     DB[("MySQL 8.0\ncontent, users, sessions")]
     R2[("Cloudflare R2\nimages, PDFs, SQL backups")]
+    SendGrid["SendGrid Mail Send API"]
     CDN["R2 public URL\nPDF delivery"]
     GHA["GitHub Actions\nweekly DB backup"]
 
@@ -22,6 +23,7 @@ flowchart LR
     Browser -->|"pages/admin + fetch /api"| Web
     Web -->|"mysqli; SSL when configured"| DB
     Web -->|"AWS SDK; S3-compatible API"| R2
+    Web -->|"HTTPS + API key"| SendGrid
     Browser -->|"images via api/get-image.php\nproxied, authenticated"| Web
     Browser -->|"loads resume PDFs directly"| CDN
     CDN --> R2
@@ -34,7 +36,7 @@ flowchart LR
 ```mermaid
 flowchart TB
     subgraph Client["Client layer — browser"]
-        Public["User pages\ndashboard, profile, projects, resume"]
+        Public["User pages\ndashboard, profile, projects, resume, contact"]
         AdminUI["Admin pages\ncontent, profile, projects, resume, users"]
         SharedJS["Shared client subsystem\ndashboard-script.js\nsession check, CSRF header, sidebar, logout,\ntoImageSrc() image-proxy URL helper"]
         FeatureJS["Feature scripts\nauth, profile, projects, resume, users, dashboard content"]
@@ -43,6 +45,7 @@ flowchart TB
 
     subgraph App["Web application — Apache + PHP"]
         Endpoints["API endpoint modules\n/api/*.php"]
+        Contact["Contact endpoint\ncontact.php: validation, honeypot, SendGrid request"]
         Bootstrap["Bootstrap subsystem\n.env loading, DB connection, session start"]
         Guard["Security guard subsystem\nrequireLogin, requireAdmin, verifyCsrf"]
         Sanitizer["Rich-text sanitizer\nallowed tags + safe http(s) links"]
@@ -77,6 +80,8 @@ flowchart TB
     Upload --> R2Adapter
     R2Adapter --> R2
     Endpoints --> MySQL
+    Endpoints --> Contact
+    Contact --> SendGrid
 ```
 
 ### Client/UI subsystem
@@ -85,6 +90,7 @@ flowchart TB
 - `admin/` provides CMS pages: profile/project/resume uploads, user-role management, and editable dashboard content.
 - `assets/scripts/dashboard-script.js` is the cross-cutting browser module. It performs server-side session verification on page load, stores the current CSRF token in `localStorage`, loads the correct sidebar fragment, handles logout, and exposes `toImageSrc(path)` — a shared helper that converts a stored image path (legacy full R2 URL or bare key) into a proxied `../api/get-image.php?key=...` URL. Because this file loads on every page before feature scripts, `toImageSrc()` is available globally without duplication.
 - Feature scripts use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals. Project and profile rendering call `toImageSrc()` rather than constructing R2 URLs directly.
+- `pages/contact-me.html` provides the Contact Me form for signed-in visitors. `assets/scripts/contact.js` submits the name, email, message, and hidden honeypot field as JSON to `api/contact.php`, then displays the outcome without reloading the page.
 - Quill is used only when editing rich text. DOMPurify sanitizes that HTML in the browser before it is submitted and again before it is inserted into the DOM.
 
 ### API and application subsystem
@@ -95,6 +101,7 @@ flowchart TB
 - `auth-check.php` centralizes the three endpoint guards: authenticated session required, admin role required, and matching `X-CSRF-Token` required.
 - `r2.php` hides Cloudflare R2 behind four helpers: create S3 client, upload object, extract a key from a public URL, and delete object. All calls into this adapter from endpoint code are wrapped in `try/catch` around `\Aws\S3\Exception\S3Exception`, so an R2-side failure (invalid/expired credentials, wrong bucket, network issue) returns a clean JSON error instead of an uncaught fatal error and an empty HTTP response body.
 - `get-image.php` is a read-side proxy: it validates the requested `key` against an allowlist pattern (`images/projects/...` or `images/profile/...`), requires an authenticated session (`requireLogin()`), then performs an authenticated `getObject` call via the R2 adapter and streams the bytes back with the object's content type and a one-day cache header. This replaces direct browser requests to the R2 public development URL (`pub-*.r2.dev`), which is not intended for production traffic and is subject to undocumented rate limits.
+- `contact.php` accepts JSON `POST` requests, validates required fields and email format, caps the message at 5,000 characters, and silently accepts submissions that fill its honeypot field. Valid messages are sent through SendGrid's Mail Send API using `SENDGRID_API_KEY`; `SENDGRID_FROM_EMAIL` is the sender and `CONTACT_EMAIL` receives the message. The visitor's email is used only as the email reply-to address.
 
 ## 3. Authentication and authorization flow
 
@@ -143,6 +150,7 @@ sequenceDiagram
 | Delete a project | Admin | `requireAdmin()` + CSRF |
 | List users / change roles | Admin | `requireAdmin()` + CSRF |
 | Log out | Authenticated session with valid token | CSRF token validation then session-cookie and server-session destruction |
+| Submit contact form | Any caller of the endpoint | POST-only JSON, required-field/email/message-length validation, and honeypot filtering; SendGrid credentials remain server-side |
 
 The browser's `localStorage` values are used for initial UI routing and carrying the CSRF token, but the API makes the final access decision from the server-side session stored in MySQL.
 
@@ -199,6 +207,7 @@ Deleting or updating a project removes/replaces its preview rows and attempts to
 | `dashboard-content.php` | Read/update dashboard About content | Read: logged in; write: admin + CSRF | `dashboard_content` |
 | `users-table.php` | List accounts | Admin + CSRF | `users` |
 | `set-role.php` | Change a user role | Admin + CSRF | `users` |
+| `contact.php` | Validate and send a contact-form email | Public endpoint | SendGrid Mail Send API |
 
 ## 6. Database model
 
@@ -277,13 +286,14 @@ flowchart TB
     Repo -->|"build and deploy"| Render
     Render -->|"environment variables\nDB_SSL_CA"| Aiven
     Render -->|"R2_* environment variables"| R2
+    Render -->|"SENDGRID_* + CONTACT_EMAIL"| SendGrid["SendGrid"]
     Action -->|"mysqldump with ca.pem"| Aiven
     Action -->|"backups/backup-YYYY-MM-DD.sql\nbackups/latest.sql"| R2
 ```
 
 - **Local Docker:** `docker-compose.yml` starts the app container and a MySQL 8.0 service with `DB_HOST=db`, `DB_USER=appuser`, `DB_PASS=apppassword`, and `DB_NAME=fprojectdb_mysql`. The app source is mounted into `/var/www/html`, `init.sql` seeds the schema at container startup, and MySQL data is persisted in the `db_data` volume.
 - **Production:** the Dockerfile builds an Apache + PHP 8.3 web service, installs required PHP extensions and Composer dependencies, enables URL rewriting, and serves the repository content as the application. Render hosts the built container, while MySQL and Cloudflare R2 remain independent managed services.
-- **Configuration:** PHP loads environment values via `phpdotenv` in local development, while production and CI inject credentials through environment variables. Database SSL is enabled when `DB_SSL_CA` is provided for CA-verified connections. `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY` must stay in sync with the currently active Cloudflare R2 API token — deleting and recreating a token invalidates these values until Render's environment variables are updated and the service is redeployed.
+- **Configuration:** PHP loads environment values via `phpdotenv` in local development, while production and CI inject credentials through environment variables. Database SSL is enabled when `DB_SSL_CA` is provided for CA-verified connections. `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY` must stay in sync with the currently active Cloudflare R2 API token — deleting and recreating a token invalidates these values until Render's environment variables are updated and the service is redeployed. Contact email requires `SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL` (a SendGrid-verified sender), and `CONTACT_EMAIL` (the receiving inbox).
 - **Recovery subsystem:** `.github/workflows/db-backup.yml` runs `mysqldump` against Aiven using the committed `ca.pem` certificate, then uploads both a dated SQL snapshot and `latest.sql` to Cloudflare R2 via the AWS CLI. The workflow runs weekly and can also be triggered manually.
 
 ## 8. Security boundaries and controls
@@ -306,7 +316,7 @@ flowchart LR
     ImgRead --> Data
 ```
 
-Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text sanitization, optional CA-verified encrypted database connections, and — for image delivery — session-gated, key-allowlisted proxying of R2 reads rather than exposing the bucket via an unauthenticated public URL.
+Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text sanitization, optional CA-verified encrypted database connections, contact-form POST/field validation and honeypot filtering with the SendGrid key retained server-side, and — for image delivery — session-gated, key-allowlisted proxying of R2 reads rather than exposing the bucket via an unauthenticated public URL.
 
 ## 9. Important operational dependencies
 
@@ -316,6 +326,7 @@ Key controls include password hashing, session-ID regeneration after successful 
 | R2 availability | New uploads, project deletion/update, and **all image viewing** depend on the R2 API, since images are now served through the authenticated proxy rather than a public URL. Resume PDFs are still delivered from the R2 public URL and depend only on that URL resolving. |
 | Render application availability | Because images are proxied through `get-image.php`, image delivery now depends on the PHP application being reachable, not solely on R2/Cloudflare's edge. |
 | Correct environment variables | Required for DB connection, R2 client credentials, R2 bucket/public URL, and optional SSL CA path. |
+| SendGrid credentials | `SENDGRID_API_KEY`, a verified `SENDGRID_FROM_EMAIL`, and `CONTACT_EMAIL` are required for contact-form delivery. |
 | AWS CLI in CI | GitHub Actions uses the AWS CLI to upload backup artifacts to Cloudflare R2. |
 | CDN-hosted Quill and DOMPurify | Editing pages and safe rich-text rendering load these browser libraries from cdnjs. |
 | GitHub Actions secrets and `ca.pem` | Required for scheduled production database backups. |
