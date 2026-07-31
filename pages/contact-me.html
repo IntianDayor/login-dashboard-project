@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../assets/uploads/images/icons/icons8-portfolio-50-3.png">
+    <link rel="stylesheet" href="../assets/styles/content.css">
+    <link rel="stylesheet" href="../assets/styles/global.css">
+    <title>Contact Me | Christian Dior Feraer</title>
+</head>
+<body class="dashboard contact-page">
+    <div id="sidebar-container" data-title="Contact Me"></div>
+    <main class="content">
+        <section class="contact-layout" aria-labelledby="contact-heading">
+            <div class="contact-intro">
+                <span class="contact-eyebrow">Let’s connect</span>
+                <h1 id="contact-heading">Interested in working with me?</h1>
+                <p>I’d be glad to hear from you. Share a few details and I’ll get back to you as soon as I can.</p>
+                <div class="contact-note"><span aria-hidden="true">✦</span><p>Your message is sent directly and your email is only used to reply.</p></div>
+            </div>
+            <form class="contact-form" id="contact-form" novalidate>
+                <div class="contact-form-heading"><h2>Send a message</h2><p>All fields are required.</p></div>
+                <div class="contact-field"><label for="contact-name">Your name</label><input id="contact-name" type="text" name="name" autocomplete="name" maxlength="120" placeholder="Jane Smith" required></div>
+                <div class="contact-field"><label for="contact-email">Email address</label><input id="contact-email" type="email" name="email" autocomplete="email" maxlength="254" placeholder="jane@example.com" required></div>
+                <div class="contact-field"><label for="contact-message">How can I help?</label><textarea id="contact-message" name="message" rows="6" maxlength="5000" placeholder="Tell me a little about your project or opportunity..." required></textarea></div>
+                <div class="contact-honeypot" aria-hidden="true"><label for="contact-website">Website</label><input id="contact-website" type="text" name="website" tabindex="-1" autocomplete="off"></div>
+                <button class="contact-submit" type="submit">Send message <span aria-hidden="true">→</span></button>
+                <p class="contact-status" id="contact-status" aria-live="polite"></p>
+            </form>
+        </section>
+    </main>
+    <script src="../assets/scripts/dashboard-script.js"></script>
+    <script src="../assets/scripts/contact.js"></script>
+</body>
+</html>

@@ -275,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'resume':           'view-resume.html',
                 'profile':          'profile.html',
                 'projects':         'projects-user.html',
+                'contact':          'contact-me.html',
                 'manage-users':     'manage-users.html',
                 'upload-projects':  'projects.html',
                 'upload-resume':    'upload-resume.html',

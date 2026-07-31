@@ -232,7 +232,8 @@ body.admin > .content > h2 {
 .different-data .resume,
 .different-data .experience,
 .different-data .projects,
-.different-data .home {
+.different-data .home,
+.different-data .contact {
     text-align: left;
     padding: 12px 14px;
     border-radius: 12px;
@@ -251,6 +252,7 @@ body.admin > .content > h2 {
 .different-data .experience:hover,
 .different-data .projects:hover,
 .different-data .home:hover,
+.different-data .contact:hover,
 .log-out:hover {
     background: var(--sidebar-item-hover);
     transform: translateX(2px);
