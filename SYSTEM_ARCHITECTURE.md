@@ -45,7 +45,7 @@ flowchart TB
 
     subgraph App["Web application — Apache + PHP"]
         Endpoints["API endpoint modules\n/api/*.php"]
-        Contact["Contact endpoint\ncontact.php: validation, honeypot, SendGrid request"]
+        Contact["Contact endpoint\ncontact.php: validation, bot traps, rate limiting, SendGrid request"]
         Bootstrap["Bootstrap subsystem\n.env loading, DB connection, session start"]
         Guard["Security guard subsystem\nrequireLogin, requireAdmin, verifyCsrf"]
         Sanitizer["Rich-text sanitizer\nallowed tags + safe http(s) links"]
@@ -90,7 +90,6 @@ flowchart TB
 - `admin/` provides CMS pages: profile/project/resume uploads, user-role management, and editable dashboard content.
 - `assets/scripts/dashboard-script.js` is the cross-cutting browser module. It performs server-side session verification on page load, stores the current CSRF token in `localStorage`, loads the correct sidebar fragment, handles logout, and exposes `toImageSrc(path)` — a shared helper that converts a stored image path (legacy full R2 URL or bare key) into a proxied `../api/get-image.php?key=...` URL. Because this file loads on every page before feature scripts, `toImageSrc()` is available globally without duplication.
 - Feature scripts use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals. Project and profile rendering call `toImageSrc()` rather than constructing R2 URLs directly.
-- `pages/contact-me.html` provides the Contact Me form for signed-in visitors. `assets/scripts/contact.js` submits the name, email, message, and hidden honeypot field as JSON to `api/contact.php`, then displays the outcome without reloading the page.
 - Quill is used only when editing rich text. DOMPurify sanitizes that HTML in the browser before it is submitted and again before it is inserted into the DOM.
 
 ### API and application subsystem
@@ -101,7 +100,7 @@ flowchart TB
 - `auth-check.php` centralizes the three endpoint guards: authenticated session required, admin role required, and matching `X-CSRF-Token` required.
 - `r2.php` hides Cloudflare R2 behind four helpers: create S3 client, upload object, extract a key from a public URL, and delete object. All calls into this adapter from endpoint code are wrapped in `try/catch` around `\Aws\S3\Exception\S3Exception`, so an R2-side failure (invalid/expired credentials, wrong bucket, network issue) returns a clean JSON error instead of an uncaught fatal error and an empty HTTP response body.
 - `get-image.php` is a read-side proxy: it validates the requested `key` against an allowlist pattern (`images/projects/...` or `images/profile/...`), requires an authenticated session (`requireLogin()`), then performs an authenticated `getObject` call via the R2 adapter and streams the bytes back with the object's content type and a one-day cache header. This replaces direct browser requests to the R2 public development URL (`pub-*.r2.dev`), which is not intended for production traffic and is subject to undocumented rate limits.
-- `contact.php` accepts JSON `POST` requests, validates required fields and email format, caps the message at 5,000 characters, and silently accepts submissions that fill its honeypot field. Valid messages are sent through SendGrid's Mail Send API using `SENDGRID_API_KEY`; `SENDGRID_FROM_EMAIL` is the sender and `CONTACT_EMAIL` receives the message. The visitor's email is used only as the email reply-to address.
+- `contact.php` accepts JSON `POST` requests, validates required fields and email format, caps the message at 5,000 characters, and silently accepts submissions that fill its honeypot field or arrive within two seconds of the form being loaded. It records attempts by client IP in `contact_attempts`; after the third attempt, further requests from that IP are rejected for 60 minutes. Valid messages are sent through SendGrid's Mail Send API using `SENDGRID_API_KEY`; `SENDGRID_FROM_EMAIL` is the sender and `CONTACT_EMAIL` receives the message. The visitor's email is used only as the email reply-to address.
 
 ## 3. Authentication and authorization flow
 
@@ -150,7 +149,7 @@ sequenceDiagram
 | Delete a project | Admin | `requireAdmin()` + CSRF |
 | List users / change roles | Admin | `requireAdmin()` + CSRF |
 | Log out | Authenticated session with valid token | CSRF token validation then session-cookie and server-session destruction |
-| Submit contact form | Any caller of the endpoint | POST-only JSON, required-field/email/message-length validation, and honeypot filtering; SendGrid credentials remain server-side |
+| Submit contact form | Any caller of the endpoint | POST-only JSON, required-field/email/message-length validation, honeypot and timing traps, plus per-IP rate limiting; SendGrid credentials remain server-side |
 
 The browser's `localStorage` values are used for initial UI routing and carrying the CSRF token, but the API makes the final access decision from the server-side session stored in MySQL.
 
@@ -207,7 +206,7 @@ Deleting or updating a project removes/replaces its preview rows and attempts to
 | `dashboard-content.php` | Read/update dashboard About content | Read: logged in; write: admin + CSRF | `dashboard_content` |
 | `users-table.php` | List accounts | Admin + CSRF | `users` |
 | `set-role.php` | Change a user role | Admin + CSRF | `users` |
-| `contact.php` | Validate and send a contact-form email | Public endpoint | SendGrid Mail Send API |
+| `contact.php` | Validate, throttle, and send a contact-form email | Public endpoint | `contact_attempts`, SendGrid Mail Send API |
 
 ## 6. Database model
 
@@ -259,6 +258,13 @@ erDiagram
         INT attempts
         DATETIME locked_until
         TIMESTAMP last_attempt
+    }
+    CONTACT_ATTEMPTS {
+        INT id PK
+        VARCHAR ip_address UK
+        INT attempts
+        DATETIME locked_until
+        DATETIME last_attempt
     }
     DASHBOARD_CONTENT {
         INT id PK "singleton: 1"
@@ -316,7 +322,7 @@ flowchart LR
     ImgRead --> Data
 ```
 
-Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text sanitization, optional CA-verified encrypted database connections, contact-form POST/field validation and honeypot filtering with the SendGrid key retained server-side, and — for image delivery — session-gated, key-allowlisted proxying of R2 reads rather than exposing the bucket via an unauthenticated public URL.
+Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text sanitization, optional CA-verified encrypted database connections, contact-form POST/field validation, honeypot and timing traps, and per-IP throttling (three attempts followed by a 60-minute lock) with the SendGrid key retained server-side, and — for image delivery — session-gated, key-allowlisted proxying of R2 reads rather than exposing the bucket via an unauthenticated public URL.
 
 ## 9. Important operational dependencies
 

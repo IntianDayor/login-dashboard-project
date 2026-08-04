@@ -35,7 +35,7 @@ The primary goal of this project is to present myself as a **professional** in a
 
 * **Contact Form** — Signed-in visitors can send a message from the portfolio through the Contact Me page.
 * **Email Delivery** — Messages are delivered with SendGrid and use the visitor's submitted address as the reply-to address.
-* **Spam Mitigation** — A hidden honeypot field filters simple automated submissions without disrupting legitimate visitors.
+* **Spam Mitigation** — A hidden honeypot field and a minimum form-completion time silently filter simple automated submissions. Database-backed, per-IP rate limiting permits up to three submissions before temporarily blocking further messages for one hour.
 
 ### 🔐 User Authentication & Administration
 
@@ -72,6 +72,7 @@ The primary goal of this project is to present myself as a **professional** in a
 * **Password Hashing** — Passwords are securely hashed using PHP's `password_hash()` with bcrypt.
 * **Session Authentication** — Protected routes require valid authenticated sessions.
 * **CSRF Protection** — Mutating requests require valid CSRF tokens.
+* **Contact-Form Throttling** — Contact submissions are tracked per IP address and temporarily locked after repeated attempts.
 * **Encrypted Database Connections** — Production database connections use SSL/TLS via a CA-verified connection.
 * **Environment Variable Security** — Sensitive credentials are stored outside the source code, injected via the hosting platform's environment variable manager and GitHub Actions encrypted secrets.
 
