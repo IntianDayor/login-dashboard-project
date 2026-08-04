@@ -1,15 +1,69 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
-
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/..");
-$dotenv->safeLoad();
+require_once __DIR__ . '/db.php';
 
 header("Content-Type: application/json");
+
+const MAX_CONTACT_ATTEMPTS = 3;
+const CONTACT_LOCK_MINUTES = 60;
+
+function getClientIp(): string {
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+}
+
+function rejectIfContactLocked(mysqli $conn, string $ip): void {
+    $stmt = $conn->prepare("
+        SELECT locked_until
+        FROM contact_attempts
+        WHERE ip_address = ? AND locked_until > NOW()
+        LIMIT 1
+    ");
+    $stmt->bind_param("s", $ip);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if (!$row) {
+        return;
+    }
+
+    $wait = max(1, ceil((strtotime($row['locked_until']) - time()) / 60));
+    echo json_encode(["success" => false, "message" => "Too many messages sent. Try again in {$wait} minute(s)."]);
+    exit;
+}
+
+function recordContactAttempt(mysqli $conn, string $ip): void {
+    $lockMinutes = CONTACT_LOCK_MINUTES;
+    $maxAttempts = MAX_CONTACT_ATTEMPTS;
+
+    $stmt = $conn->prepare("
+        INSERT INTO contact_attempts (ip_address, attempts, locked_until, last_attempt)
+        VALUES (?, 1, NULL, NOW())
+        ON DUPLICATE KEY UPDATE
+            attempts = CASE
+                WHEN locked_until IS NOT NULL AND locked_until <= NOW() THEN 1
+                WHEN last_attempt < DATE_SUB(NOW(), INTERVAL {$lockMinutes} MINUTE) THEN 1
+                ELSE attempts + 1
+            END,
+            locked_until = CASE
+                WHEN locked_until IS NOT NULL AND locked_until <= NOW() THEN NULL
+                WHEN last_attempt < DATE_SUB(NOW(), INTERVAL {$lockMinutes} MINUTE) THEN NULL
+                WHEN attempts + 1 >= {$maxAttempts} THEN DATE_ADD(NOW(), INTERVAL {$lockMinutes} MINUTE)
+                ELSE locked_until
+            END,
+            last_attempt = NOW()
+    ");
+    $stmt->bind_param("s", $ip);
+    $stmt->execute();
+    $stmt->close();
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["success" => false, "message" => "Invalid request"]);
     exit;
 }
+
+$clientIp = getClientIp();
+rejectIfContactLocked($conn, $clientIp);
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -17,12 +71,22 @@ $name     = trim($data['name'] ?? '');
 $email    = trim($data['email'] ?? '');
 $message  = trim($data['message'] ?? '');
 $honeypot = trim($data['website'] ?? ''); // hidden field, clankers fill it, humans don't
+$loadedAt = intval($data['loaded_at'] ?? 0); // JS timestamp (ms) set when the form loaded
 
-// Honeypot: if this is filled, silently pretend success (fool the clankers)
+// Honeypot: if this is filled, silently pretend success (clankers be fooled)
 if ($honeypot !== '') {
     echo json_encode(["success" => true]);
     exit;
 }
+
+// Timing trap: reject submissions faster than a human could realistically fill the form
+$elapsedMs = (microtime(true) * 1000) - $loadedAt;
+if ($loadedAt > 0 && $elapsedMs < 2000) {
+    echo json_encode(["success" => true]); // pretend success, fool clankers
+    exit;
+}
+
+recordContactAttempt($conn, $clientIp);
 
 if (empty($name) || empty($email) || empty($message)) {
     echo json_encode(["success" => false, "message" => "All fields are required"]);
@@ -39,8 +103,8 @@ if (strlen($message) > 5000) {
     exit;
 }
 
-$apiKey  = getenv('SENDGRID_API_KEY') ?: ($_ENV['SENDGRID_API_KEY'] ?? '');
-$toEmail = getenv('CONTACT_EMAIL') ?: ($_ENV['CONTACT_EMAIL'] ?? '');
+$apiKey    = getenv('SENDGRID_API_KEY') ?: ($_ENV['SENDGRID_API_KEY'] ?? '');
+$toEmail   = getenv('CONTACT_EMAIL') ?: ($_ENV['CONTACT_EMAIL'] ?? '');
 $fromEmail = getenv('SENDGRID_FROM_EMAIL') ?: ($_ENV['SENDGRID_FROM_EMAIL'] ?? '');
 
 $payload = json_encode([

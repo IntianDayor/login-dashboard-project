@@ -1,3 +1,8 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const loadedAtField = document.getElementById('loaded-at');
+    if (loadedAtField) loadedAtField.value = Date.now();
+});
+
 document.getElementById('contact-form')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -16,7 +21,8 @@ document.getElementById('contact-form')?.addEventListener('submit', async (event
         name: form.name.value.trim(),
         email: form.email.value.trim(),
         message: form.message.value.trim(),
-        website: form.website.value
+        website: form.website.value,
+        loaded_at: form.loaded_at.value
     };
 
     try {
