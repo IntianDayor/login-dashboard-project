@@ -19,8 +19,9 @@ function requireAdmin() {
 function verifyCsrf() {
     $headers = array_change_key_case(getallheaders(), CASE_LOWER);
     $token = $headers['x-csrf-token'] ?? '';
+    $sessionToken = $_SESSION['csrf_token'] ?? '';
 
-    if (empty($token) || $token !== ($_SESSION['csrf_token'] ?? '')) {
+    if (empty($token) || empty($sessionToken) || !hash_equals($sessionToken, $token)) {
         echo json_encode(["success" => false, "message" => "Invalid CSRF token"]);
         exit;
     }

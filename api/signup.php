@@ -46,7 +46,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $username);
 $stmt->execute();
 if ($stmt->get_result()->num_rows > 0) {
-    echo json_encode(["success" => false, "message" => "Username already taken"]);
+    echo json_encode(["success" => false, "message" => "Username or Email Already Taken"]);
     exit;
 }
 
@@ -56,7 +56,7 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
 if ($stmt->get_result()->num_rows > 0) {
-    echo json_encode(["success" => false, "message" => "Email already registered"]);
+    echo json_encode(["success" => false, "message" => "Username or Email Already Taken"]);
     exit;
 }
 

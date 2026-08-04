@@ -153,7 +153,7 @@ function initProjectEditEditors() {
         });
 
         if (descriptionField.value) {
-            quill.root.innerHTML = descriptionField.value;
+            quill.root.innerHTML = DOMPurify.sanitize(descriptionField.value);
         }
 
         const syncDescription = () => {

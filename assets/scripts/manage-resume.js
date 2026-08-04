@@ -12,7 +12,7 @@ if (uploadForm) {
 
         const submitButton = uploadForm.querySelector('button[type="submit"]');
         setButtonLoading(submitButton, true, 'Uploading...');
-        
+
         const formData = new FormData(uploadForm);
 
         try {
@@ -44,20 +44,18 @@ const resumeContainer = document.querySelector(".resume-content");
 if (resumeContainer) {
     showContentLoading(resumeContainer, 'Loading resume...');
     fetch("../api/get-resumes.php")
-    .then(res => res.json())
-    .then(data => {
-        clearContentLoading(resumeContainer);
-        if (data.length === 0) {
-            resumeContainer.innerHTML = "<p>No resume uploaded yet.</p>";
-            return;
-        }
+        .then(res => res.json())
+        .then(data => {
+            clearContentLoading(resumeContainer);
+            if (data.length === 0) {
+                resumeContainer.innerHTML = "<p>No resume uploaded yet.</p>";
+                return;
+            }
 
-        const resume = data[0];
-        const resumeUrl = resume.file_path.startsWith('http')
-            ? resume.file_path
-            : '../' + resume.file_path;
-        
-        resumeContainer.innerHTML = `
+            const resume = data[0];
+            const resumeUrl = '../api/get-current-resume-pdf.php';
+
+            resumeContainer.innerHTML = `
             <h3 class="resume-viewer-title">Christian Dior Feraer's Latest Resume</h3>
             <div class="resume-viewer-frame-wrapper">
                 <div class="resume-viewer-frame" role="region" aria-label="Resume preview">
@@ -76,13 +74,13 @@ if (resumeContainer) {
             </div>
         `;
 
-        return renderResumePreview(resumeContainer);
-    })
-    .catch(error => {
-        clearContentLoading(resumeContainer);
-        resumeContainer.innerHTML = "<p>Failed to load resume. Please try again.</p>";
-        console.error("Error loading resume:", error);
-    });
+            return renderResumePreview(resumeContainer);
+        })
+        .catch(error => {
+            clearContentLoading(resumeContainer);
+            resumeContainer.innerHTML = "<p>Failed to load resume. Please try again.</p>";
+            console.error("Error loading resume:", error);
+        });
 }
 
 async function renderResumePreview(container) {

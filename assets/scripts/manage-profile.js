@@ -13,7 +13,7 @@ if (editForm) {
         .then(res => res.json())
         .then(data => {
             if (window.profileQuill) {
-                window.profileQuill.root.innerHTML = data?.description || '';
+                window.profileQuill.root.innerHTML = DOMPurify.sanitize(data?.description || '');
             }
         })
         .catch(err => {
