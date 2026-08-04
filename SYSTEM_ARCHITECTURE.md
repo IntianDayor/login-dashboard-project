@@ -4,7 +4,7 @@
 
 ## 1. System at a glance
 
-The application is a server-rendered static-page frontend with JavaScript-driven API calls. PHP API endpoints enforce authentication and authorization where required, persist application data and sessions in MySQL, send contact-form email through SendGrid, and store uploaded binary assets in Cloudflare R2. Images are served back to the browser through an authenticated backend proxy rather than the R2 public URL directly; resumes (PDFs) are still delivered from the R2 public URL. The application itself is disposable: persistent state is kept outside the web container.
+The application is a server-rendered static-page frontend with JavaScript-driven API calls. PHP API endpoints enforce authentication and authorization where required, persist application data and sessions in MySQL, send contact-form email through SendGrid, and store uploaded binary assets in Cloudflare R2. Images and the latest resume PDF are served back to the browser through authenticated backend proxies rather than directly from an R2 public URL. The application itself is disposable: persistent state is kept outside the web container.
 
 ```mermaid
 flowchart LR
@@ -15,7 +15,6 @@ flowchart LR
     DB[("MySQL 8.0\ncontent, users, sessions")]
     R2[("Cloudflare R2\nimages, PDFs, SQL backups")]
     SendGrid["SendGrid Mail Send API"]
-    CDN["R2 public URL\nPDF delivery"]
     GHA["GitHub Actions\nweekly DB backup"]
 
     Visitor --> Browser
@@ -25,8 +24,7 @@ flowchart LR
     Web -->|"AWS SDK; S3-compatible API"| R2
     Web -->|"HTTPS + API key"| SendGrid
     Browser -->|"images via api/get-image.php\nproxied, authenticated"| Web
-    Browser -->|"loads resume PDFs directly"| CDN
-    CDN --> R2
+    Browser -->|"latest resume via api/get-current-resume-pdf.php\nproxied, authenticated"| Web
     GHA -->|"mysqldump over TLS"| DB
     GHA -->|"dated + latest SQL snapshots"| R2
 ```
@@ -90,7 +88,7 @@ flowchart TB
 - `admin/` provides CMS pages: profile/project/resume uploads, user-role management, and editable dashboard content.
 - `assets/scripts/dashboard-script.js` is the cross-cutting browser module. It performs server-side session verification on page load, stores the current CSRF token in `localStorage`, loads the correct sidebar fragment, handles logout, and exposes `toImageSrc(path)` — a shared helper that converts a stored image path (legacy full R2 URL or bare key) into a proxied `../api/get-image.php?key=...` URL. Because this file loads on every page before feature scripts, `toImageSrc()` is available globally without duplication.
 - Feature scripts use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals. Project and profile rendering call `toImageSrc()` rather than constructing R2 URLs directly.
-- Quill is used only when editing rich text. DOMPurify sanitizes that HTML in the browser before it is submitted and again before it is inserted into the DOM.
+- Quill is used only when editing rich text. DOMPurify sanitizes rich text in the browser before submission, before it is restored into an editor, and before it is inserted into the DOM. PHP also strips disallowed tags and attributes before persisting rich text, rebuilding permitted links with safe `http(s)` destinations.
 
 ### API and application subsystem
 
@@ -100,6 +98,7 @@ flowchart TB
 - `auth-check.php` centralizes the three endpoint guards: authenticated session required, admin role required, and matching `X-CSRF-Token` required.
 - `r2.php` hides Cloudflare R2 behind four helpers: create S3 client, upload object, extract a key from a public URL, and delete object. All calls into this adapter from endpoint code are wrapped in `try/catch` around `\Aws\S3\Exception\S3Exception`, so an R2-side failure (invalid/expired credentials, wrong bucket, network issue) returns a clean JSON error instead of an uncaught fatal error and an empty HTTP response body.
 - `get-image.php` is a read-side proxy: it validates the requested `key` against an allowlist pattern (`images/projects/...` or `images/profile/...`), requires an authenticated session (`requireLogin()`), then performs an authenticated `getObject` call via the R2 adapter and streams the bytes back with the object's content type and a one-day cache header. This replaces direct browser requests to the R2 public development URL (`pub-*.r2.dev`), which is not intended for production traffic and is subject to undocumented rate limits.
+- `get-current-resume-pdf.php` is the corresponding resume proxy: it requires an authenticated session, selects the most recently uploaded resume, validates its `resumes/*.pdf` R2 key, and streams the PDF with a private one-hour cache header.
 - `contact.php` accepts JSON `POST` requests, validates required fields and email format, caps the message at 5,000 characters, and silently accepts submissions that fill its honeypot field or arrive within two seconds of the form being loaded. It records attempts by client IP in `contact_attempts`; after the third attempt, further requests from that IP are rejected for 60 minutes. Valid messages are sent through SendGrid's Mail Send API using `SENDGRID_API_KEY`; `SENDGRID_FROM_EMAIL` is the sender and `CONTACT_EMAIL` receives the message. The visitor's email is used only as the email reply-to address.
 
 ## 3. Authentication and authorization flow
@@ -173,7 +172,8 @@ flowchart LR
     M -->|"Image"| N["Browser requests api/get-image.php?key=...\n(dashboard-script.js toImageSrc helper)"]
     N --> O["Authenticated S3 getObject via R2 adapter"]
     O --> P["Browser renders image from proxy response"]
-    M -->|"PDF / rich text"| Q["Browser loads resume from R2 public URL\nor renders DOMPurify-cleaned content"]
+    M -->|"PDF"| Q["Browser requests api/get-current-resume-pdf.php\nAuthenticated S3 getObject streams latest PDF"]
+    M -->|"Rich text"| R["Browser renders DOMPurify-cleaned content"]
 ```
 
 Upload limits enforced by the server:
@@ -201,6 +201,7 @@ Deleting or updating a project removes/replaces its preview rows and attempts to
 | `update-project.php` | Update an existing project and replace preview images | Admin + CSRF | `projects`, `project_previews`, R2 |
 | `delete-project.php` | Delete project and associated images | Admin + CSRF | `projects`, `project_previews`, R2 |
 | `get-image.php` | Stream a profile or project image via authenticated R2 read | Logged in | R2 (read-only) |
+| `get-current-resume-pdf.php` | Stream the latest resume PDF via authenticated R2 read | Logged in | `resumes`, R2 (read-only) |
 | `get-resumes.php` | Read uploaded resume metadata | Logged in | `resumes` |
 | `upload-resume.php` | Upload resume PDF | Admin + CSRF | `resumes`, R2 |
 | `dashboard-content.php` | Read/update dashboard About content | Read: logged in; write: admin + CSRF | `dashboard_content` |
@@ -313,7 +314,7 @@ flowchart LR
     CSRF --> Validation["Length, MIME, size, method validation"]
     Validation --> Sanitize["Server-side rich-text sanitization"]
     Sanitize --> Data["MySQL / R2"]
-    Data --> Output["JSON response / streamed image / public PDF URL"]
+    Data --> Output["JSON response / streamed image or PDF"]
     Output --> Render["DOMPurify before HTML render"]
 
     ImgReq["Browser image request\napi/get-image.php?key=..."] --> ImgAuth["requireLogin()"]
@@ -322,15 +323,15 @@ flowchart LR
     ImgRead --> Data
 ```
 
-Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text sanitization, optional CA-verified encrypted database connections, contact-form POST/field validation, honeypot and timing traps, and per-IP throttling (three attempts followed by a 60-minute lock) with the SendGrid key retained server-side, and — for image delivery — session-gated, key-allowlisted proxying of R2 reads rather than exposing the bucket via an unauthenticated public URL.
+Key controls include password hashing, session-ID regeneration after successful login, `HttpOnly`/`SameSite=Lax` session cookies, CSRF tokens on state-changing actions verified with a timing-safe comparison, login throttling (five attempts, 15-minute lock), prepared SQL statements for user-controlled query values, MIME/size checks for uploads, server-side rich-text tag/attribute and link sanitization, optional CA-verified encrypted database connections, contact-form POST/field validation, honeypot and timing traps, and per-IP throttling (three attempts followed by a 60-minute lock) with the SendGrid key retained server-side, and — for image and resume delivery — session-gated, key-allowlisted proxying of R2 reads rather than exposing the bucket via an unauthenticated public URL.
 
 ## 9. Important operational dependencies
 
 | Dependency | Why it matters |
 | --- | --- |
 | MySQL availability | Authentication, sessions, all CMS data, and dashboard page protection depend on it. |
-| R2 availability | New uploads, project deletion/update, and **all image viewing** depend on the R2 API, since images are now served through the authenticated proxy rather than a public URL. Resume PDFs are still delivered from the R2 public URL and depend only on that URL resolving. |
-| Render application availability | Because images are proxied through `get-image.php`, image delivery now depends on the PHP application being reachable, not solely on R2/Cloudflare's edge. |
+| R2 availability | New uploads, project deletion/update, and **all image and resume viewing** depend on the R2 API, since both asset types are served through authenticated proxies rather than a public URL. |
+| Render application availability | Because images and resume PDFs are proxied through PHP endpoints, their delivery depends on the application being reachable, not solely on R2/Cloudflare's edge. |
 | Correct environment variables | Required for DB connection, R2 client credentials, R2 bucket/public URL, and optional SSL CA path. |
 | SendGrid credentials | `SENDGRID_API_KEY`, a verified `SENDGRID_FROM_EMAIL`, and `CONTACT_EMAIL` are required for contact-form delivery. |
 | AWS CLI in CI | GitHub Actions uses the AWS CLI to upload backup artifacts to Cloudflare R2. |

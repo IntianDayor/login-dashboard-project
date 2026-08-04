@@ -68,7 +68,7 @@ The primary goal of this project is to present myself as a **professional** in a
 
 ### 🔒 Security
 
-* **XSS Protection** — Rich text content is sanitized using DOMPurify before storage and rendering.
+* **XSS Protection** — Rich text is sanitized with DOMPurify in the browser and filtered again on the server to allow only safe tags, attributes, and `http(s)` links.
 * **Password Hashing** — Passwords are securely hashed using PHP's `password_hash()` with bcrypt.
 * **Session Authentication** — Protected routes require valid authenticated sessions.
 * **CSRF Protection** — Mutating requests require valid CSRF tokens.
