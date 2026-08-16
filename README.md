@@ -101,17 +101,22 @@ The primary goal of this project is to present myself as a **professional** in a
 
 ```text
 login-dashboard-project/
-├── admin/               # Admin panel and CMS management pages
 ├── api/                 # Backend APIs and database logic
 ├── assets/              # CSS, JavaScript, images, uploads
-├── pages/                # Frontend pages
+│   ├── scripts/         # JavaScript modules (auth, dashboard, management)
+│   ├── styles/          # CSS stylesheets
+│   └── uploads/         # Uploaded assets (images, resumes)
+├── pages/               # Frontend and admin pages
+│   ├── admin/           # Admin panel and CMS management pages
+│   └── user/            # Standard user pages (dashboard, profile, projects, etc.)
+├── vendor/              # PHP dependencies (Composer)
 ├── .github/workflows/   # GitHub Actions (automated database backups)
-├── Dockerfile            # Docker build configuration
-├── docker-compose.yml    # Local development environment
-├── init.sql               # Database schema
-├── ca.pem                 # CA certificate for encrypted database connections
-├── php.ini                 # PHP configuration
-└── README.md               # Project documentation
+├── Dockerfile           # Docker build configuration
+├── docker-compose.yml   # Local development environment
+├── init.sql             # Database schema
+├── ca.pem               # CA certificate for encrypted database connections
+├── php.ini              # PHP configuration
+└── README.md            # Project documentation
 ```
 
 ---

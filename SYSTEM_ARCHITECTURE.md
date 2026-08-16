@@ -84,10 +84,10 @@ flowchart TB
 
 ### Client/UI subsystem
 
-- `pages/` is the standard-user experience: dashboard, profile, project gallery, and resume viewer.
-- `admin/` provides CMS pages: profile/project/resume uploads, user-role management, and editable dashboard content.
+- `pages/user/` is the standard-user experience: dashboard, profile, project gallery, resume viewer, and contact form.
+- `pages/admin/` provides CMS pages: profile/project/resume uploads, user-role management, and editable dashboard content.
 - `assets/scripts/dashboard-script.js` is the cross-cutting browser module. It performs server-side session verification on page load, stores the current CSRF token in `localStorage`, loads the correct sidebar fragment, handles logout, and exposes `toImageSrc(path)` — a shared helper that converts a stored image path (legacy full R2 URL or bare key) into a proxied `../api/get-image.php?key=...` URL. Because this file loads on every page before feature scripts, `toImageSrc()` is available globally without duplication.
-- Feature scripts use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals. Project and profile rendering call `toImageSrc()` rather than constructing R2 URLs directly.
+- Feature scripts (`manage-*.js`, `auth.js`, `contact.js`) use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals. Project and profile rendering call `toImageSrc()` rather than constructing R2 URLs directly.
 - Quill is used only when editing rich text. DOMPurify sanitizes rich text in the browser before submission, before it is restored into an editor, and before it is inserted into the DOM. PHP also strips disallowed tags and attributes before persisting rich text, rebuilding permitted links with safe `http(s)` destinations.
 
 ### API and application subsystem
