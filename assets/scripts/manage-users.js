@@ -5,7 +5,7 @@ const userTableBody = document.getElementById('users-table-body');
 async function fetchUsers() {
     userTableBody.innerHTML = '<tr><td colspan="6"><div class="content-loading"><span class="content-spinner" aria-hidden="true"></span>Loading users...</div></td></tr>';
     try {
-        const response = await fetch("../api/users-table.php", {
+        const response = await fetch("/api/users-table.php", {
             headers: { "X-CSRF-Token": getCsrfToken() }
         });
         const result = await response.json();
@@ -61,7 +61,7 @@ async function setRole(userId, newRole, selectEl, prevRole) {
 
     try {
         selectEl.disabled = true;
-        const response = await fetch('../api/set-role.php', {
+        const response = await fetch('/api/set-role.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

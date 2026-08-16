@@ -12,7 +12,7 @@ The primary goal of this project is to present myself as a **professional** in a
 
 ## Live Demo
 
-🌐 **https://christiandiorferaer-portfoliohub.onrender.com/pages/login.html**
+🌐 **https://christiandiorferaer-portfoliohub.onrender.com/pages/user/login.html**
 
 ---
 
@@ -127,7 +127,7 @@ docker-compose up --build
 Visit:
 
 ```text
-http://localhost:8080/pages/login.html
+http://localhost:8080/pages/user/login.html
 ```
 
 Stop containers:

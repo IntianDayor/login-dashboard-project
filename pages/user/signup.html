@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <base href="/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="../assets/uploads/images/icons/icons8-portfolio-50-3.png">
     <link rel="stylesheet" href="../assets/styles/global.css">
-    <title>Register Account | To access Christian Dior Feraer's Info</title>
+    <title>Register Account</title>
 </head>
 <body class="auth">
     <div class="auth-layout auth-signup">
@@ -24,16 +25,20 @@
                 <input type="text" placeholder="Username" id="username-reg">
                 <input type="text" placeholder="Full Name" id="fullname">
                 <input type="email" placeholder="Email Address" id="email">
-                <input type="password" placeholder="Create Password" id="create">
-                <label>
-                    <input type="checkbox" id="show-create" onclick="create.type = this.checked ? 'text' : 'password'">
-                    Show password
-                </label>
-                <input type="password" placeholder="Confirm Password" id="confirmpass">
-                <label>
-                    <input type="checkbox" id="show-confirm" onclick="confirmpass.type = this.checked ? 'text' : 'password'">
-                    Show password
-                </label>
+                <div class="password-field">
+                    <input type="password" placeholder="Create Password" id="create">
+                    <label class="password-toggle">
+                        <input type="checkbox" id="show-create" onclick="create.type = this.checked ? 'text' : 'password'">
+                        <span>Show</span>
+                    </label>
+                </div>
+                <div class="password-field">
+                    <input type="password" placeholder="Confirm Password" id="confirmpass">
+                    <label class="password-toggle">
+                        <input type="checkbox" id="show-confirm" onclick="confirmpass.type = this.checked ? 'text' : 'password'">
+                        <span>Show</span>
+                    </label>
+                </div>
                 <button type="submit" id="signup">Sign Up</button>
                 <p class="back-to-login" id="back-to-login">Already have an account?</p>
             </form>

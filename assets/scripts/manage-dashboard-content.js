@@ -29,7 +29,7 @@ function safeDashboardContent(content) {
 }
 
 async function fetchDashboardContent() {
-    const response = await fetch('../api/dashboard-content.php');
+    const response = await fetch('/api/dashboard-content.php');
     if (!response.ok) throw new Error('Unable to load dashboard content.');
     const data = await response.json();
     if (!data.success) throw new Error(data.message || 'Unable to load dashboard content.');
@@ -109,7 +109,7 @@ if (dashboardContentForm) {
         formData.append('content', content);
 
         try {
-            const response = await fetch('../api/dashboard-content.php', {
+            const response = await fetch('/api/dashboard-content.php', {
                 method: 'POST',
                 headers: { 'X-CSRF-Token': getCsrfToken() },
                 body: formData

@@ -50,7 +50,7 @@ addProjectbtn?.addEventListener('click', async (e) => {
     }
 
     try {
-        const response = await fetch('../api/upload-projects.php', {
+        const response = await fetch('/api/upload-projects.php', {
             method: 'POST',
             headers: { "X-CSRF-Token": getCsrfToken() },
             body: formData
@@ -75,7 +75,7 @@ async function deleteProject(id, cardElement) {
     const deleteButton = cardElement.querySelector('.delete-project-btn');
     setButtonLoading(deleteButton, true, 'Deleting...');
     try {
-        const response = await fetch('../api/delete-project.php', {
+        const response = await fetch('/api/delete-project.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ async function saveProject(projectId, formElement) {
     }
 
     try {
-        const response = await fetch('../api/update-project.php', {
+        const response = await fetch('/api/update-project.php', {
             method: 'POST',
             headers: { 'X-CSRF-Token': getCsrfToken() },
             body: formData
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!container) return;
     showContentLoading(container, 'Loading projects...');
     try {
-        const res = await fetch("../api/get-projects.php");
+        const res = await fetch("/api/get-projects.php");
         const data = await res.json();
         clearContentLoading(container);
 

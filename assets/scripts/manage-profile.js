@@ -9,7 +9,7 @@ if (editForm) {
     }
 
     // Edit Description
-    fetch("../api/get-profile.php")
+    fetch("/api/get-profile.php")
         .then(res => res.json())
         .then(data => {
             if (window.profileQuill) {
@@ -39,7 +39,7 @@ if (editForm) {
         }
 
         try {
-            const response = await fetch("../api/upload-profile.php", {
+            const response = await fetch("/api/upload-profile.php", {
                 method: "POST",
                 headers: { "X-CSRF-Token": getCsrfToken() },
                 body: formData
@@ -67,7 +67,7 @@ const profileDescription = document.getElementById("profile-description");
 if (profilePictureDiv || profileDescription) {
     if (profilePictureDiv) showContentLoading(profilePictureDiv, 'Loading profile...');
     if (profileDescription) showContentLoading(profileDescription, 'Loading profile...');
-    fetch("../api/get-profile.php")
+    fetch("/api/get-profile.php")
         .then(res => res.json())
         .then(data => {
             if (profilePictureDiv && data.profile_picture) {

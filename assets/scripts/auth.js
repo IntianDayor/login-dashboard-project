@@ -67,12 +67,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const authThemeToggle = document.createElement('button');
     authThemeToggle.className = 'theme-toggle';
     authThemeToggle.type = 'button';
-    authThemeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    const updateThemeIcon = () => {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        authThemeToggle.innerHTML = `<img src="/assets/uploads/images/icons/${isDarkMode ? 'icons8-light-mode-50.png' : 'icons8-do-not-disturb-ios-50-2.png'}" alt="" aria-hidden="true">`;
+        authThemeToggle.setAttribute('aria-label', isDarkMode ? 'Switch to light mode' : 'Switch to dark mode');
+    };
+    updateThemeIcon();
     authThemeToggle.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
         const enabled = document.body.classList.contains('dark-mode');
         localStorage.setItem('darkMode', enabled ? 'true' : 'false');
-        authThemeToggle.textContent = enabled ? '☀️' : '🌙';
+        updateThemeIcon();
     });
     form?.parentNode?.insertBefore(authThemeToggle, form);
 
@@ -104,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             setFormLoading(form, true, 'Logging in...');
             try {
-                const response = await fetch("../api/login.php", {
+                const response = await fetch("/api/login.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ username, password })
@@ -122,8 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("csrf_token", result.csrf_token);
 
                 window.location.href = result.isAdmin
-                    ? "../admin/admin-panel.html"
-                    : "dashboard.html";
+                    ? "/pages/admin/admin-panel.html"
+                    : "/pages/user/dashboard.html";
             } catch (err) {
                 showToast("Network error. Please try again.")
                 console.error(err);
@@ -134,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Go to signup page
         document.getElementById("sign-up-button")?.addEventListener("click", () => {
-            navigateWithAuthTransition("signup.html");
+            navigateWithAuthTransition("/pages/user/signup.html");
         });
     }
 
@@ -167,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             setFormLoading(form, true, 'Creating account...');
             try {
-                const response = await fetch("../api/signup.php", {
+                const response = await fetch("/api/signup.php", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ username, password, fullname, email })
@@ -186,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 showToast("Account created!", 'success')
-                window.location.href = "login.html";
+                window.location.href = "/pages/user/login.html";
             } catch (err) {
                 showToast("Network error. Please try again")
                 console.error(err);
@@ -198,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Go back to login page
         document.getElementById("back-to-login")?.addEventListener("click", () => {
-            navigateWithAuthTransition("login.html");
+            navigateWithAuthTransition("/pages/user/login.html");
         });
     }
 });

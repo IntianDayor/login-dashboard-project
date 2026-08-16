@@ -42,7 +42,7 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 COPY php.ini /etc/php/8.3/apache2/conf.d/custom.ini
 
-RUN echo 'RedirectMatch ^/$ /pages/login.html' >> /etc/apache2/apache2.conf
+RUN echo 'RedirectMatch ^/$ /pages/user/login.html' >> /etc/apache2/apache2.conf
 
 EXPOSE 80
 

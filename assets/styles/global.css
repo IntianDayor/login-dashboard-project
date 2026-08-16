@@ -91,6 +91,8 @@ body.admin > .content > h2 {
 .admin .content {
     flex-direction: column;
     align-items: center;
+    width: min(1400px, calc(100% - 32px));
+    margin: 0 auto;
 }
 
 /*Topbar & Sidebar */
@@ -186,6 +188,17 @@ body.admin > .content > h2 {
 .theme-toggle:hover {
     background: rgba(37, 99, 235, 0.12);
     color: var(--primary);
+}
+
+.theme-toggle img {
+    display: block;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+body.dark-mode .theme-toggle img {
+    filter: invert(1);
 }
 
 .sidebar-button, .home-button { color: var(--text); }
@@ -313,13 +326,42 @@ body.dark-mode .sign-up {
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.sign-up .password-field > input {
+    padding-right: 82px;
+}
+
+.auth-card.sign-up .password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1;
+}
+
+.auth-card.sign-up .password-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+}
+
 /* Split authentication experience */
 .auth-layout {
     display: grid;
     grid-template-columns: minmax(320px, 0.9fr) minmax(360px, 1.1fr);
     align-items: stretch;
     width: min(1080px, 100%);
-    min-height: min(680px, calc(100vh - 48px));
+    height: min(720px, calc(100vh - 48px));
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.68);
     border-radius: 30px;
@@ -339,7 +381,7 @@ body.dark-mode .sign-up {
     flex-direction: column;
     justify-content: center;
     width: auto;
-    padding: clamp(36px, 6vw, 72px);
+    padding: clamp(32px, 4vw, 52px);
     border: 0;
     border-radius: 0;
     background: color-mix(in srgb, var(--surface) 92%, transparent);
@@ -349,6 +391,14 @@ body.dark-mode .sign-up {
 .auth-card form {
     width: min(100%, 380px);
     margin: 0 auto;
+}
+
+.auth-card.sign-up form {
+    gap: 10px;
+}
+
+.auth-card.sign-up label {
+    margin-bottom: 4px;
 }
 
 .auth-card .theme-toggle {
@@ -948,6 +998,7 @@ body.dark-mode #page-loading-overlay {
     .auth-layout {
         display: flex;
         flex-direction: column;
+        height: auto;
         min-height: 0;
         margin: 0 auto;
         border-radius: 24px;

@@ -16,7 +16,7 @@ if (uploadForm) {
         const formData = new FormData(uploadForm);
 
         try {
-            const response = await fetch("../api/upload-resume.php", {
+            const response = await fetch("/api/upload-resume.php", {
                 method: "POST",
                 headers: { "X-CSRF-Token": getCsrfToken() },
                 body: formData
@@ -43,7 +43,7 @@ const resumeContainer = document.querySelector(".resume-content");
 
 if (resumeContainer) {
     showContentLoading(resumeContainer, 'Loading resume...');
-    fetch("../api/get-resumes.php")
+    fetch("/api/get-resumes.php")
         .then(res => res.json())
         .then(data => {
             clearContentLoading(resumeContainer);
@@ -53,7 +53,7 @@ if (resumeContainer) {
             }
 
             const resume = data[0];
-            const resumeUrl = '../api/get-current-resume-pdf.php';
+            const resumeUrl = '/api/get-current-resume-pdf.php';
 
             resumeContainer.innerHTML = `
             <h3 class="resume-viewer-title">Christian Dior Feraer's Latest Resume</h3>
@@ -91,7 +91,7 @@ async function renderResumePreview(container) {
     pdfjsLib.GlobalWorkerOptions.workerSrc =
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    const pdf = await pdfjsLib.getDocument('../api/get-current-resume-pdf.php').promise;
+    const pdf = await pdfjsLib.getDocument('/api/get-current-resume-pdf.php').promise;
     const frame = container.querySelector('.resume-viewer-frame');
     const canvas = container.querySelector('.resume-preview-canvas');
     const status = container.querySelector('.resume-page-status');

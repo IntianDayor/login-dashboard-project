@@ -116,9 +116,9 @@ function toImageSrc(path) {
     if (!path) return '';
     if (path.startsWith('http')) {
         const key = path.substring(path.indexOf('images/'));
-        return `../api/get-image.php?key=${encodeURIComponent(key)}`;
+        return `/api/get-image.php?key=${encodeURIComponent(key)}`;
     }
-    return `../api/get-image.php?key=${encodeURIComponent(path)}`;
+    return `/api/get-image.php?key=${encodeURIComponent(path)}`;
 }
 
 // =============== DASHBOARD SCRIPT ============== //
@@ -126,16 +126,16 @@ function toImageSrc(path) {
 // Verify session server-side on every page load
 async function verifySession(requireAdmin = false) {
     try {
-        const res = await fetch('../api/check-session.php');
+        const res = await fetch('/api/check-session.php');
         const data = await res.json();
 
         if (!data.loggedIn) {
-            window.location.href = '../pages/login.html';
+            window.location.href = '/pages/user/login.html';
             return;
         }
 
         if (requireAdmin && !data.isAdmin) {
-            window.location.href = '../pages/dashboard.html';
+            window.location.href = '/pages/user/dashboard.html';
             return;
         }
 
@@ -152,7 +152,7 @@ async function verifySession(requireAdmin = false) {
         return data;
 
     } catch (err) {
-        window.location.href = '../pages/login.html';
+        window.location.href = '/pages/user/login.html';
     }
 }
 
@@ -163,7 +163,7 @@ function getCsrfToken() {
 
 // Global function to handle logout from any page
 function logout(redirectPath) {
-    fetch("../api/logout.php", { method: "POST", headers: { "X-CSRF-Token": getCsrfToken() } }).finally(() => {
+    fetch("/api/logout.php", { method: "POST", headers: { "X-CSRF-Token": getCsrfToken() } }).finally(() => {
         localStorage.removeItem("username");
         localStorage.removeItem("isAdmin");
         localStorage.removeItem("csrf_token");
@@ -174,15 +174,15 @@ function logout(redirectPath) {
 // Credential Check if the user is logged in
 const username = localStorage.getItem("username");
 const isAdmin  = localStorage.getItem("isAdmin");
-const onAdminPage = window.location.pathname.includes("/admin/");
-const onUserPage  = window.location.pathname.includes("/pages/");
+const onAdminPage = window.location.pathname.includes("/pages/admin/");
+const onUserPage  = window.location.pathname.includes("/pages/user/");
 
 if (!username) {
     // Not logged in at all — send to login
-    window.location.href = onAdminPage ? "../pages/login.html" : "login.html";
+    window.location.href = '/pages/user/login.html';
 } else if (onAdminPage && isAdmin !== "true") {
     // Logged in but not admin — kick them out of admin pages
-    window.location.href = "../pages/dashboard.html";
+    window.location.href = '/pages/user/dashboard.html';
 }
 
 // Server-side session verification for admin pages
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handles Sidebars Both Admin and User
-    const sidebarPath = onAdminPage ? '../admin/admin-sidebar.html' : '../pages/user-sidebar.html';
+    const sidebarPath = onAdminPage ? '/pages/admin/admin-sidebar.html' : '/pages/user/user-sidebar.html';
     showContentLoading(document.getElementById('sidebar-container'), 'Loading navigation...');
 
     fetch(sidebarPath)
@@ -237,7 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const themeToggleBtn = document.createElement('button');
                 themeToggleBtn.className = 'theme-toggle';
                 themeToggleBtn.type = 'button';
-                themeToggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                const updateThemeIcon = () => {
+                    const isDarkMode = document.body.classList.contains('dark-mode');
+                    themeToggleBtn.innerHTML = `<img src="/assets/uploads/images/icons/${isDarkMode ? 'icons8-light-mode-50.png' : 'icons8-do-not-disturb-ios-50-2.png'}" alt="" aria-hidden="true">`;
+                    themeToggleBtn.setAttribute('aria-label', isDarkMode ? 'Switch to light mode' : 'Switch to dark mode');
+                };
+                updateThemeIcon();
                 topbar.insertBefore(themeToggleBtn, topbar.querySelector('.home-button'));
             }
 
@@ -256,17 +261,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.body.classList.toggle('dark-mode');
                 const enabled = document.body.classList.contains('dark-mode');
                 localStorage.setItem('darkMode', enabled ? 'true' : 'false');
-                themeToggle.textContent = enabled ? '☀️' : '🌙';
+                themeToggle.querySelector('img').src = `/assets/uploads/images/icons/${enabled ? 'icons8-light-mode-50.png' : 'icons8-do-not-disturb-ios-50-2.png'}`;
+                themeToggle.setAttribute('aria-label', enabled ? 'Switch to light mode' : 'Switch to dark mode');
             });
 
             logoutBtn?.addEventListener('click', () => {
-                const path = onAdminPage ? '../pages/login.html' : 'login.html';
+                const path = '/pages/user/login.html';
                 setButtonLoading(logoutBtn, true, 'Logging out...');
                 logout(path);
             });
 
             const homeClickHandler = () => {
-                window.location.href = onAdminPage ? 'admin-panel.html' : 'dashboard.html';
+                window.location.href = onAdminPage ? '/pages/admin/admin-panel.html' : '/pages/user/dashboard.html';
             };
             homeBtn?.addEventListener('click', homeClickHandler);
 
@@ -286,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             Object.entries(navMap).forEach(([id, href]) => {
                 document.getElementById(id)?.addEventListener('click', () => {
-                    window.location.href = href;
+                    window.location.href = `${onAdminPage ? '/pages/admin/' : '/pages/user/'}${href}`;
                 });
             });
         })
