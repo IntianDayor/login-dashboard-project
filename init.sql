@@ -68,3 +68,12 @@ CREATE TABLE IF NOT EXISTS contact_attempts (
     last_attempt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_contact_ip (ip_address)
 );
+
+CREATE TABLE IF NOT EXISTS page_views (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    page_path VARCHAR(255) NOT NULL,
+    username VARCHAR(100) NULL,
+    viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_page_path (page_path),
+    INDEX idx_viewed_at (viewed_at)
+);

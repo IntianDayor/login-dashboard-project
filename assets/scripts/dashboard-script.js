@@ -1,3 +1,13 @@
+// =============== PAGE VIEW LOGGING ================ //
+
+(function logPageView() {
+    fetch('../api/log-view.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page: window.location.pathname })
+    }).catch(() => {}); // fire-and-forget, never blocks the page
+})();
+
 // =============== ALERT MSG ================ //
 
 function showToast(message, type = 'error', duration = 3000) {
