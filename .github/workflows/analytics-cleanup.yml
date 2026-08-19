@@ -1,0 +1,33 @@
+name: Analytics Cleanup
+
+on:
+  schedule:
+    # Runs on the 1st of every month at 4:00 AM UTC
+    - cron: '0 4 1 * *'
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo (to access ca.pem)
+        uses: actions/checkout@v4
+
+      - name: Install MySQL client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
+      - name: Delete page views older than 6 months
+        env:
+          DB_HOST: ${{ secrets.AIVEN_HOST }}
+          DB_PORT: ${{ secrets.AIVEN_PORT }}
+          DB_USER: ${{ secrets.AIVEN_USER }}
+          DB_PASS: ${{ secrets.AIVEN_PASSWORD }}
+        run: |
+          mysql \
+            --host="$DB_HOST" \
+            --port="$DB_PORT" \
+            --user="$DB_USER" \
+            --password="$DB_PASS" \
+            --ssl-ca=ca.pem \
+            defaultdb \
+            -e "DELETE FROM page_views WHERE viewed_at < NOW() - INTERVAL 6 MONTH;"
