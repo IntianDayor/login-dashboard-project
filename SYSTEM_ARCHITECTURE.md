@@ -16,6 +16,7 @@ flowchart LR
     R2[("Cloudflare R2\nimages, PDFs, SQL backups")]
     SendGrid["SendGrid Mail Send API"]
     GHA["GitHub Actions\nweekly DB backup"]
+    Cleanup["GitHub Actions\nmonthly analytics cleanup"]
 
     Visitor --> Browser
     Admin --> Browser
@@ -27,6 +28,7 @@ flowchart LR
     Browser -->|"latest resume via api/get-current-resume-pdf.php\nproxied, authenticated"| Web
     GHA -->|"mysqldump over TLS"| DB
     GHA -->|"dated + latest SQL snapshots"| R2
+    Cleanup -->|"delete page views older than six months"| DB
 ```
 
 ## 2. Application layers and subsystems
@@ -35,9 +37,9 @@ flowchart LR
 flowchart TB
     subgraph Client["Client layer — browser"]
         Public["User pages\ndashboard, profile, projects, resume, contact"]
-        AdminUI["Admin pages\ncontent, profile, projects, resume, users"]
+        AdminUI["Admin pages\ncontent, profile, projects, resume, users, analytics"]
         SharedJS["Shared client subsystem\ndashboard-script.js\nsession check, CSRF header, sidebar, logout,\ntoImageSrc() image-proxy URL helper"]
-        FeatureJS["Feature scripts\nauth, profile, projects, resume, users, dashboard content"]
+        FeatureJS["Feature scripts\nauth, profile, projects, resume, users, dashboard content, analytics"]
         Editors["Quill rich-text editor\nDOMPurify client sanitization"]
     end
 
@@ -86,6 +88,7 @@ flowchart TB
 
 - `pages/user/` is the standard-user experience: dashboard, profile, project gallery, resume viewer, and contact form.
 - `pages/admin/` provides CMS pages: profile/project/resume uploads, user-role management, and editable dashboard content.
+- The admin dashboard includes an analytics panel. `log-view.php` records valid page paths and the optional signed-in username in `page_views`; `get-analytics.php` is protected by admin and CSRF checks and returns total views, today's views, top pages, and a daily series. `manage-analytics.js` displays the data with Chart.js.
 - `assets/scripts/dashboard-script.js` is the cross-cutting browser module. It performs server-side session verification on page load, stores the current CSRF token in `localStorage`, loads the correct sidebar fragment, handles logout, and exposes `toImageSrc(path)` — a shared helper that converts a stored image path (legacy full R2 URL or bare key) into a proxied `../api/get-image.php?key=...` URL. Because this file loads on every page before feature scripts, `toImageSrc()` is available globally without duplication.
 - Feature scripts (`manage-*.js`, `auth.js`, `contact.js`) use `fetch()` for JSON and multipart form requests. They also provide loading states, confirmation dialogs, sliders, and image modals. Project and profile rendering call `toImageSrc()` rather than constructing R2 URLs directly.
 - Quill is used only when editing rich text. DOMPurify sanitizes rich text in the browser before submission, before it is restored into an editor, and before it is inserted into the DOM. PHP also strips disallowed tags and attributes before persisting rich text, rebuilding permitted links with safe `http(s)` destinations.
@@ -207,6 +210,8 @@ Deleting or updating a project removes/replaces its preview rows and attempts to
 | `dashboard-content.php` | Read/update dashboard About content | Read: logged in; write: admin + CSRF | `dashboard_content` |
 | `users-table.php` | List accounts | Admin + CSRF | `users` |
 | `set-role.php` | Change a user role | Admin + CSRF | `users` |
+| `log-view.php` | Record a valid page view and the optional signed-in username | Public | `page_views` |
+| `get-analytics.php` | Return aggregate, top-page, and daily page-view data | Admin + CSRF | `page_views` |
 | `contact.php` | Validate, throttle, and send a contact-form email | Public endpoint | `contact_attempts`, SendGrid Mail Send API |
 
 ## 6. Database model
@@ -272,11 +277,17 @@ erDiagram
         TEXT content
         TIMESTAMP updated_at
     }
+    PAGE_VIEWS {
+        INT id PK
+        VARCHAR page_path
+        VARCHAR username "nullable"
+        TIMESTAMP viewed_at
+    }
 
     PROJECTS ||--o{ PROJECT_PREVIEWS : "has preview images"
 ```
 
-`profile` and `dashboard_content` are singleton tables: the application writes and reads row `id = 1`. Sessions are deliberately database records rather than application-container files, allowing a session to survive a container replacement as long as the database remains available. `profile.profile_picture` and `project_previews.image_path` may still contain legacy full R2 public URLs from before the image proxy was introduced; `toImageSrc()` on the client extracts the object key from either a full URL or a bare key before building the proxy request, so no data migration was required.
+`profile` and `dashboard_content` are singleton tables: the application writes and reads row `id = 1`. Sessions are deliberately database records rather than application-container files, allowing a session to survive a container replacement as long as the database remains available. `page_views` is created on demand by the analytics endpoints and is pruned monthly by `.github/workflows/analytics-cleanup.yml`, which retains six months of data. `profile.profile_picture` and `project_previews.image_path` may still contain legacy full R2 public URLs from before the image proxy was introduced; `toImageSrc()` on the client extracts the object key from either a full URL or a bare key before building the proxy request, so no data migration was required.
 
 ## 7. Deployment, configuration, and recovery
 
@@ -302,6 +313,7 @@ flowchart TB
 - **Production:** the Dockerfile builds an Apache + PHP 8.3 web service, installs required PHP extensions and Composer dependencies, enables URL rewriting, and serves the repository content as the application. Render hosts the built container, while MySQL and Cloudflare R2 remain independent managed services.
 - **Configuration:** PHP loads environment values via `phpdotenv` in local development, while production and CI inject credentials through environment variables. Database SSL is enabled when `DB_SSL_CA` is provided for CA-verified connections. `R2_ACCESS_KEY_ID`/`R2_SECRET_ACCESS_KEY` must stay in sync with the currently active Cloudflare R2 API token — deleting and recreating a token invalidates these values until Render's environment variables are updated and the service is redeployed. Contact email requires `SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL` (a SendGrid-verified sender), and `CONTACT_EMAIL` (the receiving inbox).
 - **Recovery subsystem:** `.github/workflows/db-backup.yml` runs `mysqldump` against Aiven using the committed `ca.pem` certificate, then uploads both a dated SQL snapshot and `latest.sql` to Cloudflare R2 via the AWS CLI. The workflow runs weekly and can also be triggered manually.
+- **Analytics retention:** `.github/workflows/analytics-cleanup.yml` runs monthly (or manually) against the production database over TLS and deletes `page_views` records older than six months.
 
 ## 8. Security boundaries and controls
 
@@ -335,5 +347,5 @@ Key controls include password hashing, session-ID regeneration after successful 
 | Correct environment variables | Required for DB connection, R2 client credentials, R2 bucket/public URL, and optional SSL CA path. |
 | SendGrid credentials | `SENDGRID_API_KEY`, a verified `SENDGRID_FROM_EMAIL`, and `CONTACT_EMAIL` are required for contact-form delivery. |
 | AWS CLI in CI | GitHub Actions uses the AWS CLI to upload backup artifacts to Cloudflare R2. |
-| CDN-hosted Quill and DOMPurify | Editing pages and safe rich-text rendering load these browser libraries from cdnjs. |
+| CDN-hosted Quill, DOMPurify, and Chart.js | Editing pages and safe rich-text rendering load Quill and DOMPurify from cdnjs; the admin analytics chart loads Chart.js from cdnjs. |
 | GitHub Actions secrets and `ca.pem` | Required for scheduled production database backups. |
