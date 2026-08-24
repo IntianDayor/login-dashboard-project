@@ -69,6 +69,15 @@ CREATE TABLE IF NOT EXISTS contact_attempts (
     UNIQUE KEY unique_contact_ip (ip_address)
 );
 
+CREATE TABLE IF NOT EXISTS social_links (
+    id INT PRIMARY KEY DEFAULT 1,
+    github_url VARCHAR(500) NULL,
+    linkedin_url VARCHAR(500) NULL,
+    instagram_url VARCHAR(500) NULL,
+    facebook_url VARCHAR(500) NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS page_views (
     id INT AUTO_INCREMENT PRIMARY KEY,
     page_path VARCHAR(255) NOT NULL,

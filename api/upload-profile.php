@@ -15,6 +15,37 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $description = sanitizeRichText(trim($_POST['description'] ?? ''));
 $imagePath   = null;
 
+function sanitizeSocialUrl(string $url): ?string {
+    $url = trim($url);
+    if ($url === '') {
+        return null;
+    }
+
+    if (strlen($url) > 500 || !filter_var($url, FILTER_VALIDATE_URL)) {
+        return false;
+    }
+
+    $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+    return in_array($scheme, ['http', 'https'], true) ? $url : false;
+}
+
+$socialFields = ['github_url', 'linkedin_url', 'instagram_url', 'facebook_url'];
+$postedSocialUrls = $_POST['social_urls'] ?? [];
+if (!is_array($postedSocialUrls)) {
+    $postedSocialUrls = [];
+}
+$socialLinks = [];
+foreach ($socialFields as $index => $field) {
+    $rawUrl = array_key_exists($index, $postedSocialUrls)
+        ? $postedSocialUrls[$index]
+        : ($_POST[$field] ?? '');
+    $socialLinks[$field] = sanitizeSocialUrl($rawUrl);
+    if ($socialLinks[$field] === false) {
+        echo json_encode(["success" => false, "message" => "Please enter valid social links that start with http:// or https://."]);
+        exit;
+    }
+}
+
 if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
 
     $allowed = ['image/jpeg', 'image/png', 'image/webp'];
@@ -62,6 +93,28 @@ if ($imagePath !== null) {
 }
 
 if ($stmt->execute()) {
+    $socialStmt = $conn->prepare("
+        INSERT INTO social_links (id, github_url, linkedin_url, instagram_url, facebook_url)
+        VALUES (1, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            github_url = VALUES(github_url),
+            linkedin_url = VALUES(linkedin_url),
+            instagram_url = VALUES(instagram_url),
+            facebook_url = VALUES(facebook_url)
+    ");
+    $socialStmt->bind_param(
+        "ssss",
+        $socialLinks['github_url'],
+        $socialLinks['linkedin_url'],
+        $socialLinks['instagram_url'],
+        $socialLinks['facebook_url']
+    );
+
+    if (!$socialStmt->execute()) {
+        echo json_encode(["success" => false, "message" => "Profile saved, but social links could not be saved. Run the latest database migration."]);
+        exit;
+    }
+
     echo json_encode(["success" => true, "message" => "Profile updated successfully"]);
 } else {
     echo json_encode(["success" => false, "message" => "Database error"]);

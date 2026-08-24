@@ -24,6 +24,17 @@
                     <label for="profile-picture">Change Profile Picture:</label>
                     <input type="file" id="profile-picture" accept="image/*" name="profile_picture">
                 </div>
+                <fieldset class="social-links-editor">
+                    <legend>Social links</legend>
+                    <p>Paste any social profile URL. The platform name will be detected automatically.</p>
+                    <div class="social-links-grid" id="social-links-grid">
+                        <label class="social-link-row">Social link 1
+                            <input name="social_urls[]" type="url" placeholder="https://your-social-profile.com/your-name">
+                            <button class="social-link-remove" type="button" aria-label="Remove social link">×</button>
+                        </label>
+                    </div>
+                    <button class="social-link-add" id="add-social-link" type="button">+ Add another link</button>
+                </fieldset>
                 <button type="submit">Save Changes</button>
             </form>
         </section>

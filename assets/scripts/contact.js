@@ -1,6 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
     const loadedAtField = document.getElementById('loaded-at');
     if (loadedAtField) loadedAtField.value = Date.now();
+
+    const socialContainer = document.getElementById('contact-socials');
+    if (socialContainer) {
+        fetch('/api/get-profile.php')
+            .then(response => response.json())
+            .then(profile => {
+                const urls = profile?.social_urls?.length
+                    ? profile.social_urls
+                    : ['github_url', 'linkedin_url', 'instagram_url', 'facebook_url']
+                        .map(field => profile?.[field]).filter(Boolean);
+                const socials = urls.map(url => {
+                    let host = '';
+                    try { host = new URL(url).hostname.replace(/^www\./, ''); } catch { return [url, 'Social link']; }
+                    const name = host.split('.')[0] || 'Social link';
+                    return [url, name.charAt(0).toUpperCase() + name.slice(1)];
+                });
+
+                if (!socials.length) return;
+                socials.forEach(([url, label]) => {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = label;
+                    const arrow = document.createElement('span');
+                    arrow.setAttribute('aria-hidden', 'true');
+                    arrow.textContent = '↗';
+                    link.append(arrow);
+                    socialContainer.append(link);
+                });
+                socialContainer.hidden = false;
+            })
+            .catch(() => {
+                socialContainer.hidden = true;
+            });
+    }
 });
 
 document.getElementById('contact-form')?.addEventListener('submit', async (event) => {

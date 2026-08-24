@@ -4,6 +4,39 @@
 const editForm = document.querySelector(".edit-profile-form");
 
 if (editForm) {
+    const socialGrid = document.getElementById('social-links-grid');
+    const addSocialLinkButton = document.getElementById('add-social-link');
+    const legacySocialFields = ['github_url', 'linkedin_url', 'instagram_url', 'facebook_url'];
+
+    const addSocialLink = (value = '') => {
+        if (!socialGrid || socialGrid.children.length >= 4) return;
+        const row = document.createElement('label');
+        row.className = 'social-link-row';
+        row.textContent = `Social link ${socialGrid.children.length + 1}`;
+        const input = document.createElement('input');
+        input.name = 'social_urls[]';
+        input.type = 'url';
+        input.placeholder = 'https://your-social-profile.com/your-name';
+        input.value = value;
+        const removeButton = document.createElement('button');
+        removeButton.className = 'social-link-remove';
+        removeButton.type = 'button';
+        removeButton.setAttribute('aria-label', 'Remove social link');
+        removeButton.textContent = '×';
+        row.append(input, removeButton);
+        socialGrid.append(row);
+    };
+
+    socialGrid?.addEventListener('click', (event) => {
+        if (!event.target.classList.contains('social-link-remove')) return;
+        if (socialGrid.children.length > 1) event.target.closest('.social-link-row').remove();
+        else event.target.closest('.social-link-row').querySelector('input').value = '';
+        [...socialGrid.children].forEach((row, index) => {
+            row.firstChild.textContent = `Social link ${index + 1}`;
+        });
+    });
+    addSocialLinkButton?.addEventListener('click', () => addSocialLink());
+
     if (window.profileQuill) {
         window.profileQuill.root.innerHTML = '<p class="content-loading"><span class="content-spinner" aria-hidden="true"></span>Loading profile...</p>';
     }
@@ -14,6 +47,13 @@ if (editForm) {
         .then(data => {
             if (window.profileQuill) {
                 window.profileQuill.root.innerHTML = DOMPurify.sanitize(data?.description || '');
+            }
+            const savedLinks = data?.social_urls?.length
+                ? data.social_urls
+                : legacySocialFields.map(field => data?.[field]).filter(Boolean);
+            if (socialGrid) {
+                socialGrid.innerHTML = '';
+                (savedLinks.length ? savedLinks : ['']).forEach(value => addSocialLink(value));
             }
         })
         .catch(err => {
