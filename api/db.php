@@ -25,21 +25,4 @@ if ($conn->connect_error) {
     die(json_encode(["success" => false, "message" => "Database connection error."]));
 }
 
-$conn->query("CREATE TABLE IF NOT EXISTS social_links (
-    id INT PRIMARY KEY DEFAULT 1,
-    github_url VARCHAR(500) NULL,
-    linkedin_url VARCHAR(500) NULL,
-    instagram_url VARCHAR(500) NULL,
-    facebook_url VARCHAR(500) NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-)");
-
-$conn->query("CREATE TABLE IF NOT EXISTS contact_attempts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    ip_address VARCHAR(45) NOT NULL,
-    attempts INT NOT NULL DEFAULT 0,
-    locked_until DATETIME NULL,
-    last_attempt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_contact_ip (ip_address)
-)");
 ?>
