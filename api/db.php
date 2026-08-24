@@ -24,4 +24,13 @@ if ($sslCa) {
 if ($conn->connect_error) {
     die(json_encode(["success" => false, "message" => "Database connection error."]));
 }
+
+$conn->query("CREATE TABLE IF NOT EXISTS social_links (
+    id INT PRIMARY KEY DEFAULT 1,
+    github_url VARCHAR(500) NULL,
+    linkedin_url VARCHAR(500) NULL,
+    instagram_url VARCHAR(500) NULL,
+    facebook_url VARCHAR(500) NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)");
 ?>
