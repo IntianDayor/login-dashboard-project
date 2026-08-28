@@ -604,6 +604,48 @@ select option {
     animation: button-spin 0.7s linear infinite;
 }
 
+/* Image Loading Spinners & Transitions */
+.img-loading-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-soft, #f1f5f9);
+    overflow: hidden;
+}
+
+.img-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 26px;
+    height: 26px;
+    border: 3px solid rgba(37, 99, 235, 0.2);
+    border-top-color: var(--primary, #2563eb);
+    border-radius: 50%;
+    animation: button-spin 0.7s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.img-loading-target {
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.img-loading-target.img-loaded,
+img.img-loaded {
+    opacity: 1;
+}
+
+.img-loaded > .img-spinner,
+.img-loaded + .img-spinner {
+    opacity: 0;
+    visibility: hidden;
+}
+
 #page-loading-overlay {
     position: fixed;
     inset: 0;

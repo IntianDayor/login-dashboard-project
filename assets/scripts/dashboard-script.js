@@ -67,6 +67,59 @@ function clearContentLoading(container) {
     container?.removeAttribute('aria-busy');
 }
 
+// ============= IMAGE LOADING SPINNER HELPER =============//
+
+function setupImageLoaders(root = document) {
+    const images = root.querySelectorAll('img');
+    images.forEach(img => {
+        // Skip tiny icons or specifically excluded images
+        if (img.classList.contains('no-spinner') || img.closest('.theme-toggle, .social-links, #toast-container, .social-link-row')) return;
+
+        if (img.complete && img.naturalWidth !== 0) {
+            img.classList.add('img-loaded');
+            img.classList.remove('img-loading-target');
+            return;
+        }
+
+        img.classList.add('img-loading-target');
+
+        const onDone = () => {
+            img.classList.add('img-loaded');
+            img.classList.remove('img-loading-target');
+        };
+
+        img.addEventListener('load', onDone, { once: true });
+        img.addEventListener('error', onDone, { once: true });
+    });
+}
+
+// Observe dynamic image insertions in the DOM
+if (typeof MutationObserver !== 'undefined') {
+    const imgObserver = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+            for (const node of m.addedNodes) {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.tagName === 'IMG') {
+                        setupImageLoaders(node.parentElement || document);
+                    } else if (node.querySelector && node.querySelector('img')) {
+                        setupImageLoaders(node);
+                    }
+                }
+            }
+        }
+    });
+
+    if (document.body) {
+        imgObserver.observe(document.body, { childList: true, subtree: true });
+    } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            imgObserver.observe(document.body, { childList: true, subtree: true });
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => setupImageLoaders());
+
 function setPageLoading(isLoading) {
     let overlay = document.getElementById('page-loading-overlay');
     if (isLoading && !overlay) {

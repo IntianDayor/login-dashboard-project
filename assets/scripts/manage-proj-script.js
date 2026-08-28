@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="slider-viewport">
                         <div class="slider-track">
                            ${project.images.map((img, index) =>
-                `<img src="${toImageSrc(img)}" alt="${esc(project.title)} preview ${index + 1}" loading="lazy" decoding="async" onclick="event.stopPropagation(); openImageModal(this.closest('.project-slider'), ${index})">`
+                `<div class="slider-slide-wrap"><img src="${toImageSrc(img)}" alt="${esc(project.title)} preview ${index + 1}" loading="lazy" decoding="async" onclick="event.stopPropagation(); openImageModal(this.closest('.project-slider'), ${index})"></div>`
             ).join("")}
                         </div>
                     </div>
@@ -317,6 +317,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div class="image-modal-content" role="dialog" aria-modal="true" aria-label="Project image preview">
                 <button class="close-modal" type="button" aria-label="Close image preview">&times;</button>
                 <button class="modal-nav modal-prev" type="button" aria-label="Previous image">&#10094;</button>
+                <span class="modal-spinner" aria-hidden="true"></span>
                 <img id="modalImage" src="" alt="" decoding="async">
                 <button class="modal-nav modal-next" type="button" aria-label="Next image">&#10095;</button>
                 <span class="modal-image-count" aria-live="polite"></span>
@@ -410,6 +411,7 @@ function openImageModal(slider, index) {
 
 function updateModalImage() {
     const modal = document.getElementById('imageModal');
+    const modalContent = modal?.querySelector('.image-modal-content');
     const modalImg = document.getElementById('modalImage');
     const counter = modal?.querySelector('.modal-image-count');
     const previous = modal?.querySelector('.modal-prev');
@@ -417,8 +419,24 @@ function updateModalImage() {
     if (!modalImg || !modalImages.length) return;
 
     const image = modalImages[modalImageIndex];
+    if (modalContent) modalContent.classList.add('img-loading');
+    modalImg.classList.remove('img-loaded');
+
+    const handleLoaded = () => {
+        if (modalContent) modalContent.classList.remove('img-loading');
+        modalImg.classList.add('img-loaded');
+    };
+
+    modalImg.onload = handleLoaded;
+    modalImg.onerror = handleLoaded;
+
     modalImg.src = image.src;
     modalImg.alt = image.alt;
+
+    if (modalImg.complete && modalImg.naturalWidth !== 0) {
+        handleLoaded();
+    }
+
     counter.textContent = `${modalImageIndex + 1} / ${modalImages.length}`;
 
     const hasMultipleImages = modalImages.length > 1;

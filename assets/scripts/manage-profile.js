@@ -111,7 +111,18 @@ if (profilePictureDiv || profileDescription) {
         .then(res => res.json())
         .then(data => {
             if (profilePictureDiv && data.profile_picture) {
+                profilePictureDiv.classList.add('img-loading');
                 profilePictureDiv.innerHTML = `<img src="${toImageSrc(data.profile_picture)}" alt="Profile Picture" loading="lazy" decoding="async">`;
+                const img = profilePictureDiv.querySelector('img');
+                if (img) {
+                    const handleDone = () => {
+                        profilePictureDiv.classList.remove('img-loading');
+                        img.classList.add('img-loaded');
+                    };
+                    img.onload = handleDone;
+                    img.onerror = handleDone;
+                    if (img.complete && img.naturalWidth !== 0) handleDone();
+                }
             } else if (profilePictureDiv) {
                 profilePictureDiv.innerHTML = '';
             }
