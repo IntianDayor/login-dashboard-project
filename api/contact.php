@@ -140,7 +140,14 @@ $payload = json_encode([
     "subject"   => "New portfolio message from " . $name,
     "content"   => [[
         "type"  => "text/plain",
-        "value" => "From: $name <$email>\n\n$message"
+        "value" => "PORTFOLIO CONTACT\n"
+            . "=================\n\n"
+            . "Name: $name\n"
+            . "Email: $email\n\n"
+            . "Message:\n"
+            . "$message\n\n"
+            . "-----------------\n"
+            . "Reply directly to this email to respond to $name."
     ]]
 ]);
 
