@@ -17,29 +17,69 @@
             <h2>Welcome, <span id="username"></span>!<br>What would you like to do?</h2>
             <section class="analytics-manager" aria-labelledby="analytics-title">
                 <div class="analytics-heading">
-                    <h3 id="analytics-title">Site Analytics</h3>
+                    <div class="analytics-title-group">
+                        <h3 id="analytics-title">Site Analytics</h3>
+                    </div>
+                    <div class="analytics-filter-bar">
+                        <div class="analytics-filter-presets">
+                            <button type="button" class="analytics-preset-btn" data-days="7">7 Days</button>
+                            <button type="button" class="analytics-preset-btn" data-days="14">14 Days</button>
+                            <button type="button" class="analytics-preset-btn active" data-days="30">30 Days</button>
+                            <button type="button" class="analytics-preset-btn" data-mode="single">Single Date</button>
+                            <button type="button" class="analytics-preset-btn" data-mode="custom">Custom Range</button>
+                        </div>
+                        <div id="analytics-single-picker" class="analytics-picker-group" hidden>
+                            <label for="analytics-single-date">Date:</label>
+                            <input type="date" id="analytics-single-date" class="analytics-date-input">
+                        </div>
+                        <div id="analytics-custom-picker" class="analytics-picker-group" hidden>
+                            <label for="analytics-start-date">From:</label>
+                            <input type="date" id="analytics-start-date" class="analytics-date-input">
+                            <label for="analytics-end-date">To:</label>
+                            <input type="date" id="analytics-end-date" class="analytics-date-input">
+                            <button type="button" id="analytics-custom-apply" class="analytics-apply-btn">Apply</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="analytics-stats">
                     <div class="analytics-stat-card">
-                        <span class="analytics-stat-value" id="analytics-total">—</span>
-                        <span class="analytics-stat-label">Total Views</span>
+                        <span class="analytics-stat-value" id="analytics-period-views">—</span>
+                        <span class="analytics-stat-label" id="analytics-views-label">Views (Selected Period)</span>
+                    </div>
+                    <div class="analytics-stat-card">
+                        <span class="analytics-stat-value" id="analytics-period-unique">—</span>
+                        <span class="analytics-stat-label" id="analytics-unique-label">Unique Visitors (Selected Period)</span>
                     </div>
                     <div class="analytics-stat-card">
                         <span class="analytics-stat-value" id="analytics-today">—</span>
                         <span class="analytics-stat-label">Views Today</span>
+                    </div>
+                    <div class="analytics-stat-card">
+                        <span class="analytics-stat-value" id="analytics-today-unique">—</span>
+                        <span class="analytics-stat-label">Unique Today</span>
                     </div>
                 </div>
                 <div class="analytics-tables">
                     <div class="analytics-table-block">
                         <h4>Top Pages</h4>
                         <table class="analytics-table">
-                            <thead><tr><th>Page</th><th>Views</th></tr></thead>
-                            <tbody id="analytics-top-pages"><tr><td colspan="2">Loading...</td></tr></tbody>
+                            <thead><tr><th>Page</th><th>Views</th><th>Uniques</th></tr></thead>
+                            <tbody id="analytics-top-pages"><tr><td colspan="3">Loading...</td></tr></tbody>
                         </table>
                     </div>
-                    <div class="analytics-table-block analytics-chart-block">
-                        <h4>Views Over Last 30 Days</h4>
-                        <canvas id="analytics-chart" height="180"></canvas>
+                    <div class="analytics-charts-column">
+                        <div class="analytics-table-block analytics-chart-block">
+                            <h4 id="analytics-views-chart-title">Page Views (Last 30 Days)</h4>
+                            <div class="analytics-chart-wrapper">
+                                <canvas id="analytics-views-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="analytics-table-block analytics-chart-block">
+                            <h4 id="analytics-unique-chart-title">Unique Visitors (Last 30 Days)</h4>
+                            <div class="analytics-chart-wrapper">
+                                <canvas id="analytics-unique-chart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

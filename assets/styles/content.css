@@ -385,7 +385,95 @@ tr:last-child td {
     border: 1px solid var(--border);
 }
 
+.analytics-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
 .analytics-heading h3 { margin: 0; }
+
+.analytics-filter-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.analytics-filter-presets {
+    display: inline-flex;
+    background: var(--surface-soft);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    gap: 4px;
+}
+
+.analytics-preset-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.analytics-preset-btn:hover {
+    color: var(--text);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.analytics-preset-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.analytics-picker-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.analytics-date-input {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.analytics-date-input:focus {
+    border-color: var(--primary);
+}
+
+.analytics-apply-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.analytics-apply-btn:hover {
+    opacity: 0.9;
+}
 
 .analytics-stats {
     display: flex;
@@ -398,6 +486,7 @@ tr:last-child td {
     flex-direction: column;
     gap: 4px;
     min-width: 160px;
+    flex: 1 1 160px;
     padding: 18px 20px;
     background: var(--surface-soft);
     border: 1px solid var(--border);
@@ -421,7 +510,14 @@ tr:last-child td {
 
 .analytics-tables {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: 1fr 1.6fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.analytics-charts-column {
+    display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
@@ -455,7 +551,15 @@ tr:last-child td {
 
 .analytics-table tr:last-child td { border-bottom: none; }
 
-.analytics-chart-block canvas {
+.analytics-chart-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.analytics-chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
     max-width: 100%;
 }
 

@@ -1,10 +1,19 @@
 // =============== PAGE VIEW LOGGING ================ //
 
 (function logPageView() {
+    let visitorId = localStorage.getItem('site_visitor_id');
+    if (!visitorId) {
+        visitorId = 'v_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+        localStorage.setItem('site_visitor_id', visitorId);
+    }
+
     fetch('../api/log-view.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ page: window.location.pathname })
+        body: JSON.stringify({
+            page: window.location.pathname,
+            visitor_id: visitorId
+        })
     }).catch(() => {}); // fire-and-forget, never blocks the page
 })();
 

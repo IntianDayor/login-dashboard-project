@@ -82,7 +82,9 @@ CREATE TABLE IF NOT EXISTS page_views (
     id INT AUTO_INCREMENT PRIMARY KEY,
     page_path VARCHAR(255) NOT NULL,
     username VARCHAR(100) NULL,
+    visitor_id VARCHAR(64) NULL,
     viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_page_path (page_path),
-    INDEX idx_viewed_at (viewed_at)
+    INDEX idx_viewed_at (viewed_at),
+    INDEX idx_visitor_id (visitor_id)
 );
