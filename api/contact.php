@@ -7,7 +7,31 @@ const MAX_CONTACT_ATTEMPTS = 3;
 const CONTACT_LOCK_MINUTES = 60;
 
 function getClientIp(): string {
-    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $headers = [
+        'HTTP_CF_CONNECTING_IP', // Cloudflare
+        'HTTP_X_FORWARDED_FOR', // Proxy / Load Balancer
+        'HTTP_X_REAL_IP',        // Nginx / Apache reverse proxy
+        'HTTP_CLIENT_IP',        // Shared internet
+        'REMOTE_ADDR'            // Direct connection
+    ];
+
+    foreach ($headers as $header) {
+        if (!empty($_SERVER[$header])) {
+            $ips = explode(',', $_SERVER[$header]);
+            foreach ($ips as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
+                }
+            }
+            $first = trim($ips[0]);
+            if (filter_var($first, FILTER_VALIDATE_IP)) {
+                return $first;
+            }
+        }
+    }
+
+    return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
 }
 
 function rejectIfContactLocked(mysqli $conn, string $ip): void {
