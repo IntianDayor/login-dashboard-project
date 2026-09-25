@@ -487,6 +487,74 @@ body.dark-mode .sign-up {
     line-height: 1.72;
 }
 
+.portfolio-pdf-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-start;
+    margin-top: 24px;
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 999px;
+    color: #1e40af;
+    background: #fff;
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.portfolio-pdf-link span {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.portfolio-pdf-link:hover {
+    transform: translateY(-2px);
+    background: #eff6ff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+}
+
+.portfolio-pdf-link:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.7);
+    outline-offset: 4px;
+}
+
+.portfolio-pdf-link[aria-busy="true"] {
+    cursor: wait;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.pdf-download-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 1.4em;
+    margin: 12px 0 0;
+    color: rgba(239, 246, 255, 0.92);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.pdf-download-status[hidden] {
+    display: none;
+}
+
+.pdf-download-status.is-error {
+    color: #ffe0e0;
+}
+
+.pdf-download-spinner {
+    width: 0.9em;
+    height: 0.9em;
+    flex: 0 0 auto;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: button-spin 0.7s linear infinite;
+}
+
 .demo-account {
     width: min(100%, 360px);
     margin-top: 30px;

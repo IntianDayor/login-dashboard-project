@@ -13,7 +13,11 @@
         <aside class="auth-intro" aria-label="Portfolio access information">
             <span class="auth-intro__eyebrow">Welcome to my portfolio</span>
             <h2>Explore the work behind the profile.</h2>
-            <p>Explore my recruiter dashboard for a closer look at my projects, technical capabilities, and the work behind this portfolio. Both registration and login are purely for demonstration, so you are welcome to use any name and email address—no personal information is required.</p>
+            <p>Explore my projects and experience in the recruiter dashboard, or download my portfolio PDF for a quick overview.</p>
+            <a class="portfolio-pdf-link" href="/api/generate-portfolio-pdf.php" aria-label="Download my portfolio as a PDF">
+                <span aria-hidden="true">↓</span> Download portfolio PDF
+            </a>
+            <p class="pdf-download-status" id="pdf-download-status" role="status" aria-live="polite" hidden></p>
             <div class="demo-account">
                 <span>Prefer a quick look?</span>
                 <p><strong>Username:</strong> viewer<br><strong>Password:</strong> 123456</p>
@@ -45,5 +49,6 @@
         </main>
     </div>
     <script src="../assets/scripts/auth.js"></script>
+    <script src="../assets/scripts/portfolio-pdf-download.js"></script>
 </body>
 </html>
