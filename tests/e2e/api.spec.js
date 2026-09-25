@@ -1,6 +1,10 @@
 const { test, expect } = require('@playwright/test');
 
 const unique = () => `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+const testClientIp = () => {
+  const id = Math.floor(Math.random() * 0x10000);
+  return `198.18.${id >> 8}.${id & 255}`;
+};
 
 async function createAndLoginUser(page) {
   const id = unique();
@@ -46,6 +50,7 @@ test('standard user cannot perform admin actions; logout requires CSRF', async (
 test('contact honeypot is accepted without sending email', async ({ page }) => {
   const response = await page.request.post('/api/contact.php', {
     data: { name: 'Automated test', email: 'bot@example.test', message: 'Ignored', website: 'filled-by-bot' },
+    headers: { 'X-Forwarded-For': testClientIp() },
   });
   expect((await response.json()).success).toBe(true);
 });
@@ -63,11 +68,15 @@ test('signup rejects short passwords and invalid email addresses', async ({ page
 });
 
 test('contact form rejects missing fields and invalid email before delivery', async ({ page }) => {
-  const missing = await page.request.post('/api/contact.php', { data: { name: '', email: '', message: '' } });
+  const missing = await page.request.post('/api/contact.php', {
+    data: { name: '', email: '', message: '' },
+    headers: { 'X-Forwarded-For': testClientIp() },
+  });
   expect((await missing.json()).message).toBe('All fields are required');
 
   const invalidEmail = await page.request.post('/api/contact.php', {
     data: { name: 'QA', email: 'not-an-email', message: 'This will not be sent' },
+    headers: { 'X-Forwarded-For': testClientIp() },
   });
   expect((await invalidEmail.json()).message).toBe('Invalid email address');
 });
