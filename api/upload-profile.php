@@ -4,6 +4,7 @@ requireAdmin();
 verifyCsrf();
 include "r2.php";
 include "sanitize.php";
+require_once __DIR__ . '/helpers/social-url.php';
 
 header('Content-Type: application/json');
 
@@ -14,20 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $description = sanitizeRichText(trim($_POST['description'] ?? ''));
 $imagePath   = null;
-
-function sanitizeSocialUrl(string $url): ?string {
-    $url = trim($url);
-    if ($url === '') {
-        return null;
-    }
-
-    if (strlen($url) > 500 || !filter_var($url, FILTER_VALIDATE_URL)) {
-        return false;
-    }
-
-    $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
-    return in_array($scheme, ['http', 'https'], true) ? $url : false;
-}
 
 $socialFields = ['github_url', 'linkedin_url', 'instagram_url', 'facebook_url'];
 $postedSocialUrls = $_POST['social_urls'] ?? [];

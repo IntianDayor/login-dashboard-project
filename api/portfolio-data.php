@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/r2.php';
+require_once __DIR__ . '/helpers/storage-path.php';
 
 /**
  * Shared, auth-agnostic data-fetching functions for portfolio content.
@@ -68,15 +69,4 @@ function getProjectImageBytes(string $key): array {
     ];
 }
 
-/**
- * project_previews.image_path / profile.profile_picture may hold either a bare R2
- * key or a legacy full R2 public URL. Reduce either form down to the object key.
- */
-function r2KeyFromStoredPath(string $imagePath): ?string {
-    if (str_starts_with($imagePath, 'http')) {
-        $pos = strpos($imagePath, 'images/');
-        return $pos !== false ? substr($imagePath, $pos) : null;
-    }
-    return $imagePath !== '' ? $imagePath : null;
-}
 ?>

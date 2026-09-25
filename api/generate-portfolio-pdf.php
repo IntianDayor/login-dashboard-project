@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/portfolio-data.php';
+require_once __DIR__ . '/helpers/pdf.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Dompdf\Dompdf;
@@ -119,21 +120,6 @@ function recordPdfAttempt(mysqli $conn, string $ip): void {
     $stmt->close();
 }
 
-/** Dompdf can't render animated GIFs; convert to a single static (first) frame. */
-function normalizeImageForPdf(string $bytes, string $contentType): array {
-    if ($contentType === 'image/gif') {
-        $frame = @imagecreatefromstring($bytes);
-        if ($frame !== false) {
-            ob_start();
-            imagepng($frame);
-            $pngBytes = ob_get_clean();
-            imagedestroy($frame);
-            return [$pngBytes, 'image/png'];
-        }
-    }
-    return [$bytes, $contentType];
-}
-
 function imageToDataUri(string $imagePath): ?string {
     $key = r2KeyFromStoredPath($imagePath);
     if (!$key) {
@@ -149,10 +135,6 @@ function imageToDataUri(string $imagePath): ?string {
 
     [$bytes, $contentType] = normalizeImageForPdf($image['body'], $image['contentType']);
     return 'data:' . $contentType . ';base64,' . base64_encode($bytes);
-}
-
-function escapeHtml(?string $value): string {
-    return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
 // ---------------------------------------------------------------------------
