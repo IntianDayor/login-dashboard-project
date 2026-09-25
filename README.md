@@ -20,6 +20,11 @@ There are no shared demo credentials. Signup creates a standard user account for
 - [API endpoints](docs/API_ENDPOINTS.md) — routes, methods, access rules, and inputs.
 - [What I learned](docs/LEARNINGS.md) — key implementation takeaways.
 
+## Tests
+
+- Run sanitizer tests with `composer test`.
+- See [tests/README.md](tests/README.md) for isolated test-instance setup and browser/API tests with Playwright (`npm run test:e2e`).
+
 ## Repository layout
 
 - `api/` — PHP endpoints and shared backend code.

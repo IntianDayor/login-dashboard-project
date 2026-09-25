@@ -37,3 +37,11 @@
 - Generating a portfolio PDF from live profile and project data with Dompdf.
 - Integrating third-party services such as SendGrid, Cloudflare R2, and browser-side libraries.
 - Documenting features, API contracts, architecture, and setup as separate project references.
+
+## 🧪 Testing and Quality Assurance
+
+- Using automated tests alongside manual testing: automated checks repeat important cases consistently, while manual checks help explore the app and judge whether the experience feels right.
+- Writing focused PHP tests for shared logic such as rich-text sanitization, and browser/API tests with Playwright for signup, login, permissions, CSRF, and key user flows.
+- Running integration tests against a separate test database because tests may create accounts or change content; never point them at production or everyday development data.
+- Treating test failures as feedback about either the app or the test assumptions, then fixing the cause and rerunning the relevant checks.
+- Keeping external-service workflows such as R2 uploads and SendGrid delivery separate from tests that can run without those credentials.
