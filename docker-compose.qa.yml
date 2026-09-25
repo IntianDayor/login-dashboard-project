@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8081:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: qa_user
+      DB_PASS: qa_only_password
+      DB_NAME: portfolio_qa
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: qa_only_root_password
+      MYSQL_DATABASE: portfolio_qa
+      MYSQL_USER: qa_user
+      MYSQL_PASSWORD: qa_only_password
+    volumes:
+      - qa_db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+      interval: 5s
+
+volumes:
+  qa_db_data:

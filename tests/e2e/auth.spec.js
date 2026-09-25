@@ -46,5 +46,5 @@ test('public portfolio page loads and login page links to signup', async ({ page
   await page.getByText('Create an account').click();
   await expect(page).toHaveURL(/signup\.html$/);
   await expect(page.getByRole('heading', { name: 'Register an Account' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Download portfolio PDF/ })).toHaveAttribute('href', '/api/generate-portfolio-pdf.php');
+  await expect(page.getByRole('link', { name: 'Download my portfolio as a PDF' })).toHaveAttribute('href', '/api/generate-portfolio-pdf.php');
 });
