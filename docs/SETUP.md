@@ -26,6 +26,47 @@ PHP loads a root `.env` file through phpdotenv, so it can supply these optional 
 UPDATE users SET role = 'admin' WHERE username = 'your_username';
 ```
 
+## Disposable browser/API QA instance
+
+The Playwright suite creates user accounts and, when admin credentials are supplied, edits About content. Use the isolated QA Compose stack below; it has its own database volume and listens on port `8081`, separate from the regular local stack on `8080`.
+
+Start the QA app and database from the repository root:
+
+```powershell
+docker compose -p portfolio-qa -f docker-compose.qa.yml up --build -d
+```
+
+Install the browser test dependency and Chromium once if needed:
+
+```powershell
+npm install
+npx playwright install chromium
+```
+
+Run the browser/API suite against the disposable QA instance:
+
+```powershell
+$env:APP_TEST_URL = 'http://localhost:8081'
+npm run test:e2e
+```
+
+To include admin coverage, create a QA account through the signup page at `http://localhost:8081/pages/user/signup.html`, then promote that account only in the QA database:
+
+```powershell
+docker compose -p portfolio-qa -f docker-compose.qa.yml exec db mysql -uqa_user -pqa_only_password portfolio_qa -e "UPDATE users SET role = 'admin' WHERE username = 'qa-admin'"
+$env:TEST_ADMIN_USERNAME = 'qa-admin'
+$env:TEST_ADMIN_PASSWORD = 'the-password-used-at-signup'
+npm run test:e2e
+```
+
+Replace `qa-admin` and the password with the values used when creating the QA account. Stop and remove the QA stack and its disposable database volume after testing:
+
+```powershell
+docker compose -p portfolio-qa -f docker-compose.qa.yml down -v
+```
+
+The `-v` option permanently deletes the QA database contents. It does not affect the regular local Compose database volume. Do not change `APP_TEST_URL` to a production or everyday development URL.
+
 Use the same controlled bootstrap process for the first production administrator.
 
 ## Production deployment
