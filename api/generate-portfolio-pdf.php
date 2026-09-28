@@ -8,8 +8,25 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-/* Temp log line will be removed */
-error_log('XFF=' . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '-') . ' REMOTE=' . $_SERVER['REMOTE_ADDR']);
+// Temporary, opt-in proxy diagnostic. Reports position metadata only; never IP values.
+if (getenv('PROXY_DIAGNOSTICS') === '1') {
+    $rawXff = trim($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '');
+    $xff = $rawXff === '' ? [] : array_map('trim', explode(',', $rawXff));
+    $cfIp = trim($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '');
+    $cfPacked = filter_var($cfIp, FILTER_VALIDATE_IP) ? inet_pton($cfIp) : false;
+    $cfPositionFromRight = null;
+
+    foreach (array_reverse($xff) as $index => $ip) {
+        $packed = filter_var($ip, FILTER_VALIDATE_IP) ? inet_pton($ip) : false;
+        if ($cfPacked !== false && $packed === $cfPacked) {
+            $cfPositionFromRight = $index + 1;
+            break;
+        }
+    }
+
+    header('X-Proxy-Diagnostic: xff_entries=' . count($xff)
+        . '; cf_client_position_from_right=' . ($cfPositionFromRight ?? 'not-found'));
+}
 /**
  * Public, unauthenticated portfolio PDF export.
  * Because it's public, it's rate-limited per IP.
