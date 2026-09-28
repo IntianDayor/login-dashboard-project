@@ -12,7 +12,7 @@ The site has a public portfolio/contact experience and a signed-in area for user
 | User management | — | List accounts and change roles | Admin-only endpoints check the server session, admin role, and CSRF token. |
 | Analytics | Page views are recorded during visits | View totals and filtered charts | The browser sends page paths and a persistent visitor ID. Admin charts query `page_views` by date/range; older records are periodically pruned. |
 | Contact | Send a message | Receive it by email | The endpoint validates fields and sends through SendGrid. Honeypot/timing traps and per-IP throttling limit abuse. |
-| Portfolio PDF | Download a generated portfolio | — | A public endpoint combines current profile/project data and available R2 images into a PDF; downloads are throttled per IP. |
+| Portfolio PDF | Download a generated portfolio | — | A public endpoint combines current profile/project data and available R2 images into a PDF, caches it in R2 using a content/version hash, and throttles requests per IP. |
 
 ## Content and asset flow
 

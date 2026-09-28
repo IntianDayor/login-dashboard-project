@@ -4,7 +4,7 @@
 
 ## 1. System at a glance
 
-The application serves HTML pages with JavaScript-driven API calls. PHP endpoints enforce authentication and authorization where required, persist application data and sessions in MySQL, send contact-form email through SendGrid, and store uploaded binary assets in Cloudflare R2. Images and the latest resume PDF are served through authenticated backend proxies. A separate public endpoint generates a portfolio PDF from current database content and available R2 images. The application itself is disposable: persistent state is kept outside the web container.
+The application serves HTML pages with JavaScript-driven API calls. PHP endpoints enforce authentication and authorization where required, persist application data and sessions in MySQL, send contact-form email through SendGrid, and store uploaded binary assets in Cloudflare R2. Images and the latest resume PDF are served through authenticated backend proxies. A separate public endpoint generates a portfolio PDF from current database content and available R2 images, then caches it in R2 using a content/version hash. The application itself is disposable: persistent state is kept outside the web container.
 
 ```mermaid
 flowchart LR
@@ -99,7 +99,7 @@ flowchart TB
 - PHP uses `mysqli`; when `DB_SSL_CA` is configured, the connection uses MySQL TLS. PHP sessions are stored in MySQL and expire with the configured session lifetime.
 - `auth-check.php` provides session, administrator-role, and CSRF guards. Route-specific access and inputs are listed in the [API endpoint reference](API_ENDPOINTS.md).
 - The R2 adapter supports object upload, read, key extraction, and deletion. Authenticated image and resume proxies validate object keys before streaming files.
-- The contact endpoint validates submissions and sends email through SendGrid. Public portfolio PDF export reads current database content and R2 images, then renders with Dompdf. Both public flows use IP-based rate limits.
+- The contact endpoint validates submissions and sends email through SendGrid. Public portfolio PDF export reads current database content and R2 images, renders with Dompdf, and caches the result in R2 using a content/version hash. Both public flows use IP-based rate limits.
 
 ## 3. Authentication and authorization flow
 
@@ -161,7 +161,7 @@ flowchart LR
     M -->|"Rich text"| R["Browser renders DOMPurify-cleaned content"]
     V["Visitor requests portfolio PDF"] --> S["Public portfolio PDF endpoint"]
     S --> T["Read current profile/projects + fetch R2 images"]
-    T --> U["Dompdf renders and streams PDF"]
+    T --> U["Dompdf renders PDF; R2 caches by content/version hash"]
 ```
 
 Upload limits enforced by the server:
@@ -208,6 +208,13 @@ erDiagram
         INT id PK
         INT project_id FK
         VARCHAR image_path
+    }
+    SOCIAL_LINKS {
+        INT id PK "singleton: 1"
+        VARCHAR github_url
+        VARCHAR linkedin_url
+        VARCHAR instagram_url
+        VARCHAR facebook_url
     }
     RESUMES {
         INT id PK

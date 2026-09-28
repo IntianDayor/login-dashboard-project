@@ -12,6 +12,8 @@ Open [http://localhost:8080/pages/user/login.html](http://localhost:8080/pages/u
 
 Compose creates the local `fprojectdb_mysql` database and applies `init.sql` the first time the database volume is initialized. The DB connection values (`DB_HOST=db`, `DB_USER=appuser`, `DB_PASS=apppassword`, `DB_NAME=fprojectdb_mysql`) are set directly in `docker-compose.yml`; a root `.env` file does not override those values. To change them, update the matching Compose environment settings.
 
+For a new database, use `init.sql`. For an existing database, apply the relevant SQL file from `migrations/` manually; this project does not have an automatic migration runner.
+
 The app can start without external service credentials, but these features need additional configuration:
 
 | Feature | Local configuration |

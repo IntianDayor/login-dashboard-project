@@ -22,9 +22,9 @@ All routes are PHP files under `api/`. JSON endpoints use JSON request bodies un
 | `users-table.php` | GET | Admin + CSRF | Lists user account fields. |
 | `set-role.php` | POST | Admin + CSRF | JSON: user `id` and `role` (`user` or `admin`). |
 | `log-view.php` | POST | Public | JSON: `page`, optional `visitor_id`; records a valid page view. |
-| `get-analytics.php` | GET | Admin + CSRF | Query filters: `filter` (`days`, `single_date`, or range), `days` (1–180), `date`, `start_date`, `end_date`. Returns totals and chart/page aggregates. |
+| `get-analytics.php` | GET | Admin + CSRF | Query filters: `filter` (`days`, `single_date`, or `custom`), `days` (1–180), `date`, `start_date`, `end_date`. Returns totals and chart/page aggregates. |
 | `contact.php` | POST | Public | JSON: `name`, `email`, `message`; optional `website` honeypot and `loaded_at` timestamp. Sends validated messages using SendGrid. |
-| `generate-portfolio-pdf.php` | GET | Public | Generates and downloads the current portfolio PDF; rate-limited per IP. |
+| `generate-portfolio-pdf.php` | GET | Public | Generates the current portfolio PDF, caches it in R2 by content/version hash, and rate-limits requests per IP. |
 
 ## Common behavior
 

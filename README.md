@@ -22,7 +22,7 @@ There are no shared demo credentials. Signup creates a standard user account for
 
 ## Tests
 
-- Run sanitizer tests with `composer test`.
+- Run PHP helper tests with `composer test` (sanitization, social URLs, PDF helpers, R2 paths, and trusted-proxy IP handling).
 - See [tests/README.md](tests/README.md) for isolated test-instance setup and browser/API tests with Playwright (`npm run test:e2e`).
 
 ## Repository layout
@@ -32,7 +32,8 @@ There are no shared demo credentials. Signup creates a standard user account for
 - `pages/` — user and admin HTML pages.
 - `docs/` — project and API documentation.
 - `.github/workflows/` — scheduled database backup and analytics cleanup automation.
-- `init.sql` — database schema and seed data.
+- `init.sql` — database schema (no administrator account is seeded).
+- `migrations/` — standalone SQL migration files for existing databases.
 - `Dockerfile`, `docker-compose.yml` — container build and local services.
 
 ---

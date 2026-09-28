@@ -1,6 +1,6 @@
 # Test suite
 
-The PHP tests (`composer test`) cover rich-text sanitization, social URL validation, PDF HTML escaping and image normalization, and stored R2 image-path parsing. These focused tests call helper functions directly and need no database. Browser/API tests (`npm run test:e2e`) cover signup/login and page navigation, API authentication and access control, CSRF, contact handling, analytics, and About-content sanitization.
+The PHP tests (`composer test`) cover rich-text sanitization, social URL validation, PDF HTML escaping and image normalization, stored R2 image-path parsing, and trusted-proxy IP handling. These focused tests call helper functions directly and need no database. Browser/API tests (`npm run test:e2e`) cover signup/login and page navigation, API authentication and access control, CSRF, contact handling, analytics, and About-content sanitization.
 
 ## Safety and setup
 

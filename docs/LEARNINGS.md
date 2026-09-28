@@ -45,3 +45,7 @@
 - Running integration tests against a separate test database because tests may create accounts or change content; never point them at production or everyday development data.
 - Treating test failures as feedback about either the app or the test assumptions, then fixing the cause and rerunning the relevant checks.
 - Keeping external-service workflows such as R2 uploads and SendGrid delivery separate from tests that can run without those credentials.
+
+## Frameworks
+
+Working on migrations, caching, tests, and QA scripts—and trying background jobs and queues—showed me how much frameworks can help. Their built-in tools and conventions would make this work easier and more production-ready from the start.
