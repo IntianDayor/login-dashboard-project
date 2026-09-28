@@ -78,6 +78,7 @@ The production setup uses a Render Docker web service, Aiven MySQL, Cloudflare R
 3. Set the database variables: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`, and `DB_SSL_CA`. Set Render's `DB_NAME` to `defaultdb` to match the current workflow target.
 4. Set the R2 credentials and bucket variables (`R2_*`).
 5. For contact email, set `SENDGRID_API_KEY`, verified `SENDGRID_FROM_EMAIL`, and receiving `CONTACT_EMAIL`.
+   Also set `TRUSTED_PROXY_HOPS` to the number of proxies in front of the app (see `.env.example`); with the default `0` every visitor behind Render's proxy shares one rate-limit key.
 6. Deploy. Later pushes to the connected branch trigger redeployment.
 
 GitHub Actions provides two operational workflows: `.github/workflows/db-backup.yml` dumps `defaultdb` to dated and `latest.sql` objects in R2 weekly (and on manual runs), while `.github/workflows/analytics-cleanup.yml` removes page-view records older than six months monthly (and on manual runs). Configure `AIVEN_HOST`, `AIVEN_PORT`, `AIVEN_USER`, `AIVEN_PASSWORD`, and the required `R2_*` repository secrets before running them. To restore, download the desired backup object and import it into the intended database with the MySQL client; the SQL dump contains the schema and data. These workflows automate maintenance and recovery; they are not build/test CI jobs. Render provides continuous deployment from the connected Git branch.

@@ -2,11 +2,14 @@
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/portfolio-data.php';
 require_once __DIR__ . '/helpers/pdf.php';
+require_once __DIR__ . '/helpers/client-ip.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
+/* Temp log line will be removed */
+error_log('XFF=' . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '-') . ' REMOTE=' . $_SERVER['REMOTE_ADDR']);
 /**
  * Public, unauthenticated portfolio PDF export.
  * Because it's public, it's rate-limited per IP.
@@ -14,34 +17,6 @@ use Dompdf\Options;
 
 const MAX_PDF_ATTEMPTS = 20;
 const PDF_LOCK_MINUTES = 60;
-
-function getClientIp(): string {
-    $headers = [
-        'HTTP_CF_CONNECTING_IP', // Cloudflare
-        'HTTP_X_FORWARDED_FOR',  // Proxy / Load Balancer
-        'HTTP_X_REAL_IP',        // Nginx / Apache reverse proxy
-        'HTTP_CLIENT_IP',        // Shared internet
-        'REMOTE_ADDR'            // Direct connection
-    ];
-
-    foreach ($headers as $header) {
-        if (!empty($_SERVER[$header])) {
-            $ips = explode(',', $_SERVER[$header]);
-            foreach ($ips as $ip) {
-                $ip = trim($ip);
-                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-                    return $ip;
-                }
-            }
-            $first = trim($ips[0]);
-            if (filter_var($first, FILTER_VALIDATE_IP)) {
-                return $first;
-            }
-        }
-    }
-
-    return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-}
 
 function rejectIfPdfLocked(mysqli $conn, string $ip): void {
     $stmt = $conn->prepare("
@@ -148,13 +123,59 @@ recordPdfAttempt($conn, $clientIp);
 $profile  = getProfileData($conn);
 $projects = getProjectsData($conn);
 
+// Content-addressed cache: the key is a hash of everything the PDF shows plus
+// the template code, so any edit (or layout change) maps to a different object
+// and a cached PDF can never be stale. Old objects can be expired with an R2
+// lifecycle rule on the "portfolio/" prefix.
+$cacheKey = 'portfolio/' . sha1(
+    json_encode([$profile['description'] ?? null, $projects])
+    . md5_file(__FILE__) . md5_file(__DIR__ . '/helpers/pdf.php')
+) . '.pdf';
+
+function sendPdf(string $bytes): never
+{
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="christian-dior-feraer-portfolio.pdf"');
+    header('Cache-Control: no-cache');
+    echo $bytes;
+    exit;
+}
+
+function redirectToCachedPdf(string $key): bool
+{
+    $publicUrl = rtrim(envValue('R2_PUBLIC_URL'), '/') . '/' . $key;
+    if (!filter_var($publicUrl, FILTER_VALIDATE_URL)) {
+        return false;
+    }
+
+    header('Location: ' . $publicUrl, true, 302);
+    exit;
+}
+
+try {
+    if (envValue('R2_PUBLIC_URL') !== '') {
+        getR2Client()->headObject([
+            'Bucket' => envValue('R2_BUCKET'),
+            'Key'    => $cacheKey,
+        ]);
+        if (!redirectToCachedPdf($cacheKey)) {
+            sendPdf(getProjectImageBytes($cacheKey)['body']);
+        }
+    } else {
+        sendPdf(getProjectImageBytes($cacheKey)['body']);
+    }
+} catch (\Aws\S3\Exception\S3Exception $e) {
+    // Cache miss (or R2 unavailable): render below.
+}
+
 $aboutHtml = $profile['description'] ?: '<p>No description provided yet.</p>';
 
 $projectsHtml = '';
 foreach ($projects as $project) {
     $title       = escapeHtml($project['title']);
     $description = $project['description'] ?: '<p><em>No description provided.</em></p>';
-    $link        = $project['project_link'] ? escapeHtml($project['project_link']) : null;
+    $safeLink    = sanitizeProjectLink($project['project_link']);
+    $link        = $safeLink ? escapeHtml($safeLink) : null;
 
     $imagesHtml = '';
     foreach ($project['images'] as $imagePath) {
@@ -209,7 +230,25 @@ $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
 
-header('Content-Type: application/pdf');
-header('Content-Disposition: attachment; filename="christian-dior-feraer-portfolio.pdf"');
-echo $dompdf->output();
+$pdfBytes = $dompdf->output();
+$cacheStored = false;
+
+try {
+    getR2Client()->putObject([
+        'Bucket'      => envValue('R2_BUCKET'),
+        'Key'         => $cacheKey,
+        'Body'        => $pdfBytes,
+        'ContentType' => 'application/pdf',
+        'ContentDisposition' => 'attachment; filename="christian-dior-feraer-portfolio.pdf"',
+        'CacheControl' => 'public, max-age=31536000, immutable',
+    ]);
+    $cacheStored = true;
+} catch (\Aws\S3\Exception\S3Exception $e) {
+    error_log('Could not cache portfolio PDF: ' . $e->getMessage());
+}
+
+if ($cacheStored && envValue('R2_PUBLIC_URL') !== '') {
+    redirectToCachedPdf($cacheKey);
+}
+sendPdf($pdfBytes);
 ?>

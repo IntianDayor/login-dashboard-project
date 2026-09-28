@@ -11,6 +11,7 @@ services:
       DB_USER: qa_user
       DB_PASS: qa_only_password
       DB_NAME: portfolio_qa
+      TRUSTED_PROXY_HOPS: "1"
 
   db:
     image: mysql:8.0
